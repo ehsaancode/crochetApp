@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState } from 'react'; // Force rebuild
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingBag, Heart } from 'lucide-react';
 import Home from './pages/Home';
 import Collection from './pages/Collection';
 import About from './pages/About';
 import Contact from './pages/Contact';
+import ProductDetail from './pages/ProductDetail';
 
 // Navigation Component to handle location-based logic if needed
 function Navigation() {
@@ -48,7 +49,7 @@ function Navigation() {
 
             <header className="fixed w-full bg-silk-50/90 backdrop-blur-sm z-40 border-b border-silk-200 transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                    <Link to="/" className="font-serif text-2xl tracking-tight text-silk-900">Aalaboo & Co.</Link>
+                    <Link to="/" onClick={() => window.scrollTo(0, 0)} className="font-serif text-2xl tracking-tight text-silk-900">Aalaboo & Co.</Link>
                     <nav className="flex items-center space-x-2">
                         <button className="p-2 hover:bg-silk-100 rounded-full transition-colors duration-200 hidden sm:block">
                             <Heart className="w-5 h-5 text-silk-900" strokeWidth={1.5} />
@@ -78,6 +79,7 @@ function App() {
                         <Route path="/collection" element={<Collection />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
+                        <Route path="/product/:id" element={<ProductDetail />} />
                     </Routes>
                 </main>
             </div>

@@ -1,23 +1,12 @@
 import React, { useState } from 'react';
 import { ShoppingBag, Filter, X, Star } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
-// Import images
-import imgDress from '../assets/images/crochet_dress.svg';
-import imgTop from '../assets/images/crochet_top.svg';
-import imgBag from '../assets/images/crochet_bag.svg';
+import { products } from '../data/products';
 
 function Collection() {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [priceRange, setPriceRange] = useState(300);
-
-    const products = [
-        { id: 1, name: "Boho Maxi Dress", price: 245.00, type: "Dress", rating: 5, img: imgDress },
-        { id: 2, name: "Lace Crop Top", price: 85.00, type: "Top", rating: 4, img: imgTop },
-        { id: 3, name: "Woven Tote Bag", price: 120.00, type: "Accessory", rating: 5, img: imgBag },
-        { id: 4, name: "Summer Cardigan", price: 150.00, type: "Top", rating: 4, img: imgTop },
-        { id: 5, name: "Beach Coverup", price: 95.00, type: "Dress", rating: 5, img: imgDress },
-        { id: 6, name: "Sun Hat", price: 45.00, type: "Accessory", rating: 3, img: imgBag },
-    ];
 
     return (
         <div className="pt-20 pb-12 px-4 max-w-7xl mx-auto flex flex-col md:flex-row gap-8">
@@ -102,7 +91,7 @@ function Collection() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {products.map((item) => (
-                        <div key={item.id} className="group cursor-pointer">
+                        <Link to={`/product/${item.id}`} key={item.id} className="group cursor-pointer">
                             <div className="relative aspect-[3/4] bg-silk-200 mb-4 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow duration-500">
                                 <div className="w-full h-full bg-silk-300 group-hover:scale-105 transition-transform duration-700 ease-out overflow-hidden">
                                     <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
@@ -122,7 +111,7 @@ function Collection() {
                                     </div>
                                 </div>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
             </div>

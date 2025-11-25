@@ -31,7 +31,7 @@ function Home() {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
                     {products.slice(0, visibleCount).map((item, index) => (
-                        <div key={item.id} className="group cursor-pointer" style={{ animationDelay: `${index * 50}ms` }}>
+                        <Link to={`/product/${item.id}`} key={item.id} className="group cursor-pointer" style={{ animationDelay: `${index * 50}ms` }}>
                             <div className="relative aspect-[4/5] bg-silk-200 mb-6 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow duration-500">
                                 {item.tag && (
                                     <span className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-wider font-medium z-10">
@@ -53,7 +53,7 @@ function Home() {
                                 </div>
                                 <p className="text-lg font-medium text-silk-900">${item.price.toFixed(2)}</p>
                             </div>
-                        </div>
+                        </Link>
                     ))}
                 </div>
 
