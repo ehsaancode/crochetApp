@@ -31,7 +31,7 @@ function Navigation() {
                         <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 hover:text-silk-600 transition-colors">Contact</Link>
                     </nav>
 
-                    <div className="mt-auto border-t border-silk-200 pt-8">
+                    <div className="mt-auto border-t border-silk-200 pt-8 md:hidden">
                         <div className="flex justify-center space-x-8 mb-8">
                             <a href="#" className="flex flex-col items-center text-silk-600 hover:text-silk-900">
                                 <Heart className="w-6 h-6 mb-2" strokeWidth={1.5} />
@@ -48,7 +48,7 @@ function Navigation() {
 
             <header className="fixed w-full bg-silk-50/90 backdrop-blur-sm z-40 border-b border-silk-200 transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                    <Link to="/" className="font-serif text-2xl tracking-tight text-silk-900">Crochet & Co.</Link>
+                    <Link to="/" className="font-serif text-2xl tracking-tight text-silk-900">Aalaboo & Co.</Link>
                     <nav className="flex items-center space-x-2">
                         <button className="p-2 hover:bg-silk-100 rounded-full transition-colors duration-200 hidden sm:block">
                             <Heart className="w-5 h-5 text-silk-900" strokeWidth={1.5} />
