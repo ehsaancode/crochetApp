@@ -1,0 +1,77 @@
+import React from 'react';
+import { ShoppingBag, Heart, Mail, Phone, Instagram } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+// Import images
+import imgDress from '../assets/images/crochet_dress.svg';
+import imgTop from '../assets/images/crochet_top.svg';
+import imgBag from '../assets/images/crochet_bag.svg';
+
+function Home() {
+    return (
+        <>
+            <section id="home" className="h-[85vh] flex items-center justify-center bg-silk-100 p-6 text-center relative overflow-hidden">
+                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/woven.png')]"></div>
+                <div className="relative z-10 animate-slide-up">
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] mb-4 text-silk-600">Handmade Luxury</p>
+                    <h2 className="font-serif text-5xl mb-6 text-silk-900 leading-tight">Artisan<br />Crochet</h2>
+                    <Link to="/collection" className="inline-block bg-silk-900 text-white px-10 py-4 rounded-full text-sm uppercase tracking-widest hover:bg-silk-800 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                        View Collection
+                    </Link>
+                </div>
+            </section>
+
+            <section id="shop" className="py-16 px-6 max-w-md mx-auto">
+                <div className="flex items-end justify-between mb-10">
+                    <h3 className="font-serif text-3xl text-silk-900">New Arrivals</h3>
+                    <Link to="/collection" className="text-xs uppercase tracking-widest border-b border-silk-900 pb-1 hover:text-silk-600 hover:border-silk-600 transition-colors">View All</Link>
+                </div>
+
+                <div className="grid grid-cols-1 gap-12">
+                    {[
+                        { id: 1, name: "Boho Maxi Dress", price: "$245.00", tag: "Best Seller", img: imgDress },
+                        { id: 2, name: "Lace Crop Top", price: "$85.00", tag: "New", img: imgTop },
+                        { id: 3, name: "Woven Tote Bag", price: "$120.00", img: imgBag }
+                    ].map((item, index) => (
+                        <div key={item.id} className="group cursor-pointer" style={{ animationDelay: `${index * 100}ms` }}>
+                            <div className="relative aspect-[4/5] bg-silk-200 mb-6 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow duration-500">
+                                {item.tag && (
+                                    <span className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-wider font-medium z-10">
+                                        {item.tag}
+                                    </span>
+                                )}
+                                <div className="w-full h-full bg-silk-300 group-hover:scale-105 transition-transform duration-700 ease-out overflow-hidden">
+                                    <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                                </div>
+                                <button className="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg translate-y-14 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-100 hover:bg-silk-900 hover:text-white">
+                                    <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
+                                </button>
+                            </div>
+
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h4 className="font-serif text-xl mb-1 group-hover:text-silk-700 transition-colors">{item.name}</h4>
+                                    <p className="text-sm text-silk-500">Natural Cotton</p>
+                                </div>
+                                <p className="text-lg font-medium text-silk-900">{item.price}</p>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            <footer className="bg-silk-900 text-silk-100 py-12 px-6">
+                <div className="max-w-md mx-auto text-center">
+                    <h4 className="font-serif text-2xl mb-6">Crochet & Co.</h4>
+                    <div className="flex justify-center space-x-6 mb-8">
+                        <a href="#" className="hover:text-white transition-colors"><Instagram className="w-5 h-5" /></a>
+                        <a href="#" className="hover:text-white transition-colors"><Mail className="w-5 h-5" /></a>
+                    </div>
+                    <p className="text-xs text-silk-400 uppercase tracking-widest">© 2025 Crochet & Co.</p>
+                </div>
+            </footer>
+        </>
+    );
+}
+
+export default Home;
