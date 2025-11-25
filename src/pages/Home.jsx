@@ -1,13 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ShoppingBag, Heart, Mail, Phone, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-// Import images
-import imgDress from '../assets/images/crochet_dress.svg';
-import imgTop from '../assets/images/crochet_top.svg';
-import imgBag from '../assets/images/crochet_bag.svg';
+import { products } from '../data/products';
 
 function Home() {
+    const [visibleCount, setVisibleCount] = useState(16);
+
+    const showMore = () => {
+        setVisibleCount(prev => prev + 16);
+    };
+
     return (
         <>
             <section id="home" className="h-[85vh] flex items-center justify-center bg-silk-100 p-6 text-center relative overflow-hidden">
@@ -21,19 +23,15 @@ function Home() {
                 </div>
             </section>
 
-            <section id="shop" className="py-16 px-6 max-w-md mx-auto">
+            <section id="shop" className="py-16 px-6 max-w-7xl mx-auto">
                 <div className="flex items-end justify-between mb-10">
                     <h3 className="font-serif text-3xl text-silk-900">New Arrivals</h3>
                     <Link to="/collection" className="text-xs uppercase tracking-widest border-b border-silk-900 pb-1 hover:text-silk-600 hover:border-silk-600 transition-colors">View All</Link>
                 </div>
 
-                <div className="grid grid-cols-1 gap-12">
-                    {[
-                        { id: 1, name: "Boho Maxi Dress", price: "$245.00", tag: "Best Seller", img: imgDress },
-                        { id: 2, name: "Lace Crop Top", price: "$85.00", tag: "New", img: imgTop },
-                        { id: 3, name: "Woven Tote Bag", price: "$120.00", img: imgBag }
-                    ].map((item, index) => (
-                        <div key={item.id} className="group cursor-pointer" style={{ animationDelay: `${index * 100}ms` }}>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
+                    {products.slice(0, visibleCount).map((item, index) => (
+                        <div key={item.id} className="group cursor-pointer" style={{ animationDelay: `${index * 50}ms` }}>
                             <div className="relative aspect-[4/5] bg-silk-200 mb-6 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow duration-500">
                                 {item.tag && (
                                     <span className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-wider font-medium z-10">
@@ -53,11 +51,22 @@ function Home() {
                                     <h4 className="font-serif text-xl mb-1 group-hover:text-silk-700 transition-colors">{item.name}</h4>
                                     <p className="text-sm text-silk-500">Natural Cotton</p>
                                 </div>
-                                <p className="text-lg font-medium text-silk-900">{item.price}</p>
+                                <p className="text-lg font-medium text-silk-900">${item.price.toFixed(2)}</p>
                             </div>
                         </div>
                     ))}
                 </div>
+
+                {visibleCount < products.length && (
+                    <div className="text-center mt-16">
+                        <button
+                            onClick={showMore}
+                            className="inline-block border border-silk-900 text-silk-900 px-10 py-3 rounded-full text-xs uppercase tracking-widest hover:bg-silk-900 hover:text-white transition-all duration-300"
+                        >
+                            Show More
+                        </button>
+                    </div>
+                )}
             </section>
 
             <footer className="bg-silk-900 text-silk-100 py-12 px-6">

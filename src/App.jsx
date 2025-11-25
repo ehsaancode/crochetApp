@@ -47,7 +47,7 @@ function Navigation() {
             </div>
 
             <header className="fixed w-full bg-silk-50/90 backdrop-blur-sm z-40 border-b border-silk-200 transition-all duration-300">
-                <div className="max-w-md mx-auto px-4 h-16 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
                     <Link to="/" className="font-serif text-2xl tracking-tight text-silk-900">Crochet & Co.</Link>
                     <nav className="flex items-center space-x-2">
                         <button className="p-2 hover:bg-silk-100 rounded-full transition-colors duration-200 hidden sm:block">
