@@ -3,7 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import { products } from '../data/products';
 import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft } from 'lucide-react';
 
-function ProductDetail() {
+function ProductDetail({ wishlist, toggleWishlist }) {
     const { id } = useParams();
     const product = products.find(p => p.id === parseInt(id));
     const [activeImage, setActiveImage] = useState(0);
@@ -109,14 +109,14 @@ function ProductDetail() {
                             <div className="flex items-center border border-silk-200 rounded-full">
                                 <button
                                     onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                    className="px-4 py-2 text-silk-600 hover:text-silk-900"
+                                    className="px-4 py-2 text-silk-600 hover:text-silk-900 hover:bg-silk-100 active:bg-silk-200 rounded-l-full transition-colors duration-200"
                                 >
                                     -
                                 </button>
                                 <span className="w-8 text-center text-silk-900 font-medium">{quantity}</span>
                                 <button
                                     onClick={() => setQuantity(quantity + 1)}
-                                    className="px-4 py-2 text-silk-600 hover:text-silk-900"
+                                    className="px-4 py-2 text-silk-600 hover:text-silk-900 hover:bg-silk-100 active:bg-silk-200 rounded-r-full transition-colors duration-200"
                                 >
                                     +
                                 </button>
@@ -125,11 +125,14 @@ function ProductDetail() {
                                 <ShoppingBag className="w-5 h-5" />
                                 <span>Add to Cart</span>
                             </button>
-                            <button className="p-3 border border-silk-200 rounded-full hover:bg-silk-50 text-silk-600 transition-colors">
-                                <Heart className="w-6 h-6" />
+                            <button
+                                onClick={(e) => toggleWishlist(e, product.id)}
+                                className={`p-3 border rounded-full transition-colors ${wishlist.includes(product.id) ? 'border-red-200 bg-red-50 text-red-500' : 'border-silk-200 hover:bg-silk-50 text-silk-600 hover:fill-red-500 hover:text-red-500'}`}
+                            >
+                                <Heart className={`w-6 h-6 ${wishlist.includes(product.id) ? 'fill-current' : 'hover:fill-red-500'}`} />
                             </button>
                         </div>
-                        <button className="w-full border border-silk-900 text-silk-900 px-8 py-3 rounded-full font-medium tracking-wide hover:bg-silk-50 transition-all duration-300">
+                        <button className="w-full border border-silk-900 text-silk-900 px-8 py-3 rounded-full font-medium tracking-wide hover:bg-silk-900 hover:text-white transition-all duration-300 hover:shadow-lg">
                             Buy Now
                         </button>
                     </div>

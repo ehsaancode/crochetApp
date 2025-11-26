@@ -5,17 +5,17 @@ import imgCardigan from '../assets/images/crochet_cardigan.png';
 import imgHat from '../assets/images/crochet_sun_hat.png';
 
 export const products = [
-    {
-        id: 1,
-        name: "Boho Maxi Dress",
-        price: 245.00,
-        tag: "Best Seller",
-        type: "Dress",
-        rating: 5,
-        img: imgDress,
-        images: [imgDress, imgTop, imgCardigan],
-        description: "Handcrafted from premium cotton blend yarn, this Boho Maxi Dress features intricate lace patterns that cascade elegantly to the floor. Perfect for beach weddings or summer soirées, its breathable open-work design ensures comfort while making a stunning statement. The adjustable straps and elasticized back provide a custom fit for all body types."
-    },
+    // {
+    //     id: 1,
+    //     name: "Boho Maxi Dress",
+    //     price: 245.00,
+    //     tag: "Best Seller",
+    //     type: "Dress",
+    //     rating: 5,
+    //     img: imgDress,
+    //     images: [imgDress, imgTop, imgCardigan],
+    //     description: "Handcrafted from premium cotton blend yarn, this Boho Maxi Dress features intricate lace patterns that cascade elegantly to the floor. Perfect for beach weddings or summer soirées, its breathable open-work design ensures comfort while making a stunning statement. The adjustable straps and elasticized back provide a custom fit for all body types."
+    // },
     {
         id: 2,
         name: "Lace Crop Top",

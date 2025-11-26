@@ -69,17 +69,29 @@ function Navigation() {
 }
 
 function App() {
+    const [wishlist, setWishlist] = useState([]);
+
+    const toggleWishlist = (e, productId) => {
+        e.preventDefault(); // Prevent navigation if inside a Link
+        e.stopPropagation();
+        setWishlist(prev =>
+            prev.includes(productId)
+                ? prev.filter(id => id !== productId)
+                : [...prev, productId]
+        );
+    };
+
     return (
         <Router>
             <div className="min-h-screen bg-silk-50 text-accent-dark font-sans selection:bg-silk-200">
                 <Navigation />
                 <main>
                     <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/collection" element={<Collection />} />
+                        <Route path="/" element={<Home wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
+                        <Route path="/collection" element={<Collection wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
-                        <Route path="/product/:id" element={<ProductDetail />} />
+                        <Route path="/product/:id" element={<ProductDetail wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
                     </Routes>
                 </main>
             </div>

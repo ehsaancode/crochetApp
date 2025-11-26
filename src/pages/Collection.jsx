@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Filter, X, Star } from 'lucide-react';
+import { ShoppingBag, Filter, X, Star, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 import { products } from '../data/products';
 
-function Collection() {
+function Collection({ wishlist, toggleWishlist }) {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [priceRange, setPriceRange] = useState(300);
 
@@ -93,6 +93,15 @@ function Collection() {
                     {products.map((item) => (
                         <Link to={`/product/${item.id}`} key={item.id} className="group cursor-pointer">
                             <div className="relative aspect-[3/4] bg-silk-200 mb-4 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow duration-500">
+                                <button
+                                    onClick={(e) => toggleWishlist(e, item.id)}
+                                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 z-10"
+                                >
+                                    <Heart
+                                        className={`w-5 h-5 transition-colors duration-300 ${wishlist.includes(item.id) ? 'fill-red-500 text-red-500' : 'text-silk-900 hover:fill-red-500 hover:text-red-500'}`}
+                                        strokeWidth={1.5}
+                                    />
+                                </button>
                                 <div className="w-full h-full bg-silk-300 group-hover:scale-105 transition-transform duration-700 ease-out overflow-hidden">
                                     <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
                                 </div>
