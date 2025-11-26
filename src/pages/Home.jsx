@@ -17,7 +17,7 @@ function Home({ wishlist, toggleWishlist }) {
                 <div className="relative z-10 animate-slide-up">
                     <p className="text-xs font-medium uppercase tracking-[0.2em] mb-4 text-silk-600">Handmade Luxury</p>
                     <h2 className="font-serif text-5xl mb-6 text-silk-900 leading-tight">Artisan<br />Crochet</h2>
-                    <Link to="/collection" className="inline-block bg-silk-900 text-white px-10 py-4 rounded-full text-sm uppercase tracking-widest hover:bg-silk-800 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
+                    <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="inline-block bg-silk-900 text-white px-10 py-4 rounded-full text-sm uppercase tracking-widest hover:bg-silk-800 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
                         View Collection
                     </Link>
                 </div>
@@ -26,7 +26,7 @@ function Home({ wishlist, toggleWishlist }) {
             <section id="shop" className="py-16 px-6 max-w-7xl mx-auto">
                 <div className="flex items-end justify-between mb-10">
                     <h3 className="font-serif text-3xl text-silk-900">New Arrivals</h3>
-                    <Link to="/collection" className="text-xs uppercase tracking-widest border-b border-silk-900 pb-1 hover:text-silk-600 hover:border-silk-600 transition-colors">View All</Link>
+                    <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="text-xs uppercase tracking-widest border-b border-silk-900 pb-1 hover:text-silk-600 hover:border-silk-600 transition-colors">View All</Link>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">

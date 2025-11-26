@@ -27,7 +27,7 @@ function Navigation() {
 
                     <nav className="flex flex-col space-y-6 text-center">
                         <Link to="/" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 hover:text-silk-600 transition-colors">Home</Link>
-                        <Link to="/collection" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 hover:text-silk-600 transition-colors">Shop</Link>
+                        <Link to="/collection" onClick={() => { setIsMenuOpen(false); sessionStorage.removeItem('collectionScrollY'); }} className="font-serif text-3xl text-silk-900 hover:text-silk-600 transition-colors">Shop</Link>
                         <Link to="/about" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 hover:text-silk-600 transition-colors">About</Link>
                         <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 hover:text-silk-600 transition-colors">Contact</Link>
                     </nav>
