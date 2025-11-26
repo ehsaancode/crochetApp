@@ -22,8 +22,8 @@ function Collection({ wishlist, toggleWishlist }) {
             {/* Mobile Filter Toggle */}
             <button
                 onClick={() => setIsFilterOpen(true)}
-                className={`md:hidden sticky top-24 z-40 flex items-center space-x-2 text-silk-900 font-medium shadow-lg mb-4 transition-all duration-700 ease-in-out ${isScrolled
-                    ? 'self-start w-auto px-6 py-2 rounded-full bg-silk-100/60 backdrop-blur-md hover:bg-silk-200/60'
+                className={`md:hidden sticky top-24 z-40 flex items-center space-x-2 text-silk-900 font-medium shadow-lg mb-4 transition-all duration-700 ease-in-out overflow-hidden ${isScrolled
+                    ? 'self-start w-[140px] px-6 py-2 rounded-full bg-silk-100/50 backdrop-blur-md hover:bg-silk-200/50 justify-center'
                     : 'w-full justify-center p-3 rounded-lg bg-silk-100/90 backdrop-blur-sm hover:bg-silk-200'
                     }`}
             >
