@@ -14,8 +14,21 @@ function Collection({ wishlist, toggleWishlist }) {
             setIsScrolled(window.scrollY > 50);
         };
         window.addEventListener('scroll', handleScroll);
+
+        // Restore scroll position if available
+        const savedScrollY = sessionStorage.getItem('collectionScrollY');
+        if (savedScrollY) {
+            window.scrollTo(0, parseInt(savedScrollY, 10));
+            // Optional: Clear it if you only want it to persist for one navigation
+            // sessionStorage.removeItem('collectionScrollY'); 
+        }
+
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    const saveScrollPosition = () => {
+        sessionStorage.setItem('collectionScrollY', window.scrollY.toString());
+    };
 
     return (
         <div className="pt-20 pb-12 px-4 max-w-7xl mx-auto flex flex-col md:flex-row gap-8">
@@ -103,7 +116,7 @@ function Collection({ wishlist, toggleWishlist }) {
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {products.map((item) => (
-                        <Link to={`/product/${item.id}`} key={item.id} className="group cursor-pointer">
+                        <Link to={`/product/${item.id}`} key={item.id} className="group cursor-pointer" onClick={saveScrollPosition}>
                             <div className="relative aspect-[3/4] bg-silk-200 mb-4 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow duration-500">
                                 <button
                                     onClick={(e) => toggleWishlist(e, item.id)}
