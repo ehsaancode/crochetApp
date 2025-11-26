@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { ShoppingBag, Filter, X, Star, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -7,20 +7,32 @@ import { products } from '../data/products';
 function Collection({ wishlist, toggleWishlist }) {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [priceRange, setPriceRange] = useState(300);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     return (
         <div className="pt-20 pb-12 px-4 max-w-7xl mx-auto flex flex-col md:flex-row gap-8">
             {/* Mobile Filter Toggle */}
             <button
                 onClick={() => setIsFilterOpen(true)}
-                className="md:hidden flex items-center justify-center space-x-2 bg-silk-100 p-3 rounded-lg text-silk-900 font-medium"
+                className={`md:hidden sticky top-24 z-40 flex items-center space-x-2 text-silk-900 font-medium shadow-lg mb-4 transition-all duration-700 ease-in-out ${isScrolled
+                    ? 'self-start w-auto px-6 py-2 rounded-full bg-silk-100/60 backdrop-blur-md hover:bg-silk-200/60'
+                    : 'w-full justify-center p-3 rounded-lg bg-silk-100/90 backdrop-blur-sm hover:bg-silk-200'
+                    }`}
             >
                 <Filter className="w-5 h-5" />
                 <span>Filters</span>
             </button>
 
             {/* Sidebar Filters */}
-            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white p-6 shadow-2xl transform transition-transform duration-300 ease-out md:relative md:translate-x-0 md:shadow-none md:bg-transparent md:w-64 md:block ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white p-6 shadow-2xl transform transition-transform duration-300 ease-out md:sticky md:top-24 md:h-fit md:translate-x-0 md:shadow-none md:bg-transparent md:w-64 md:block ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex justify-between items-center mb-8 md:hidden">
                     <h3 className="font-serif text-xl">Filters</h3>
                     <button onClick={() => setIsFilterOpen(false)}><X className="w-6 h-6" /></button>
