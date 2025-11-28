@@ -3,6 +3,8 @@ import { ShoppingBag, Heart, Mail, Phone, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { products } from '../data/products';
 import FadeContent from './FadeContent'
+import DarkVeil from './uiComponents/DarkVeil';
+
 
 
 import { RainbowButton } from "@/components/ui/rainbow-button";
@@ -17,16 +19,18 @@ function Home({ wishlist, toggleWishlist }) {
     return (
         <>
 
-            <section id="home" className="h-[85vh] flex items-center justify-center bg-silk-100 p-6 text-center relative overflow-hidden">
-                <div className="absolute inset-0 opacity-20 bg-[url('https://png.pngtree.com/background/20250201/original/pngtree-textured-background-white-knitted-crochet-pattern-in-large-size-picture-image_15229557.jpg')]"></div>
+            <section id="home" className="h-[85vh] flex items-center justify-center p-6 text-center relative overflow-hidden">
+                <div className="absolute inset-0 z-0">
+                    <DarkVeil />
+                </div>
+                <div className="absolute inset-0 opacity-20)] pointer-events-none"></div>
                 <div className="relative z-10 animate-slide-up">
                     <p className="text-xs font-medium uppercase tracking-[0.2em] mb-4 text-silk-600">Handmade Luxury</p>
                     <h2 className="font-serif text-5xl mb-6 text-silk-900 leading-tight">Artisan<br />Crochet</h2>
                     <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')}>
-                        <FadeContent blur={true} duration={700} delay={200} easing="ease-out" initialOpacity={10}>
+                        <FadeContent blur={true} duration={900} delay={300} easing="ease-out" initialOpacity={10}>
                             <RainbowButton>View Collection</RainbowButton>
                         </FadeContent>
-
                     </Link>
 
                 </div>
