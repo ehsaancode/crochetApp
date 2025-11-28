@@ -1,4 +1,6 @@
 import React, { useState } from 'react'; // Force rebuild
+import DecryptedText from './pages/uiComponents/DecryptedText';
+
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingBag, Heart } from 'lucide-react';
 import Home from './pages/Home';
@@ -11,6 +13,19 @@ import ProductDetail from './pages/ProductDetail';
 function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
+
+    const phrases = ["Iloveyou", "Aalaboo"];
+    const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
+    const [brandText, setBrandText] = useState(phrases[0]);
+
+    const handleDecryptionComplete = () => {
+        if (currentPhraseIndex < phrases.length - 1) {
+            setTimeout(() => {
+                setCurrentPhraseIndex(prev => prev + 1);
+                setBrandText(phrases[currentPhraseIndex + 1]);
+            }, 1000); // Wait 1 second before showing next phrase
+        }
+    };
 
     return (
         <>
@@ -49,7 +64,21 @@ function Navigation() {
 
             <header className="fixed w-full bg-silk-50/90 backdrop-blur-sm z-40 border-b border-silk-200 transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900">Aalaboo & Co.</Link>
+
+                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900">
+                        <DecryptedText
+                            text={brandText}
+                            speed={100}
+                            maxIterations={15}
+                            characters="ILOVEYOU❤️"
+                            className="revealed"
+                            parentClassName="font-serif text-2xl tracking-tight text-silk-900 whitespace-nowrap"
+                            encryptedClassName="text-silk-900"
+                            animateOn="view"
+                            revealDirection="start"
+                            onDecryptionComplete={handleDecryptionComplete}
+                        />
+                    </Link>
                     <nav className="flex items-center space-x-2">
                         <button className="p-2 hover:bg-silk-100 rounded-full transition-colors duration-200 hidden sm:block">
                             <Heart className="w-5 h-5 text-silk-900" strokeWidth={1.5} />

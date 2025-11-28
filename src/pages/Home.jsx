@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { ShoppingBag, Heart, Mail, Phone, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { products } from '../data/products';
-import FadeContent from './FadeContent'
+import FadeContent from './uiComponents/FadeContent'
 import DarkVeil from './uiComponents/DarkVeil';
 
 
