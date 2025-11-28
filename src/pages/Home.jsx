@@ -3,6 +3,8 @@ import { ShoppingBag, Heart, Mail, Phone, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { products } from '../data/products';
 
+import { RainbowButton } from "@/components/ui/rainbow-button";
+
 function Home({ wishlist, toggleWishlist }) {
     const [visibleCount, setVisibleCount] = useState(16);
 
@@ -17,8 +19,8 @@ function Home({ wishlist, toggleWishlist }) {
                 <div className="relative z-10 animate-slide-up">
                     <p className="text-xs font-medium uppercase tracking-[0.2em] mb-4 text-silk-600">Handmade Luxury</p>
                     <h2 className="font-serif text-5xl mb-6 text-silk-900 leading-tight">Artisan<br />Crochet</h2>
-                    <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="inline-block bg-silk-900 text-white px-10 py-4 rounded-full text-sm uppercase tracking-widest hover:bg-silk-800 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl">
-                        View Collection
+                    <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')}>
+                        <RainbowButton>View Collection</RainbowButton>
                     </Link>
                 </div>
             </section>
