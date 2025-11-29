@@ -141,7 +141,7 @@ function App() {
 
     return (
         <Router>
-            <div className="min-h-screen bg-silk-50 text-accent-dark font-sans selection:bg-silk-200">
+            <div className="min-h-screen bg-silk-100 text-accent-dark font-sans selection:bg-silk-200">
                 <Navigation />
                 <main className="pb-24 md:pb-0">
                     <Routes>
