@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { products } from '../data/products';
 import FadeContent from './uiComponents/FadeContent'
 import DarkVeil from './uiComponents/DarkVeil';
+import Carousel from './uiComponents/Carousel';
 
 
 
@@ -40,6 +41,10 @@ function Home({ wishlist, toggleWishlist }) {
                 <div className="flex items-end justify-between mb-10">
                     <h3 className="font-serif text-3xl text-silk-900">New Arrivals</h3>
                     <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="text-xs uppercase tracking-widest border-b border-silk-900 pb-1 hover:text-silk-600 hover:border-silk-600 transition-colors">View All</Link>
+                </div>
+
+                <div className="mb-16">
+                    <Carousel items={products.slice(0, 5)} />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
