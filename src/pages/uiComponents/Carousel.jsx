@@ -5,12 +5,14 @@ import { Link } from 'react-router-dom';
 
 export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [direction, setDirection] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
 
     useEffect(() => {
         if (!autoPlay || isPaused) return;
 
         const timer = setInterval(() => {
+            setDirection(1);
             setCurrentIndex((prev) => (prev + 1) % items.length);
         }, interval);
 
@@ -18,11 +20,30 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
     }, [autoPlay, interval, isPaused, items.length]);
 
     const nextSlide = () => {
+        setDirection(1);
         setCurrentIndex((prev) => (prev + 1) % items.length);
     };
 
     const prevSlide = () => {
+        setDirection(-1);
         setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+    };
+
+    const variants = {
+        enter: (direction) => ({
+            x: direction > 0 ? 100 : -100,
+            opacity: 0
+        }),
+        center: {
+            zIndex: 1,
+            x: 0,
+            opacity: 1
+        },
+        exit: (direction) => ({
+            zIndex: 0,
+            x: direction < 0 ? 100 : -100,
+            opacity: 0
+        })
     };
 
     return (
@@ -31,13 +52,18 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
-            <AnimatePresence mode="wait">
+            <AnimatePresence initial={false} custom={direction} mode="popLayout">
                 <motion.div
                     key={currentIndex}
-                    initial={{ opacity: 0, x: 100 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -100 }}
-                    transition={{ duration: 0.5, ease: "easeInOut" }}
+                    custom={direction}
+                    variants={variants}
+                    initial="enter"
+                    animate="center"
+                    exit="exit"
+                    transition={{
+                        x: { type: "spring", stiffness: 300, damping: 30 },
+                        opacity: { duration: 0.2 }
+                    }}
                     drag="x"
                     dragConstraints={{ left: 0, right: 0 }}
                     dragElastic={1}
@@ -50,20 +76,20 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                             prevSlide();
                         }
                     }}
-                    className="absolute inset-0 flex flex-col cursor-grab active:cursor-grabbing"
+                    className="absolute inset-0 flex flex-col md:flex-row cursor-grab active:cursor-grabbing"
                 >
-                    {/* Image Section (Top) */}
-                    <div className="w-full h-1/2 relative overflow-hidden">
+                    {/* Image Section (Top/Left) */}
+                    <div className="w-full md:w-1/2 h-1/2 md:h-full relative overflow-hidden">
                         <div className="absolute inset-0 bg-silk-900/10 z-10"></div>
                         <img
                             src={items[currentIndex].img}
                             alt={items[currentIndex].name}
-                            className="w-full h-full object-cover object-center transform hover:scale-105 transition-transform duration-[2s]"
+                            className="w-full h-full object-cover object-center pointer-events-none"
                         />
                     </div>
 
-                    {/* Text Section (Bottom) */}
-                    <div className="w-full h-1/2 flex flex-col justify-center items-center text-center p-6 bg-silk-50 z-10 relative">
+                    {/* Text Section (Bottom/Right) */}
+                    <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center items-center text-center p-6 md:p-12 bg-silk-50 z-10 relative">
                         <motion.span
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
@@ -76,7 +102,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="font-serif text-3xl md:text-4xl text-silk-900 mb-4 leading-tight"
+                            className="font-serif text-3xl md:text-5xl text-silk-900 mb-4 leading-tight"
                         >
                             {items[currentIndex].name}
                         </motion.h3>
@@ -95,7 +121,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                         >
                             <Link
                                 to={`/product/${items[currentIndex].id}`}
-                                className="inline-flex items-center gap-2 bg-silk-900 text-silk-50 px-6 py-3 rounded-full hover:bg-silk-800 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm"
+                                className="inline-flex items-center gap-2 bg-silk-900 text-silk-50 px-6 py-3 rounded-full hover:bg-silk-800 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm pointer-events-auto"
                             >
                                 <ShoppingBag className="w-4 h-4" />
                                 <span>Shop Now - ${items[currentIndex].price.toFixed(2)}</span>
@@ -120,11 +146,14 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
             </button>
 
             {/* Indicators */}
-            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex gap-2">
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 md:left-3/4 md:-translate-x-1/2 z-20 flex gap-2">
                 {items.map((_, idx) => (
                     <button
                         key={idx}
-                        onClick={() => setCurrentIndex(idx)}
+                        onClick={() => {
+                            setDirection(idx > currentIndex ? 1 : -1);
+                            setCurrentIndex(idx);
+                        }}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-8 bg-silk-900' : 'bg-silk-400 hover:bg-silk-600'
                             }`}
                     />
