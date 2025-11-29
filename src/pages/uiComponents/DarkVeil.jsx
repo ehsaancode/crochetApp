@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useLayoutEffect } from 'react';
 import { Renderer, Program, Mesh, Triangle, Vec2 } from 'ogl';
 
 const vertex = `
@@ -95,7 +95,7 @@ export default function DarkVeil({
     resolutionScale = 1
 }) {
     const ref = useRef(null);
-    useEffect(() => {
+    useLayoutEffect(() => {
         const canvas = ref.current;
         const parent = canvas.parentElement;
 
@@ -154,5 +154,5 @@ export default function DarkVeil({
             window.removeEventListener('resize', resize);
         };
     }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale]);
-    return <canvas ref={ref} className="w-full h-full block" />;
+    return <canvas ref={ref} className="w-full h-full block bg-silk-100" />;
 }
