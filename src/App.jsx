@@ -9,14 +9,17 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import ProductDetail from './pages/ProductDetail';
 
+// Global state to track animation status across navigation (resets on full reload)
+let brandAnimationCompleted = false;
+
 // Navigation Component to handle location-based logic if needed
 function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
 
     const phrases = ["Iloveyou", "Aalaboo"];
-    const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
-    const [brandText, setBrandText] = useState(phrases[0]);
+    const [currentPhraseIndex, setCurrentPhraseIndex] = useState(brandAnimationCompleted ? phrases.length - 1 : 0);
+    const [brandText, setBrandText] = useState(brandAnimationCompleted ? phrases[phrases.length - 1] : phrases[0]);
 
     const handleDecryptionComplete = () => {
         if (currentPhraseIndex < phrases.length - 1) {
@@ -24,6 +27,8 @@ function Navigation() {
                 setCurrentPhraseIndex(prev => prev + 1);
                 setBrandText(phrases[currentPhraseIndex + 1]);
             }, 1000); // Wait 1 second before showing next phrase
+        } else {
+            brandAnimationCompleted = true;
         }
     };
 
@@ -74,7 +79,7 @@ function Navigation() {
                             className="revealed"
                             parentClassName="font-serif text-2xl tracking-tight text-silk-900 whitespace-nowrap"
                             encryptedClassName="text-silk-900"
-                            animateOn="view"
+                            animateOn={brandAnimationCompleted ? "hover" : "view"}
                             revealDirection="start"
                             onDecryptionComplete={handleDecryptionComplete}
                         />
