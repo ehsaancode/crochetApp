@@ -38,7 +38,19 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -100 }}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
-                    className="absolute inset-0 flex flex-col"
+                    drag="x"
+                    dragConstraints={{ left: 0, right: 0 }}
+                    dragElastic={1}
+                    onDragEnd={(e, { offset, velocity }) => {
+                        const swipe = offset.x;
+
+                        if (swipe < -50) {
+                            nextSlide();
+                        } else if (swipe > 50) {
+                            prevSlide();
+                        }
+                    }}
+                    className="absolute inset-0 flex flex-col cursor-grab active:cursor-grabbing"
                 >
                     {/* Image Section (Top) */}
                     <div className="w-full h-1/2 relative overflow-hidden">
@@ -96,13 +108,13 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
             {/* Controls */}
             <button
                 onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/80 backdrop-blur-sm text-silk-900 shadow-lg hover:bg-white transition-all duration-300 md:left-8"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/40 backdrop-blur-sm text-silk-900 shadow-lg hover:bg-white transition-all duration-300 md:left-8"
             >
                 <ChevronLeft className="w-6 h-6" />
             </button>
             <button
                 onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/80 backdrop-blur-sm text-silk-900 shadow-lg hover:bg-white transition-all duration-300 md:right-8"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/40 backdrop-blur-sm text-silk-900 shadow-lg hover:bg-white transition-all duration-300 md:right-8"
             >
                 <ChevronRight className="w-6 h-6" />
             </button>
