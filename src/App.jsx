@@ -101,11 +101,11 @@ function Navigation() {
 
             {/* Mobile Bottom Dock */}
             <div className="fixed bottom-0 left-0 right-0 bg-silk-50 border-t border-silk-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:hidden flex justify-around items-center py-4 pb-6 px-2">
-                <Link to="/" className="flex flex-col items-center text-silk-900 hover:text-silk-600 transition-colors p-1">
+                <Link to="/" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/' ? 'text-silk-600' : 'text-silk-900 hover:text-silk-600'}`}>
                     <HomeIcon className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">Home</span>
                 </Link>
-                <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="flex flex-col items-center text-silk-900 hover:text-silk-600 transition-colors p-1">
+                <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/collection' ? 'text-silk-600' : 'text-silk-900 hover:text-silk-600'}`}>
                     <Store className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">All Products</span>
                 </Link>
@@ -117,7 +117,7 @@ function Navigation() {
                     <Heart className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">Wishlist</span>
                 </button>
-                <Link to="/account" className="flex flex-col items-center text-silk-900 hover:text-silk-600 transition-colors p-1">
+                <Link to="/account" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/account' ? 'text-silk-600' : 'text-silk-900 hover:text-silk-600'}`}>
                     <User className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">Account</span>
                 </Link>
@@ -143,7 +143,7 @@ function App() {
         <Router>
             <div className="min-h-screen bg-silk-50 text-accent-dark font-sans selection:bg-silk-200">
                 <Navigation />
-                <main>
+                <main className="pb-24 md:pb-0">
                     <Routes>
                         <Route path="/" element={<Home wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
                         <Route path="/collection" element={<Collection wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
