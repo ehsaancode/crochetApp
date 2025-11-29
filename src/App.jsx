@@ -2,7 +2,7 @@ import React, { useState } from 'react'; // Force rebuild
 import DecryptedText from './pages/uiComponents/DecryptedText';
 
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, Heart } from 'lucide-react';
+import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User } from 'lucide-react';
 import Home from './pages/Home';
 import Collection from './pages/Collection';
 import About from './pages/About';
@@ -68,36 +68,60 @@ function Navigation() {
             </div>
 
             <header className="fixed w-full bg-silk-50/90 backdrop-blur-sm z-40 border-b border-silk-200 transition-all duration-300">
-                <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+                <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
-                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900">
+                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-brand text-2xl tracking-tight text-silk-900 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
                         <DecryptedText
                             text={brandText}
                             speed={100}
                             maxIterations={15}
                             characters="ILOVEYOU❤️"
                             className="revealed"
-                            parentClassName="font-serif text-2xl tracking-tight text-silk-900 whitespace-nowrap"
+                            parentClassName="font-brand text-2xl tracking-tight text-silk-900 whitespace-nowrap"
                             encryptedClassName="text-silk-900"
                             animateOn={brandAnimationCompleted ? "hover" : "view"}
                             revealDirection="start"
                             onDecryptionComplete={handleDecryptionComplete}
                         />
                     </Link>
-                    <nav className="flex items-center space-x-2">
+                    <nav className="flex items-center space-x-2 ml-auto md:ml-0">
                         <button className="p-2 hover:bg-silk-100 rounded-full transition-colors duration-200 hidden sm:block">
                             <Heart className="w-5 h-5 text-silk-900" strokeWidth={1.5} />
                         </button>
                         <button className="p-2 hover:bg-silk-100 rounded-full transition-colors duration-200 hidden sm:block">
                             <ShoppingBag className="w-5 h-5 text-silk-900" strokeWidth={1.5} />
                         </button>
-                        <button onClick={() => setIsMenuOpen(true)} className="p-2 hover:bg-silk-100 rounded-full transition-colors duration-200">
+                        <button onClick={() => setIsMenuOpen(true)} className="p-2 hover:bg-silk-100 rounded-full transition-colors duration-200 hidden md:block">
                             <span className="sr-only">Menu</span>
                             <Menu className="w-6 h-6 text-silk-900" strokeWidth={1.5} />
                         </button>
                     </nav>
                 </div>
             </header>
+
+            {/* Mobile Bottom Dock */}
+            <div className="fixed bottom-0 left-0 right-0 bg-silk-50 border-t border-silk-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:hidden flex justify-around items-center py-4 pb-6 px-2">
+                <Link to="/" className="flex flex-col items-center text-silk-900 hover:text-silk-600 transition-colors p-1">
+                    <HomeIcon className="w-6 h-6" strokeWidth={1.5} />
+                    <span className="sr-only">Home</span>
+                </Link>
+                <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="flex flex-col items-center text-silk-900 hover:text-silk-600 transition-colors p-1">
+                    <Store className="w-6 h-6" strokeWidth={1.5} />
+                    <span className="sr-only">All Products</span>
+                </Link>
+                <button className="flex flex-col items-center text-silk-900 hover:text-silk-600 transition-colors p-1">
+                    <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
+                    <span className="sr-only">Cart</span>
+                </button>
+                <button className="flex flex-col items-center text-silk-900 hover:text-silk-600 transition-colors p-1">
+                    <Heart className="w-6 h-6" strokeWidth={1.5} />
+                    <span className="sr-only">Wishlist</span>
+                </button>
+                <Link to="/account" className="flex flex-col items-center text-silk-900 hover:text-silk-600 transition-colors p-1">
+                    <User className="w-6 h-6" strokeWidth={1.5} />
+                    <span className="sr-only">Account</span>
+                </Link>
+            </div>
         </>
     );
 }
