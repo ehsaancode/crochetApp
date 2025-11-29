@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronLeft, ChevronRight, ShoppingBag } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { RainbowButton } from "@/components/ui/rainbow-button";
 
 export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -121,10 +122,12 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                         >
                             <Link
                                 to={`/product/${items[currentIndex].id}`}
-                                className="inline-flex items-center gap-2 bg-silk-900 text-silk-50 px-6 py-3 rounded-full hover:bg-silk-800 transition-colors duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-sm pointer-events-auto"
+                                className="pointer-events-auto"
                             >
-                                <ShoppingBag className="w-4 h-4" />
-                                <span>Shop Now - ${items[currentIndex].price.toFixed(2)}</span>
+                                <RainbowButton className="px-8 py-4 text-sm gap-2">
+                                    <ShoppingBag className="w-4 h-4" />
+                                    <span>Shop Now - ₹{items[currentIndex].price.toFixed(2)}</span>
+                                </RainbowButton>
                             </Link>
                         </motion.div>
                     </div>

@@ -80,12 +80,17 @@ export default {
 				brand: [
 					'Outfit',
 					'sans-serif'
+				],
+				script: [
+					'Birthstone',
+					'cursive'
 				]
 			},
 			animation: {
 				'fade-in': 'fadeIn 0.5s ease-out',
 				'slide-up': 'slideUp 0.5s ease-out',
-				rainbow: 'rainbow var(--speed, 2s) infinite linear'
+				rainbow: 'rainbow var(--speed, 2s) infinite linear',
+				shine: 'shine 5s linear infinite'
 			},
 			keyframes: {
 				fadeIn: {
@@ -112,6 +117,14 @@ export default {
 					},
 					'100%': {
 						'background-position': '200%'
+					}
+				},
+				shine: {
+					'0%': {
+						'background-position': '100%'
+					},
+					'100%': {
+						'background-position': '-100%'
 					}
 				}
 			},

@@ -64,8 +64,8 @@ function Collection({ wishlist, toggleWishlist }) {
                             className="w-full accent-silk-900"
                         />
                         <div className="flex justify-between text-sm text-silk-600 mt-2">
-                            <span>$0</span>
-                            <span>${priceRange}</span>
+                            <span>₹0</span>
+                            <span>₹{priceRange}</span>
                         </div>
                     </div>
 
@@ -138,7 +138,7 @@ function Collection({ wishlist, toggleWishlist }) {
                             <div>
                                 <h4 className="font-serif text-lg mb-1 group-hover:text-silk-700 transition-colors">{item.name}</h4>
                                 <div className="flex justify-between items-center">
-                                    <p className="text-silk-900 font-medium">${item.price.toFixed(2)}</p>
+                                    <p className="text-silk-900 font-medium">₹{item.price.toFixed(2)}</p>
                                     <div className="flex text-silk-400">
                                         <Star className="w-3 h-3 fill-current" />
                                         <span className="text-xs ml-1">{item.rating}.0</span>

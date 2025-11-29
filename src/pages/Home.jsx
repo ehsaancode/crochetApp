@@ -5,6 +5,8 @@ import { products } from '../data/products';
 import FadeContent from './uiComponents/FadeContent'
 import DarkVeil from './uiComponents/DarkVeil';
 import Carousel from './uiComponents/Carousel';
+import ShinyText from './uiComponents/ShinyText';
+
 
 
 
@@ -39,7 +41,14 @@ function Home({ wishlist, toggleWishlist }) {
 
             <section id="shop" className="py-16 px-6 max-w-7xl mx-auto">
                 <div className="flex items-end justify-between mb-10">
-                    <h3 className="font-serif text-3xl text-silk-900">New Arrivals</h3>
+                    <ShinyText
+                        text="New Arrivals"
+                        disabled={false}
+                        speed={3}
+                        className="font-serif text-3xl"
+                        baseColor="#673c2e" // silk-900
+                        shineColor="#c58a5b" // silk-500
+                    />
                     <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="text-xs uppercase tracking-widest border-b border-silk-900 pb-1 hover:text-silk-600 hover:border-silk-600 transition-colors">View All</Link>
                 </div>
 
@@ -78,7 +87,7 @@ function Home({ wishlist, toggleWishlist }) {
                                     <h4 className="font-serif text-xl mb-1 group-hover:text-silk-700 transition-colors">{item.name}</h4>
                                     <p className="text-sm text-silk-500">Natural Cotton</p>
                                 </div>
-                                <p className="text-lg font-medium text-silk-900">${item.price.toFixed(2)}</p>
+                                <p className="text-lg font-medium text-silk-900">₹{item.price.toFixed(2)}</p>
                             </div>
                         </Link>
                     ))}

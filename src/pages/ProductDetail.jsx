@@ -97,7 +97,7 @@ function ProductDetail({ wishlist, toggleWishlist }) {
                         <span className="text-silk-600 text-sm">42 Reviews</span>
                     </div>
 
-                    <p className="text-2xl font-light text-silk-900 mb-8">${product.price.toFixed(2)}</p>
+                    <p className="text-2xl font-light text-silk-900 mb-8">₹{product.price.toFixed(2)}</p>
 
                     <div className="prose prose-silk text-silk-700 mb-10 leading-relaxed">
                         <p>{product.description}</p>
@@ -141,7 +141,7 @@ function ProductDetail({ wishlist, toggleWishlist }) {
                     <div className="grid grid-cols-2 gap-4 pt-8 border-t border-silk-100">
                         <div className="flex items-center space-x-3 text-silk-700">
                             <Truck className="w-5 h-5" />
-                            <span className="text-sm">Free Shipping over $150</span>
+                            <span className="text-sm">Free Shipping over ₹150</span>
                         </div>
                         <div className="flex items-center space-x-3 text-silk-700">
                             <ShieldCheck className="w-5 h-5" />

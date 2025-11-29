@@ -13,15 +13,16 @@ import ProductDetail from './pages/ProductDetail';
 let brandAnimationCompleted = false;
 
 // Navigation Component to handle location-based logic if needed
+const phrases = ["Iloveyou❤️", "Aalaboo"];
+
 function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
 
-    const phrases = ["Iloveyou", "Aalaboo"];
     const [currentPhraseIndex, setCurrentPhraseIndex] = useState(brandAnimationCompleted ? phrases.length - 1 : 0);
     const [brandText, setBrandText] = useState(brandAnimationCompleted ? phrases[phrases.length - 1] : phrases[0]);
 
-    const handleDecryptionComplete = () => {
+    const handleDecryptionComplete = React.useCallback(() => {
         if (currentPhraseIndex < phrases.length - 1) {
             setTimeout(() => {
                 setCurrentPhraseIndex(prev => prev + 1);
@@ -30,7 +31,7 @@ function Navigation() {
         } else {
             brandAnimationCompleted = true;
         }
-    };
+    }, [currentPhraseIndex]);
 
     return (
         <>
@@ -70,14 +71,14 @@ function Navigation() {
             <header className="fixed w-full bg-silk-50/90 backdrop-blur-sm z-40 border-b border-silk-200 transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
-                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-brand text-2xl tracking-tight text-silk-900 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
+                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900 absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
                         <DecryptedText
                             text={brandText}
                             speed={100}
                             maxIterations={15}
                             characters="ILOVEYOU❤️"
                             className="revealed"
-                            parentClassName="font-brand text-2xl tracking-tight text-silk-900 whitespace-nowrap"
+                            parentClassName="font-serif text-2xl tracking-tight text-silk-900 whitespace-nowrap"
                             encryptedClassName="text-silk-900"
                             animateOn={brandAnimationCompleted ? "hover" : "view"}
                             revealDirection="start"
