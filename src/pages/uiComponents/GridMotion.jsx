@@ -5,7 +5,7 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
     const gridRef = useRef(null);
     const rowRefs = useRef([]);
     const mouseXRef = useRef(window.innerWidth / 2);
-    const [columnCount, setColumnCount] = useState(5); // Default to desktop (5 columns)
+    const [columnCount, setColumnCount] = useState(7); // Default to desktop (7 columns)
 
     // Ensure we have enough items to fill the grid
     const totalItems = 4 * columnCount;
@@ -16,9 +16,9 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth < 768) {
-                setColumnCount(2); // Mobile
+                setColumnCount(3); // Mobile
             } else {
-                setColumnCount(5); // Desktop
+                setColumnCount(7); // Desktop
             }
         };
 
@@ -44,7 +44,7 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
         };
 
         const updateMotion = () => {
-            const maxMoveAmount = columnCount === 2 ? 200 : 600; // Reduced for mobile
+            const maxMoveAmount = columnCount === 3 ? 200 : 600; // Reduced for mobile
             const baseDuration = 0.8;
             const inertiaFactors = [0.6, 0.4, 0.3, 0.2];
 
@@ -81,11 +81,11 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
             <section
                 className="w-full h-screen overflow-hidden relative flex items-center justify-center"
             >
-                <div className={`flex-none relative h-[150vh] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center z-[2] ${columnCount === 2 ? 'w-[120vw] gap-3' : 'w-[150vw] gap-6'}`}>
+                <div className={`flex-none relative h-[150vh] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center z-[2] ${columnCount === 3 ? 'w-[120vw] gap-3' : 'w-[150vw] gap-6'}`}>
                     {[...Array(4)].map((_, rowIndex) => (
                         <div
                             key={rowIndex}
-                            className={`grid ${columnCount === 2 ? 'grid-cols-2 gap-3' : 'grid-cols-5 gap-6'}`}
+                            className={`grid ${columnCount === 3 ? 'grid-cols-3 gap-3' : 'grid-cols-7 gap-6'}`}
                             style={{ willChange: 'transform, filter' }}
                             ref={el => (rowRefs.current[rowIndex] = el)}
                         >
