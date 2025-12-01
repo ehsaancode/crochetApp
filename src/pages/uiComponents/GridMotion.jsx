@@ -5,7 +5,7 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
     const gridRef = useRef(null);
     const rowRefs = useRef([]);
     const mouseXRef = useRef(window.innerWidth / 2);
-    const [columnCount, setColumnCount] = useState(4); // Default to desktop
+    const [columnCount, setColumnCount] = useState(5); // Default to desktop (5 columns)
 
     // Ensure we have enough items to fill the grid
     const totalItems = 4 * columnCount;
@@ -18,7 +18,7 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
             if (window.innerWidth < 768) {
                 setColumnCount(2); // Mobile
             } else {
-                setColumnCount(4); // Desktop
+                setColumnCount(5); // Desktop
             }
         };
 
@@ -38,13 +38,13 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
 
         const handleScroll = () => {
             const scrollY = window.scrollY;
-            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            const maxScroll = (document.documentElement.scrollHeight || document.body.scrollHeight) - window.innerHeight;
             const scrollFraction = maxScroll > 0 ? scrollY / maxScroll : 0;
             mouseXRef.current = scrollFraction * window.innerWidth;
         };
 
         const updateMotion = () => {
-            const maxMoveAmount = 800;
+            const maxMoveAmount = columnCount === 2 ? 200 : 600; // Reduced for mobile
             const baseDuration = 0.8;
             const inertiaFactors = [0.6, 0.4, 0.3, 0.2];
 
@@ -65,6 +65,7 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
 
         const removeAnimationLoop = gsap.ticker.add(updateMotion);
 
+        // Add listeners
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('scroll', handleScroll);
 
@@ -73,22 +74,18 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
             window.removeEventListener('scroll', handleScroll);
             removeAnimationLoop();
         };
-    }, [columnCount]); // Re-run if column count changes (though logic is largely independent)
+    }, [columnCount]); // Re-run if column count changes
 
     return (
         <div ref={gridRef} className="h-full w-full overflow-hidden">
             <section
                 className="w-full h-screen overflow-hidden relative flex items-center justify-center"
-            // Background removed as requested
             >
-                {/* Background pattern removed or kept subtle if needed, but user asked to remove background */}
-                {/* <div className="absolute inset-0 pointer-events-none z-[4] bg-[length:250px]"></div> */}
-
-                <div className="gap-6 flex-none relative w-[150vw] h-[150vh] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center z-[2]">
+                <div className={`flex-none relative h-[150vh] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center z-[2] ${columnCount === 2 ? 'w-[120vw] gap-3' : 'w-[150vw] gap-6'}`}>
                     {[...Array(4)].map((_, rowIndex) => (
                         <div
                             key={rowIndex}
-                            className={`grid gap-6 ${columnCount === 2 ? 'grid-cols-2' : 'grid-cols-4'}`}
+                            className={`grid ${columnCount === 2 ? 'grid-cols-2 gap-3' : 'grid-cols-5 gap-6'}`}
                             style={{ willChange: 'transform, filter' }}
                             ref={el => (rowRefs.current[rowIndex] = el)}
                         >
@@ -97,7 +94,6 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
                                 return (
                                     <div key={itemIndex} className="relative">
                                         <div className="relative w-full h-full overflow-hidden rounded-[10px] bg-transparent flex items-center justify-center text-white text-[1.5rem]">
-                                            {/* Handle both string URLs and imported image paths */}
                                             {typeof content === 'string' ? (
                                                 <div
                                                     className="w-full h-full bg-cover bg-center absolute top-0 left-0"
