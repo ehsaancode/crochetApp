@@ -4,7 +4,7 @@ import { gsap } from 'gsap';
 const GridMotion = ({ items = [], gradientColor = 'black' }) => {
     const gridRef = useRef(null);
     const rowRefs = useRef([]);
-    const mouseYRef = useRef(window.innerHeight / 2);
+    const mouseXRef = useRef(window.innerWidth / 2);
 
     const totalItems = 28;
     const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`);
@@ -13,8 +13,21 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
     useEffect(() => {
         gsap.ticker.lagSmoothing(0);
 
-        const handleMouseMove = e => {
-            mouseYRef.current = e.clientY;
+        const handleMouseMove = (e) => {
+            mouseXRef.current = e.clientX;
+        };
+
+        const handleScroll = () => {
+            // Map scroll position to a value similar to mouseX
+            // We can use the scroll percentage or raw value. 
+            // Let's make it proportional to the screen width to reuse the logic.
+            const scrollY = window.scrollY;
+            const maxScroll = document.body.scrollHeight - window.innerHeight;
+            // Avoid division by zero
+            const scrollFraction = maxScroll > 0 ? scrollY / maxScroll : 0;
+
+            // Map 0..1 scroll fraction to 0..window.innerWidth
+            mouseXRef.current = scrollFraction * window.innerWidth;
         };
 
         const updateMotion = () => {
@@ -25,7 +38,7 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
             rowRefs.current.forEach((row, index) => {
                 if (row) {
                     const direction = index % 2 === 0 ? 1 : -1;
-                    const moveAmount = ((mouseYRef.current / window.innerHeight) * maxMoveAmount - maxMoveAmount / 2) * direction;
+                    const moveAmount = ((mouseXRef.current / window.innerWidth) * maxMoveAmount - maxMoveAmount / 2) * direction;
 
                     gsap.to(row, {
                         x: moveAmount,
@@ -38,10 +51,14 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
         };
 
         const removeAnimationLoop = gsap.ticker.add(updateMotion);
+
+        // Add listeners
         window.addEventListener('mousemove', handleMouseMove);
+        window.addEventListener('scroll', handleScroll);
 
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
+            window.removeEventListener('scroll', handleScroll);
             removeAnimationLoop();
         };
     }, []);
