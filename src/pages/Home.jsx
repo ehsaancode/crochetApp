@@ -6,6 +6,7 @@ import FadeContent from './uiComponents/FadeContent'
 import DarkVeil from './uiComponents/DarkVeil';
 import Carousel from './uiComponents/Carousel';
 import ShinyText from './uiComponents/ShinyText';
+import GridMotion from './uiComponents/GridMotion';
 
 
 
@@ -39,7 +40,7 @@ function Home({ wishlist, toggleWishlist }) {
                 </div>
             </section>
 
-            <section id="shop" className="py-16 px-6 max-w-7xl mx-auto">
+            <section id="shop" className="pt-16 px-6 max-w-7xl mx-auto">
                 <div className="flex items-end justify-between mb-10">
                     <ShinyText
                         text="New Arrivals"
@@ -55,7 +56,38 @@ function Home({ wishlist, toggleWishlist }) {
                 <div className="mb-16">
                     <Carousel items={products.slice(0, 5)} />
                 </div>
+            </section>
 
+            <div className="mb-16 h-[80vh] w-full overflow-hidden">
+                <GridMotion items={[
+                    'Item 1',
+                    <div key='jsx-item-1' className="w-full h-full flex items-center justify-center bg-silk-200 text-silk-900 font-serif">Artisan</div>,
+                    'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    'Item 2',
+                    <div key='jsx-item-2' className="w-full h-full flex items-center justify-center bg-silk-300 text-silk-900 font-serif">Craft</div>,
+                    'Item 4',
+                    <div key='jsx-item-3' className="w-full h-full flex items-center justify-center bg-silk-400 text-white font-serif">Luxury</div>,
+                    'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    'Item 5',
+                    <div key='jsx-item-4' className="w-full h-full flex items-center justify-center bg-silk-500 text-white font-serif">Style</div>,
+                    'Item 7',
+                    <div key='jsx-item-5' className="w-full h-full flex items-center justify-center bg-silk-600 text-white font-serif">Elegance</div>,
+                    'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    'Item 8',
+                    <div key='jsx-item-6' className="w-full h-full flex items-center justify-center bg-silk-700 text-white font-serif">Quality</div>,
+                    'Item 10',
+                    <div key='jsx-item-7' className="w-full h-full flex items-center justify-center bg-silk-800 text-white font-serif">Unique</div>,
+                    'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    'Item 11',
+                    <div key='jsx-item-8' className="w-full h-full flex items-center justify-center bg-silk-900 text-white font-serif">Handmade</div>,
+                    'Item 13',
+                    <div key='jsx-item-9' className="w-full h-full flex items-center justify-center bg-black text-white font-serif">Love</div>,
+                    'https://images.unsplash.com/photo-1723403804231-f4e9b515fe9d?q=80&w=3870&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
+                    'Item 14',
+                ]} />
+            </div>
+
+            <section className="pb-16 px-6 max-w-7xl mx-auto">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
                     {products.slice(0, visibleCount).map((item, index) => (
                         <Link to={`/product/${item.id}`} key={item.id} className="group cursor-pointer" style={{ animationDelay: `${index * 50}ms` }}>

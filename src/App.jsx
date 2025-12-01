@@ -9,11 +9,13 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import ProductDetail from './pages/ProductDetail';
 
+
+
 // Global state to track animation status across navigation (resets on full reload)
 let brandAnimationCompleted = false;
 
 // Navigation Component to handle location-based logic if needed
-const phrases = ["Iloveyou❤️", "Aalaboo"];
+const phrases = ["Aalaboo"];
 
 function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -76,7 +78,7 @@ function Navigation() {
                             text={brandText}
                             speed={100}
                             maxIterations={15}
-                            characters="ILOVEYOU❤️"
+                            characters="ILOVEYOU"
                             className="revealed"
                             parentClassName="font-serif text-2xl tracking-tight text-silk-900 whitespace-nowrap"
                             encryptedClassName="text-silk-900"
@@ -100,7 +102,6 @@ function Navigation() {
                 </div>
             </header>
 
-            {/* Mobile Bottom Dock */}
             <div className="fixed bottom-0 left-0 right-0 bg-silk-50 border-t border-silk-200 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:hidden flex justify-around items-center py-4 pb-6 px-2">
                 <Link to="/" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/' ? 'text-silk-600' : 'text-silk-900 hover:text-silk-600'}`}>
                     <HomeIcon className="w-6 h-6" strokeWidth={1.5} />
