@@ -1,14 +1,33 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 
 const GridMotion = ({ items = [], gradientColor = 'black' }) => {
     const gridRef = useRef(null);
     const rowRefs = useRef([]);
     const mouseXRef = useRef(window.innerWidth / 2);
+    const [columnCount, setColumnCount] = useState(4); // Default to desktop
 
-    const totalItems = 28;
+    // Ensure we have enough items to fill the grid
+    const totalItems = 4 * columnCount;
     const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`);
     const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems;
+
+    // Handle resize to update column count
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 768) {
+                setColumnCount(2); // Mobile
+            } else {
+                setColumnCount(4); // Desktop
+            }
+        };
+
+        // Initial check
+        handleResize();
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         gsap.ticker.lagSmoothing(0);
@@ -18,20 +37,14 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
         };
 
         const handleScroll = () => {
-            // Map scroll position to a value similar to mouseX
-            // We can use the scroll percentage or raw value. 
-            // Let's make it proportional to the screen width to reuse the logic.
             const scrollY = window.scrollY;
             const maxScroll = document.body.scrollHeight - window.innerHeight;
-            // Avoid division by zero
             const scrollFraction = maxScroll > 0 ? scrollY / maxScroll : 0;
-
-            // Map 0..1 scroll fraction to 0..window.innerWidth
             mouseXRef.current = scrollFraction * window.innerWidth;
         };
 
         const updateMotion = () => {
-            const maxMoveAmount = 300;
+            const maxMoveAmount = 800;
             const baseDuration = 0.8;
             const inertiaFactors = [0.6, 0.4, 0.3, 0.2];
 
@@ -52,7 +65,6 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
 
         const removeAnimationLoop = gsap.ticker.add(updateMotion);
 
-        // Add listeners
         window.addEventListener('mousemove', handleMouseMove);
         window.addEventListener('scroll', handleScroll);
 
@@ -61,31 +73,32 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
             window.removeEventListener('scroll', handleScroll);
             removeAnimationLoop();
         };
-    }, []);
+    }, [columnCount]); // Re-run if column count changes (though logic is largely independent)
 
     return (
         <div ref={gridRef} className="h-full w-full overflow-hidden">
             <section
                 className="w-full h-screen overflow-hidden relative flex items-center justify-center"
-                style={{
-                    background: `radial-gradient(circle, ${gradientColor} 0%, transparent 100%)`
-                }}
+            // Background removed as requested
             >
-                <div className="absolute inset-0 pointer-events-none z-[4] bg-[length:250px]"></div>
-                <div className="gap-4 flex-none relative w-[150vw] h-[150vh] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center z-[2]">
+                {/* Background pattern removed or kept subtle if needed, but user asked to remove background */}
+                {/* <div className="absolute inset-0 pointer-events-none z-[4] bg-[length:250px]"></div> */}
+
+                <div className="gap-6 flex-none relative w-[150vw] h-[150vh] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center z-[2]">
                     {[...Array(4)].map((_, rowIndex) => (
                         <div
                             key={rowIndex}
-                            className="grid gap-4 grid-cols-7"
+                            className={`grid gap-6 ${columnCount === 2 ? 'grid-cols-2' : 'grid-cols-4'}`}
                             style={{ willChange: 'transform, filter' }}
                             ref={el => (rowRefs.current[rowIndex] = el)}
                         >
-                            {[...Array(7)].map((_, itemIndex) => {
-                                const content = combinedItems[rowIndex * 7 + itemIndex];
+                            {[...Array(columnCount)].map((_, itemIndex) => {
+                                const content = combinedItems[rowIndex * columnCount + itemIndex];
                                 return (
                                     <div key={itemIndex} className="relative">
-                                        <div className="relative w-full h-full overflow-hidden rounded-[10px] bg-[#111] flex items-center justify-center text-white text-[1.5rem]">
-                                            {typeof content === 'string' && content.startsWith('http') ? (
+                                        <div className="relative w-full h-full overflow-hidden rounded-[10px] bg-transparent flex items-center justify-center text-white text-[1.5rem]">
+                                            {/* Handle both string URLs and imported image paths */}
+                                            {typeof content === 'string' ? (
                                                 <div
                                                     className="w-full h-full bg-cover bg-center absolute top-0 left-0"
                                                     style={{ backgroundImage: `url(${content})` }}
@@ -100,7 +113,6 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
                         </div>
                     ))}
                 </div>
-                <div className="relative w-full h-full top-0 left-0 pointer-events-none"></div>
             </section>
         </div>
     );
