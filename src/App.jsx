@@ -68,7 +68,7 @@ function Navigation() {
                 </div>
             </div>
 
-            <header className="fixed w-full bg-silk-50/90 dark:bg-silk-blue-dark/90 backdrop-blur-sm z-40 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
+            <header className="fixed w-full bg-silk-50/90 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black/90 dark:to-silk-blue-dark/90 backdrop-blur-sm z-40 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
                     <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900 dark:text-white absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
@@ -101,7 +101,7 @@ function Navigation() {
                 </div>
             </header>
 
-            <div className="fixed bottom-0 left-0 right-0 bg-silk-50 dark:bg-silk-blue-dark border-t border-silk-200 dark:border-silk-blue-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:hidden flex justify-around items-center py-4 pb-6 px-2">
+            <div className="fixed bottom-0 left-0 right-0 bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark border-t border-silk-200 dark:border-silk-blue-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:hidden flex justify-around items-center py-4 pb-6 px-2">
                 <Link to="/" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
                     <HomeIcon className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">Home</span>

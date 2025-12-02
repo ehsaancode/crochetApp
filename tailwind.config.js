@@ -23,7 +23,7 @@ export default {
 				'silk-blue': {
 					light: '#add9e6', // Matches DarkVeil animation
 					DEFAULT: '#add9e6',
-					dark: '#0a1f26', // Dark background matching the hue
+					dark: '#170D27', // rgb(23,13,39)
 					border: '#163a4a' // Dark mode border
 				},
 				accent: {
