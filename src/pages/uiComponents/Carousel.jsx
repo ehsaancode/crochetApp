@@ -90,12 +90,12 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                     </div>
 
                     {/* Text Section (Bottom/Right) */}
-                    <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center items-center text-center p-6 md:p-12 bg-silk-50 z-10 relative">
+                    <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col justify-center items-center text-center p-6 md:p-12 bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark z-10 relative">
                         <motion.span
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.2 }}
-                            className="text-silk-600 text-sm uppercase tracking-widest font-medium mb-2"
+                            className="text-silk-600 dark:text-silk-200 text-sm uppercase tracking-widest font-medium mb-2"
                         >
                             New Arrival
                         </motion.span>
@@ -103,7 +103,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="font-serif text-3xl md:text-5xl text-silk-900 mb-4 leading-tight"
+                            className="font-serif text-3xl md:text-5xl text-silk-900 dark:text-white mb-4 leading-tight"
                         >
                             {items[currentIndex].name}
                         </motion.h3>
@@ -111,7 +111,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4 }}
-                            className="text-silk-700 text-base mb-6 max-w-md hidden md:block"
+                            className="text-silk-700 dark:text-silk-300 text-base mb-6 max-w-md hidden md:block"
                         >
                             Handcrafted with premium natural cotton. Experience the luxury of artisan crochet.
                         </motion.p>
@@ -137,13 +137,13 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
             {/* Controls */}
             <button
                 onClick={prevSlide}
-                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/40 backdrop-blur-sm text-silk-900 shadow-lg hover:bg-white transition-all duration-300 md:left-8"
+                className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/40 backdrop-blur-sm text-silk-900 dark:text-white shadow-lg hover:bg-white dark:hover:bg-black/40 transition-all duration-300 md:left-8"
             >
                 <ChevronLeft className="w-6 h-6" />
             </button>
             <button
                 onClick={nextSlide}
-                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/40 backdrop-blur-sm text-silk-900 shadow-lg hover:bg-white transition-all duration-300 md:right-8"
+                className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-white/40 backdrop-blur-sm text-silk-900 dark:text-white shadow-lg hover:bg-white dark:hover:bg-black/40 transition-all duration-300 md:right-8"
             >
                 <ChevronRight className="w-6 h-6" />
             </button>
@@ -157,7 +157,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                             setDirection(idx > currentIndex ? 1 : -1);
                             setCurrentIndex(idx);
                         }}
-                        className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-8 bg-silk-900' : 'bg-silk-400 hover:bg-silk-600'
+                        className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-8 bg-silk-900 dark:bg-white' : 'bg-silk-400 dark:bg-silk-600 hover:bg-silk-600 dark:hover:bg-silk-400'
                             }`}
                     />
                 ))}

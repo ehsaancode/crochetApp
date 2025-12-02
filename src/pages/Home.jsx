@@ -27,8 +27,8 @@ function Home({ wishlist, toggleWishlist }) {
                 </div>
                 <div className="absolute inset-0 opacity-20)] pointer-events-none"></div>
                 <div className="relative z-10 animate-slide-up">
-                    <p className="text-xs font-medium uppercase tracking-[0.2em] mb-4 text-silk-600">Handmade Luxury</p>
-                    <h2 className="font-serif text-5xl mb-6 text-silk-900 leading-tight">Artisan<br />Crochet</h2>
+                    <p className="text-xs font-medium uppercase tracking-[0.2em] mb-4 text-silk-600 dark:text-white">Handmade Luxury</p>
+                    <h2 className="font-serif text-5xl mb-6 text-silk-900 dark:text-silk-200 leading-tight">Artisan<br />Crochet</h2>
                     <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')}>
                         <FadeContent blur={true} duration={900} delay={300} easing="ease-out" initialOpacity={10}>
                             <RainbowButton>View Collection</RainbowButton>
@@ -45,8 +45,8 @@ function Home({ wishlist, toggleWishlist }) {
                         disabled={false}
                         speed={3}
                         className="font-serif text-3xl"
-                        baseColor="#673c2e" // silk-900
-                        shineColor="#c58a5b" // silk-500
+                        baseColor={theme === 'dark' ? '#ece0cc' : '#673c2e'} // silk-200 : silk-900
+                        shineColor={theme === 'dark' ? '#ffffff' : '#c58a5b'} // white : silk-500
                     />
                     <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="text-xs uppercase tracking-widest border-b border-silk-900 pb-1 hover:text-silk-600 hover:border-silk-600 transition-colors">View All</Link>
                 </div>

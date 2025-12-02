@@ -68,7 +68,7 @@ function Navigation() {
                 </div>
             </div>
 
-            <header className="fixed w-full bg-silk-50/90 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black/90 dark:to-silk-blue-dark/90 backdrop-blur-sm z-40 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
+            <header className="fixed w-full bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark backdrop-blur-sm z-40 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
                     <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900 dark:text-white absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
