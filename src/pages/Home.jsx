@@ -46,7 +46,7 @@ function Home({ wishlist, toggleWishlist }) {
                         speed={3}
                         className="font-serif text-3xl"
                         baseColor={theme === 'dark' ? '#ece0cc' : '#673c2e'} // silk-200 : silk-900
-                        shineColor={theme === 'dark' ? '#ffffff' : '#c58a5b'} // white : silk-500
+                        shineColor={theme === 'dark' ? '#add9e6' : '#c58a5b'} // silk-blue-light : silk-500
                     />
                     <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="text-xs uppercase tracking-widest border-b border-silk-900 pb-1 hover:text-silk-600 hover:border-silk-600 transition-colors">View All</Link>
                 </div>
