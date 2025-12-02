@@ -7,14 +7,12 @@ import DarkVeil from './uiComponents/DarkVeil';
 import Carousel from './uiComponents/Carousel';
 import ShinyText from './uiComponents/ShinyText';
 import GridMotion from './uiComponents/GridMotion';
-
-
-
-
 import { RainbowButton } from "@/components/ui/rainbow-button";
+import { useTheme } from '../context/ThemeContext';
 
 function Home({ wishlist, toggleWishlist }) {
     const [visibleCount, setVisibleCount] = useState(16);
+    const { theme } = useTheme();
 
     const showMore = () => {
         setVisibleCount(prev => prev + 16);
@@ -25,7 +23,7 @@ function Home({ wishlist, toggleWishlist }) {
 
             <section id="home" className="h-[85vh] flex items-center justify-center p-6 text-center relative overflow-hidden">
                 <div className="absolute inset-0 z-0">
-                    <DarkVeil />
+                    <DarkVeil darkMode={theme === 'dark'} />
                 </div>
                 <div className="absolute inset-0 opacity-20)] pointer-events-none"></div>
                 <div className="relative z-10 animate-slide-up">

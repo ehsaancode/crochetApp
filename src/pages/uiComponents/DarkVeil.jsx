@@ -17,6 +17,7 @@ uniform float uNoise;
 uniform float uScan;
 uniform float uScanFreq;
 uniform float uWarp;
+uniform float uDarkMode; // 0.0 for light, 1.0 for dark
 #define iTime uTime
 #define iResolution uResolution
 
@@ -69,15 +70,18 @@ void main(){
     float intensity = dot(col.rgb, vec3(0.299, 0.587, 0.114));
     
     // Define colors
-    vec3 creamyWhite = vec3(0.97, 0.95, 0.90); // silk-100
-    vec3 themeColor = vec3(0.725, 0.439, 0.278); // silk-600 (#b97047)
+    vec3 lightBg = vec3(0.97, 0.95, 0.90); // silk-100
+    vec3 lightFg = vec3(0.725, 0.439, 0.278); // silk-600 (#b97047)
+    
+    vec3 darkBg = vec3(0.0, 0.0, 0.0); // Black
+    vec3 darkFg = vec3(0.68, 0.85, 0.90); // Silk Light Blue (approx)
+    
+    vec3 bg = mix(lightBg, darkBg, uDarkMode);
+    vec3 fg = mix(lightFg, darkFg, uDarkMode);
     
     // Mix based on intensity
-    // Invert intensity logic because original code inverted col
-    // Original: 1.0 - col -> White background (from black)
-    // So low original intensity -> White
-    // High original intensity -> Color
-    col.rgb = mix(creamyWhite, themeColor, intensity);
+    col.rgb = mix(bg, fg, intensity);
+    
     float scanline_val=sin(gl_FragCoord.y*uScanFreq)*0.5+0.5;
     col.rgb*=1.-(scanline_val*scanline_val)*uScan;
     col.rgb+=(rand(gl_FragCoord.xy+uTime)-0.5)*uNoise;
@@ -92,7 +96,8 @@ export default function DarkVeil({
     speed = 1.5,
     scanlineFrequency = 0,
     warpAmount = 4.9,
-    resolutionScale = 1
+    resolutionScale = 1,
+    darkMode = false
 }) {
     const ref = useRef(null);
     useLayoutEffect(() => {
@@ -117,7 +122,8 @@ export default function DarkVeil({
                 uNoise: { value: noiseIntensity },
                 uScan: { value: scanlineIntensity },
                 uScanFreq: { value: scanlineFrequency },
-                uWarp: { value: warpAmount }
+                uWarp: { value: warpAmount },
+                uDarkMode: { value: darkMode ? 1.0 : 0.0 }
             }
         });
 
@@ -143,6 +149,7 @@ export default function DarkVeil({
             program.uniforms.uScan.value = scanlineIntensity;
             program.uniforms.uScanFreq.value = scanlineFrequency;
             program.uniforms.uWarp.value = warpAmount;
+            program.uniforms.uDarkMode.value = darkMode ? 1.0 : 0.0;
             renderer.render({ scene: mesh });
             frame = requestAnimationFrame(loop);
         };
@@ -153,6 +160,6 @@ export default function DarkVeil({
             cancelAnimationFrame(frame);
             window.removeEventListener('resize', resize);
         };
-    }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale]);
-    return <canvas ref={ref} className="w-full h-full block bg-silk-100" />;
+    }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale, darkMode]);
+    return <canvas ref={ref} className="w-full h-full block bg-silk-100 dark:bg-black" />;
 }
