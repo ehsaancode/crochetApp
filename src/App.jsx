@@ -10,10 +10,14 @@ import ProductDetail from './pages/ProductDetail';
 import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
 
+
+
 // Global state to track animation status across navigation (resets on full reload)
 let brandAnimationCompleted = false;
 
 const phrases = ["Aalaboo"];
+
+
 
 function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -101,6 +105,7 @@ function Navigation() {
                 </div>
             </header>
 
+
             <div className="fixed bottom-0 left-0 right-0 bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark border-t border-silk-200 dark:border-silk-blue-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:hidden flex justify-around items-center py-4 pb-6 px-2">
                 <Link to="/" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
                     <HomeIcon className="w-6 h-6" strokeWidth={1.5} />
@@ -147,7 +152,7 @@ function App() {
                     <Navigation />
                     <main className="pb-24 md:pb-0">
                         <Routes>
-                            <Route path="/" element={<Home wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
+                            <Route path="/" element={<Home />} />
                             <Route path="/collection" element={<Collection wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
                             <Route path="/about" element={<About />} />
                             <Route path="/contact" element={<Contact />} />

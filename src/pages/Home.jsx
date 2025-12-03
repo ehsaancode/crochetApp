@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ShoppingBag, Heart, Mail, Phone, Instagram } from 'lucide-react';
+import React from 'react';
+import { Mail, Phone, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { products } from '../data/products';
 import FadeContent from './uiComponents/FadeContent'
@@ -9,14 +9,18 @@ import ShinyText from './uiComponents/ShinyText';
 import GridMotion from './uiComponents/GridMotion';
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useTheme } from '../context/ThemeContext';
+import Masonry from './uiComponents/Masonry';
 
-function Home({ wishlist, toggleWishlist }) {
-    const [visibleCount, setVisibleCount] = useState(16);
+const masonryItems = products.slice(0, 10).map((product, index) => ({
+    id: product.id,
+    img: product.img,
+    name: product.name,
+    url: `/product/${product.id}`,
+    height: index % 3 === 0 ? 400 : index % 3 === 1 ? 300 : 500
+}));
+
+function Home() {
     const { theme } = useTheme();
-
-    const showMore = () => {
-        setVisibleCount(prev => prev + 16);
-    };
 
     return (
         <>
@@ -39,6 +43,19 @@ function Home({ wishlist, toggleWishlist }) {
             </section>
 
             <section id="shop" className="pt-16 px-6 max-w-7xl mx-auto">
+                <div className="w-full mb-32">
+                    <Masonry
+                        items={masonryItems}
+                        ease="power3.out"
+                        duration={0.6}
+                        stagger={0.05}
+                        animateFrom="bottom"
+                        scaleOnHover={true}
+                        hoverScale={0.95}
+                        blurToFocus={true}
+                        colorShiftOnHover={false}
+                    />
+                </div>
                 <div className="flex items-end justify-between mb-10">
                     <ShinyText
                         text="New Arrivals"
@@ -60,55 +77,7 @@ function Home({ wishlist, toggleWishlist }) {
                 <GridMotion items={products.map(product => product.img)} />
             </div>
 
-            <section className="pb-16 px-6 max-w-7xl mx-auto">
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-12">
-                    {products.slice(0, visibleCount).map((item, index) => (
-                        <Link to={`/product/${item.id}`} key={item.id} className="group cursor-pointer" style={{ animationDelay: `${index * 50}ms` }}>
-                            <div className="relative aspect-[4/5] bg-silk-200 mb-6 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow duration-500">
-                                {item.tag && (
-                                    <span className="absolute top-4 left-4 bg-white/90 backdrop-blur px-3 py-1 text-[10px] uppercase tracking-wider font-medium z-10">
-                                        {item.tag}
-                                    </span>
-                                )}
-                                <button
-                                    onClick={(e) => toggleWishlist(e, item.id)}
-                                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 z-10"
-                                >
-                                    <Heart
-                                        className={`w-5 h-5 transition-colors duration-300 ${wishlist.includes(item.id) ? 'fill-red-500 text-red-500' : 'text-silk-900 hover:fill-red-500 hover:text-red-500'}`}
-                                        strokeWidth={1.5}
-                                    />
-                                </button>
-                                <div className="w-full h-full bg-silk-300 group-hover:scale-105 transition-transform duration-700 ease-out overflow-hidden">
-                                    <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
-                                </div>
-                                <button className="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg translate-y-14 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-100 hover:bg-silk-900 hover:text-white">
-                                    <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
-                                </button>
-                            </div>
 
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <h4 className="font-serif text-xl mb-1 group-hover:text-silk-700 transition-colors">{item.name}</h4>
-                                    <p className="text-sm text-silk-500">Natural Cotton</p>
-                                </div>
-                                <p className="text-lg font-medium text-silk-900">₹{item.price.toFixed(2)}</p>
-                            </div>
-                        </Link>
-                    ))}
-                </div>
-
-                {visibleCount < products.length && (
-                    <div className="text-center mt-16">
-                        <button
-                            onClick={showMore}
-                            className="inline-block border border-silk-900 text-silk-900 px-10 py-3 rounded-full text-xs uppercase tracking-widest hover:bg-silk-900 hover:text-white transition-all duration-300"
-                        >
-                            Show More
-                        </button>
-                    </div>
-                )}
-            </section>
 
             <footer className="bg-silk-900 text-silk-100 py-12 px-6 hidden md:block">
                 <div className="max-w-md mx-auto text-center">
@@ -117,7 +86,7 @@ function Home({ wishlist, toggleWishlist }) {
                         <a href="#" className="hover:text-white transition-colors"><Instagram className="w-5 h-5" /></a>
                         <a href="#" className="hover:text-white transition-colors"><Mail className="w-5 h-5" /></a>
                     </div>
-                    <p className="text-xs text-silk-400 uppercase tracking-widest">© 2025 Crochet & Co.</p>
+                    <p className="text-xs text-silk-400 uppercase tracking-widest">© 2025 Aalaboo.</p>
                 </div>
             </footer>
         </>
