@@ -49,7 +49,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
 
     return (
         <div
-            className="relative w-full h-[500px] md:h-[600px] overflow-hidden rounded-2xl shadow-xl bg-silk-100"
+            className="relative w-full h-[500px] md:h-[600px] overflow-hidden rounded-2xl shadow-xl bg-silk-100 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark"
             onMouseEnter={() => setIsPaused(true)}
             onMouseLeave={() => setIsPaused(false)}
         >
