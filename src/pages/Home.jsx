@@ -11,12 +11,12 @@ import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useTheme } from '../context/ThemeContext';
 import Masonry from './uiComponents/Masonry';
 
-const masonryItems = products.slice(0, 10).map((product, index) => ({
+const masonryItems = products.slice(0, 12).map((product, index) => ({
     id: product.id,
     img: product.img,
     name: product.name,
     url: `/product/${product.id}`,
-    height: index % 3 === 0 ? 400 : index % 3 === 1 ? 300 : 500
+    height: index % 4 === 1 ? 400 : index % 3 === 2 ? 300 : 300
 }));
 
 function Home() {
