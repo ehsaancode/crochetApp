@@ -25,6 +25,12 @@ function Navigation() {
 
     const [currentPhraseIndex, setCurrentPhraseIndex] = useState(brandAnimationCompleted ? phrases.length - 1 : 0);
     const [brandText, setBrandText] = useState(brandAnimationCompleted ? phrases[phrases.length - 1] : phrases[0]);
+    const [startDecryption, setStartDecryption] = useState(false);
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => setStartDecryption(true), 5000);
+        return () => clearTimeout(timer);
+    }, []);
 
     const handleDecryptionComplete = React.useCallback(() => {
         if (currentPhraseIndex < phrases.length - 1) {
@@ -84,7 +90,7 @@ function Navigation() {
                             className="revealed"
                             parentClassName="font-serif text-2xl tracking-tight text-silk-900 dark:text-white whitespace-nowrap"
                             encryptedClassName="text-silk-900 dark:text-white"
-                            animateOn={brandAnimationCompleted ? "hover" : "view"}
+                            animateOn={startDecryption ? (brandAnimationCompleted ? "hover" : "view") : "none"}
                             revealDirection="start"
                             onDecryptionComplete={handleDecryptionComplete}
                         />

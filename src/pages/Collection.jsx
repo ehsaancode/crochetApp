@@ -35,9 +35,9 @@ function Collection({ wishlist, toggleWishlist }) {
             {/* Mobile Filter Toggle */}
             <button
                 onClick={() => setIsFilterOpen(true)}
-                className={`md:hidden sticky top-24 z-40 flex items-center space-x-2 text-silk-900 font-medium shadow-lg mb-4 transition-all duration-700 ease-in-out overflow-hidden ${isScrolled
-                    ? 'self-start w-[140px] px-6 py-2 rounded-full bg-silk-100/50 backdrop-blur-md hover:bg-silk-200/50 justify-center'
-                    : 'w-full justify-center p-3 rounded-lg bg-silk-100/90 backdrop-blur-sm hover:bg-silk-200'
+                className={`md:hidden sticky top-24 z-40 flex items-center space-x-2 text-silk-900 dark:text-white font-medium shadow-lg mb-4 transition-all duration-700 ease-in-out overflow-hidden ${isScrolled
+                    ? 'self-start w-[140px] px-6 py-2 rounded-full bg-silk-100/50 dark:bg-black/50 backdrop-blur-md hover:bg-silk-200/50 dark:hover:bg-gray-900/50 justify-center'
+                    : 'w-full justify-center p-3 rounded-full bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-silk-200 dark:hover:bg-gray-800'
                     }`}
             >
                 <Filter className="w-5 h-5" />
@@ -45,25 +45,25 @@ function Collection({ wishlist, toggleWishlist }) {
             </button>
 
             {/* Sidebar Filters */}
-            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white p-6 shadow-2xl transform transition-transform duration-300 ease-out md:sticky md:top-24 md:h-fit md:translate-x-0 md:shadow-none md:bg-transparent md:w-64 md:block ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-black p-6 shadow-2xl transform transition-transform duration-300 ease-out md:sticky md:top-24 md:h-fit md:translate-x-0 md:shadow-none md:bg-transparent md:w-64 md:block ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex justify-between items-center mb-8 md:hidden">
-                    <h3 className="font-serif text-xl">Filters</h3>
-                    <button onClick={() => setIsFilterOpen(false)}><X className="w-6 h-6" /></button>
+                    <h3 className="font-serif text-xl dark:text-white">Filters</h3>
+                    <button onClick={() => setIsFilterOpen(false)} className="dark:text-white"><X className="w-6 h-6" /></button>
                 </div>
 
                 <div className="space-y-8">
                     {/* Price Filter */}
                     <div>
-                        <h4 className="font-medium mb-4 text-silk-900">Price Range</h4>
+                        <h4 className="font-medium mb-4 text-silk-900 dark:text-white">Price Range</h4>
                         <input
                             type="range"
                             min="0"
                             max="300"
                             value={priceRange}
                             onChange={(e) => setPriceRange(e.target.value)}
-                            className="w-full accent-silk-900"
+                            className="w-full accent-silk-900 dark:accent-white"
                         />
-                        <div className="flex justify-between text-sm text-silk-600 mt-2">
+                        <div className="flex justify-between text-sm text-silk-600 dark:text-silk-400 mt-2">
                             <span>₹0</span>
                             <span>₹{priceRange}</span>
                         </div>
@@ -71,12 +71,12 @@ function Collection({ wishlist, toggleWishlist }) {
 
                     {/* Product Type Filter */}
                     <div>
-                        <h4 className="font-medium mb-4 text-silk-900">Product Type</h4>
+                        <h4 className="font-medium mb-4 text-silk-900 dark:text-white">Product Type</h4>
                         <div className="space-y-2">
                             {['Dress', 'Top', 'Accessory', 'Set'].map((type) => (
                                 <label key={type} className="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" className="rounded border-silk-300 text-silk-900 focus:ring-silk-500" />
-                                    <span className="text-silk-700">{type}</span>
+                                    <input type="checkbox" className="rounded border-silk-300 dark:border-silk-700 text-silk-900 focus:ring-silk-500 dark:bg-black" />
+                                    <span className="text-silk-700 dark:text-silk-300">{type}</span>
                                 </label>
                             ))}
                         </div>
@@ -84,17 +84,17 @@ function Collection({ wishlist, toggleWishlist }) {
 
                     {/* Review Filter */}
                     <div>
-                        <h4 className="font-medium mb-4 text-silk-900">Reviews</h4>
+                        <h4 className="font-medium mb-4 text-silk-900 dark:text-white">Reviews</h4>
                         <div className="space-y-2">
                             {[5, 4, 3, 2, 1].map((star) => (
                                 <label key={star} className="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" className="rounded border-silk-300 text-silk-900 focus:ring-silk-500" />
-                                    <div className="flex text-silk-500">
+                                    <input type="checkbox" className="rounded border-silk-300 dark:border-silk-700 text-silk-900 focus:ring-silk-500 dark:bg-black" />
+                                    <div className="flex text-silk-500 dark:text-silk-400">
                                         {[...Array(5)].map((_, i) => (
-                                            <Star key={i} className={`w-4 h-4 ${i < star ? 'fill-current text-silk-500' : 'text-silk-200'}`} />
+                                            <Star key={i} className={`w-4 h-4 ${i < star ? 'fill-current text-silk-500 dark:text-silk-400' : 'text-silk-200 dark:text-silk-800'}`} />
                                         ))}
                                     </div>
-                                    <span className="text-xs text-silk-400">& Up</span>
+                                    <span className="text-xs text-silk-400 dark:text-silk-500">& Up</span>
                                 </label>
                             ))}
                         </div>
@@ -110,38 +110,48 @@ function Collection({ wishlist, toggleWishlist }) {
             {/* Product Grid */}
             <div className="flex-1">
                 <div className="flex justify-between items-center mb-6">
-                    <h2 className="font-serif text-3xl text-silk-900">All Products</h2>
-                    <span className="text-silk-500 text-sm">{products.length} items</span>
+                    <h2 className="font-serif text-3xl text-silk-900 dark:text-white">All Products</h2>
+                    <span className="text-silk-500 dark:text-silk-400 text-sm">{products.length} items</span>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
                     {products.map((item) => (
                         <Link to={`/product/${item.id}`} key={item.id} className="group cursor-pointer" onClick={saveScrollPosition}>
-                            <div className="relative aspect-[3/4] bg-silk-200 mb-4 rounded-xl overflow-hidden shadow-sm group-hover:shadow-md transition-shadow duration-500">
-                                <button
-                                    onClick={(e) => toggleWishlist(e, item.id)}
-                                    className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 z-10"
-                                >
-                                    <Heart
-                                        className={`w-5 h-5 transition-colors duration-300 ${wishlist.includes(item.id) ? 'fill-red-500 text-red-500' : 'text-silk-900 hover:fill-red-500 hover:text-red-500'}`}
-                                        strokeWidth={1.5}
-                                    />
-                                </button>
-                                <div className="w-full h-full bg-silk-300 group-hover:scale-105 transition-transform duration-700 ease-out overflow-hidden">
-                                    <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
-                                </div>
-                                <button className="absolute bottom-4 right-4 w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg translate-y-14 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-100 hover:bg-silk-900 hover:text-white">
-                                    <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
-                                </button>
-                            </div>
+                            <div className="h-full flex flex-col rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 relative border border-silk-200 dark:border-silk-blue-border/30">
+                                {/* Default Background */}
+                                <div className="absolute inset-0 bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark transition-opacity duration-500"></div>
 
-                            <div>
-                                <h4 className="font-serif text-lg mb-1 group-hover:text-silk-700 transition-colors">{item.name}</h4>
-                                <div className="flex justify-between items-center">
-                                    <p className="text-silk-900 font-medium">₹{item.price.toFixed(2)}</p>
-                                    <div className="flex text-silk-400">
-                                        <Star className="w-3 h-3 fill-current" />
-                                        <span className="text-xs ml-1">{item.rating}.0</span>
+                                {/* Hover Background (Opposite Gradient) */}
+                                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-silk-blue-dark dark:to-black"></div>
+
+                                <div className="relative z-10 aspect-[3/4] overflow-hidden">
+                                    <button
+                                        onClick={(e) => toggleWishlist(e, item.id)}
+                                        className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 z-10"
+                                    >
+                                        <Heart
+                                            className={`w-5 h-5 transition-colors duration-300 ${wishlist.includes(item.id) ? 'fill-red-500 text-red-500' : 'text-silk-900 hover:fill-red-500 hover:text-red-500'}`}
+                                            strokeWidth={1.5}
+                                        />
+                                    </button>
+                                    <div className="w-full h-full bg-silk-200 dark:bg-gray-900 group-hover:scale-105 transition-transform duration-700 ease-out">
+                                        <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                                    </div>
+                                    <button className="absolute bottom-4 right-4 w-10 h-10 bg-white text-silk-900 rounded-full flex items-center justify-center shadow-lg translate-y-14 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-100 hover:bg-silk-900 hover:text-white">
+                                        <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
+                                    </button>
+                                </div>
+
+                                <div className="relative z-10 p-4 flex flex-col flex-grow justify-between">
+                                    <div>
+                                        <h4 className="font-serif text-lg mb-1 text-silk-900 dark:text-white group-hover:text-silk-600 dark:group-hover:text-silk-300 transition-colors">{item.name}</h4>
+                                        <div className="flex justify-between items-center mt-2">
+                                            <p className="text-silk-900 dark:text-silk-200 font-medium">₹{item.price.toFixed(2)}</p>
+                                            <div className="flex text-silk-400 dark:text-silk-500">
+                                                <Star className="w-3 h-3 fill-current" />
+                                                <span className="text-xs ml-1">{item.rating}.0</span>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
