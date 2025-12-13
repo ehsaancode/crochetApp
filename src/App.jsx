@@ -2,6 +2,7 @@ import React, { useState, useContext } from 'react';
 import DecryptedText from './pages/uiComponents/DecryptedText';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import Home from './pages/Home';
 import Collection from './pages/Collection';
 import About from './pages/About';
@@ -101,7 +102,7 @@ function Navigation() {
             <header className="fixed top-0 left-0 w-full bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark backdrop-blur-sm z-40 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
-                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900 dark:text-white absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
+                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900 dark:text-white absolute left-1/2 -translate-x-1/2 md:relative md:translate-x-0 group flex items-center justify-center gap-2">
                         <DecryptedText
                             text={brandText}
                             speed={100}
@@ -114,6 +115,19 @@ function Navigation() {
                             revealDirection="start"
                             onDecryptionComplete={handleDecryptionComplete}
                         />
+                        <AnimatePresence>
+                            {isGreeting && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.5, rotate: -20 }}
+                                    animate={{ opacity: 1, scale: 1, rotate: [0, 20, -10, 20, 0] }}
+                                    exit={{ opacity: 0, scale: 0 }}
+                                    transition={{ duration: 0.6, ease: "easeOut" }}
+                                    className="text-3xl pb-1.5"
+                                >
+                                    👋
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </Link>
                     <nav className="flex items-center space-x-2 ml-auto md:ml-0">
                         <ThemeToggle />
