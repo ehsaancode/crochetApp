@@ -24,27 +24,44 @@ function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
 
-    const { getCartCount } = useContext(ShopContext);
+    const { getCartCount, userData } = useContext(ShopContext);
 
     const [currentPhraseIndex, setCurrentPhraseIndex] = useState(brandAnimationCompleted ? phrases.length - 1 : 0);
     const [brandText, setBrandText] = useState(brandAnimationCompleted ? phrases[phrases.length - 1] : phrases[0]);
     const [startDecryption, setStartDecryption] = useState(false);
+    const [isGreeting, setIsGreeting] = useState(false);
 
     React.useEffect(() => {
         const timer = setTimeout(() => setStartDecryption(true), 5000);
         return () => clearTimeout(timer);
     }, []);
 
+    React.useEffect(() => {
+        if (userData && userData.name) {
+            // Trigger greeting animation
+            setBrandText(`Hi, ${userData.name.split(' ')[0]}!`);
+            setIsGreeting(true);
+            setStartDecryption(true);
+
+            // Revert back to brand name after 4 seconds
+            const timer = setTimeout(() => {
+                setBrandText(phrases[0]);
+                setIsGreeting(false);
+            }, 2500);
+            return () => clearTimeout(timer);
+        }
+    }, [userData]);
+
     const handleDecryptionComplete = React.useCallback(() => {
-        if (currentPhraseIndex < phrases.length - 1) {
+        if (!isGreeting && currentPhraseIndex < phrases.length - 1) {
             setTimeout(() => {
                 setCurrentPhraseIndex(prev => prev + 1);
                 setBrandText(phrases[currentPhraseIndex + 1]);
             }, 1000);
-        } else {
+        } else if (!isGreeting) {
             brandAnimationCompleted = true;
         }
-    }, [currentPhraseIndex]);
+    }, [currentPhraseIndex, isGreeting]);
 
     return (
         <>
@@ -93,7 +110,7 @@ function Navigation() {
                             className="revealed"
                             parentClassName="font-serif text-2xl tracking-tight text-silk-900 dark:text-white whitespace-nowrap"
                             encryptedClassName="text-silk-900 dark:text-white"
-                            animateOn={startDecryption ? (brandAnimationCompleted ? "hover" : "view") : "none"}
+                            animateOn={isGreeting ? "view" : (startDecryption ? (brandAnimationCompleted ? "hover" : "view") : "none")}
                             revealDirection="start"
                             onDecryptionComplete={handleDecryptionComplete}
                         />
