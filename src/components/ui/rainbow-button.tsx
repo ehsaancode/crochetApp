@@ -2,7 +2,7 @@ import React from "react";
 
 import { cn } from "@/lib/utils";
 interface RainbowButtonProps
-  extends React.HTMLAttributes<HTMLDivElement> { }
+  extends React.ButtonHTMLAttributes<HTMLButtonElement> { }
 
 export function RainbowButton({
   children,
@@ -10,7 +10,7 @@ export function RainbowButton({
   ...props
 }: RainbowButtonProps) {
   return (
-    <div
+    <button
       className={cn(
         "group relative inline-flex h-11 animate-rainbow cursor-pointer items-center justify-center rounded-3xl border-0 bg-[length:200%] px-8 py-2 font-medium text-white transition-all [background-clip:padding-box,border-box,border-box] [background-origin:border-box] [border:calc(0.08*1rem)_solid_transparent] focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 hover:scale-105 active:scale-95",
 
@@ -28,6 +28,6 @@ export function RainbowButton({
       {...props}
     >
       {children}
-    </div>
+    </button>
   );
 }

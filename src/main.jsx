@@ -5,10 +5,14 @@ import './index.css'
 
 import ShopContextProvider from './context/ShopContext.jsx'
 
+import { BrowserRouter } from 'react-router-dom'
+
 ReactDOM.createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-        <ShopContextProvider>
-            <App />
-        </ShopContextProvider>
+        <BrowserRouter>
+            <ShopContextProvider>
+                <App />
+            </ShopContextProvider>
+        </BrowserRouter>
     </React.StrictMode>,
 )

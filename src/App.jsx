@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import DecryptedText from './pages/uiComponents/DecryptedText';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User } from 'lucide-react';
@@ -7,21 +7,24 @@ import Collection from './pages/Collection';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import ProductDetail from './pages/ProductDetail';
+import Cart from './pages/Cart';
+import Login from './pages/Login';
 import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
-
-
+import { ShopContext } from './context/ShopContext';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 // Global state to track animation status across navigation (resets on full reload)
 let brandAnimationCompleted = false;
 
 const phrases = ["Aalaboo"];
 
-
-
 function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
+
+    const { getCartCount } = useContext(ShopContext);
 
     const [currentPhraseIndex, setCurrentPhraseIndex] = useState(brandAnimationCompleted ? phrases.length - 1 : 0);
     const [brandText, setBrandText] = useState(brandAnimationCompleted ? phrases[phrases.length - 1] : phrases[0]);
@@ -69,16 +72,16 @@ function Navigation() {
                                 <Heart className="w-6 h-6 mb-2" strokeWidth={1.5} />
                                 <span className="text-xs uppercase tracking-widest">Wishlist</span>
                             </a>
-                            <a href="#" className="flex flex-col items-center text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-50">
+                            <Link to="/cart" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-50">
                                 <ShoppingBag className="w-6 h-6 mb-2" strokeWidth={1.5} />
-                                <span className="text-xs uppercase tracking-widest">Cart (0)</span>
-                            </a>
+                                <span className="text-xs uppercase tracking-widest">Cart ({getCartCount()})</span>
+                            </Link>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <header className="fixed w-full bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark backdrop-blur-sm z-40 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
+            <header className="fixed top-0 left-0 w-full bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark backdrop-blur-sm z-40 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
                     <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900 dark:text-white absolute left-1/2 -translate-x-1/2 md:static md:translate-x-0">
@@ -100,9 +103,10 @@ function Navigation() {
                         <button className="p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
                             <Heart className="w-5 h-5 text-silk-900 dark:text-white" strokeWidth={1.5} />
                         </button>
-                        <button className="p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
+                        <Link to="/cart" className="relative p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
                             <ShoppingBag className="w-5 h-5 text-silk-900 dark:text-white" strokeWidth={1.5} />
-                        </button>
+                            <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>{getCartCount()}</p>
+                        </Link>
                         <button onClick={() => setIsMenuOpen(true)} className="p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden md:block">
                             <span className="sr-only">Menu</span>
                             <Menu className="w-6 h-6 text-silk-900 dark:text-white" strokeWidth={1.5} />
@@ -121,10 +125,10 @@ function Navigation() {
                     <Store className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">All Products</span>
                 </Link>
-                <button className="flex flex-col items-center text-silk-900 dark:text-white hover:text-silk-600 transition-colors p-1">
+                <Link to="/cart" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/cart' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
                     <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">Cart</span>
-                </button>
+                </Link>
                 <button className="flex flex-col items-center text-silk-900 dark:text-white hover:text-silk-600 transition-colors p-1">
                     <Heart className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">Wishlist</span>
@@ -153,20 +157,22 @@ function App() {
 
     return (
         <ThemeProvider>
-            <Router>
-                <div className="min-h-screen bg-silk-100 dark:bg-black text-accent-dark dark:text-silk-50 font-sans selection:bg-silk-200 dark:selection:bg-silk-800 transition-colors duration-300">
-                    <Navigation />
-                    <main className="pb-24 md:pb-0">
-                        <Routes>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/collection" element={<Collection wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
-                            <Route path="/about" element={<About />} />
-                            <Route path="/contact" element={<Contact />} />
-                            <Route path="/product/:id" element={<ProductDetail wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
-                        </Routes>
-                    </main>
-                </div>
-            </Router>
+            <ToastContainer position="bottom-right" theme="dark" />
+            <div className="min-h-screen bg-silk-100 dark:bg-black text-accent-dark dark:text-silk-50 font-sans selection:bg-silk-200 dark:selection:bg-silk-800 transition-colors duration-300">
+                <Navigation />
+                <main className="pb-24 md:pb-0">
+                    <Routes>
+                        <Route path="/" element={<Home />} />
+                        <Route path="/collection" element={<Collection wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
+                        <Route path="/about" element={<About />} />
+                        <Route path="/contact" element={<Contact />} />
+                        <Route path="/product/:id" element={<ProductDetail wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
+                        <Route path="/cart" element={<Cart />} />
+                        <Route path="/account" element={<Login />} />
+                        {/* <Route path="/place-order" element={<PlaceOrder />} /> */}
+                    </Routes>
+                </main>
+            </div>
         </ThemeProvider>
     );
 }

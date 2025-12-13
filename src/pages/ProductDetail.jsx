@@ -5,19 +5,23 @@ import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck
 
 function ProductDetail({ wishlist, toggleWishlist }) {
     const { id } = useParams();
-    const { products } = useContext(ShopContext);
+    const { products, addToCart } = useContext(ShopContext);
     const [product, setProduct] = useState(null)
     const [activeImage, setActiveImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
+    const [size, setSize] = useState("");
 
     const fetchProductData = async () => {
         products.map((item) => {
             if (item._id === id) {
                 setProduct(item)
+                setActiveImage(0);
                 return null;
             }
         })
     }
+
+
 
     useEffect(() => {
         fetchProductData();
@@ -97,7 +101,9 @@ function ProductDetail({ wishlist, toggleWishlist }) {
                 {/* Product Details */}
                 <div className="flex flex-col">
                     <div className="mb-2">
-                        <span className="text-sm font-medium text-silk-500 uppercase tracking-wider">{product.category}</span>
+                        {product.category !== 'Not applicable' && (
+                            <span className="text-sm font-medium text-silk-500 uppercase tracking-wider">{product.category}</span>
+                        )}
                     </div>
                     <h1 className="text-4xl font-serif text-silk-900 mb-4">{product.name}</h1>
 
@@ -117,6 +123,17 @@ function ProductDetail({ wishlist, toggleWishlist }) {
                         <p>{product.description}</p>
                     </div>
 
+                    {product.sizes.length > 0 && (
+                        <div className="flex flex-col gap-4 my-8">
+                            <p className="text-sm font-medium text-silk-900 dark:text-silk-50">Select Size</p>
+                            <div className="flex gap-2">
+                                {product.sizes.map((item, index) => (
+                                    <button onClick={() => setSize(item)} className={`border py-2 px-4 bg-gray-100 dark:bg-slate-800 dark:text-gray-300 dark:border-slate-700 ${item === size ? 'border-silk-500 dark:border-silk-500' : ''}`} key={index}>{item}</button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Actions */}
                     <div className="space-y-6 mb-10">
                         <div className="flex items-center space-x-4">
@@ -135,7 +152,7 @@ function ProductDetail({ wishlist, toggleWishlist }) {
                                     +
                                 </button>
                             </div>
-                            <button className="flex-1 bg-silk-900 text-white px-8 py-3 rounded-full font-medium tracking-wide hover:bg-silk-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
+                            <button onClick={() => addToCart(product._id, size, quantity)} className="flex-1 bg-silk-900 text-white px-8 py-3 rounded-full font-medium tracking-wide hover:bg-silk-800 transition-all duration-300 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2">
                                 <ShoppingBag className="w-5 h-5" />
                                 <span>Add to Cart</span>
                             </button>

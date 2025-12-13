@@ -35,6 +35,22 @@ const loginUser = async (req, res) => {
 const registerUser = async (req, res) => {
     try {
         const { name, email, password, phone } = req.body;
+        let { address } = req.body;
+
+        // Handle address if sent as string (FormData)
+        if (typeof address === 'string') {
+            try {
+                address = JSON.parse(address);
+            } catch (e) {
+                console.log("Error parsing address:", e);
+                // Fallback or leave as is if it's not JSON
+            }
+        }
+
+        let imageUrl = "";
+        if (req.file) {
+            imageUrl = `http://localhost:5000/uploads/${req.file.filename}`;
+        }
 
         // Check if user already exists
         const exists = await userModel.findOne({ email });
@@ -58,7 +74,9 @@ const registerUser = async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            phone
+            phone,
+            address: address || { street: '', city: '', state: '', zip: '', country: '' },
+            image: imageUrl
         });
 
         const user = await newUser.save();
@@ -99,4 +117,44 @@ const adminLogin = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, registerUser, adminLogin };
+// Route for getting user profile
+const getProfile = async (req, res) => {
+    try {
+        const userId = req.userId || req.body.userId;
+        const user = await userModel.findById(userId).select('-password');
+        res.json({ success: true, user });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Route for updating user profile
+const updateProfile = async (req, res) => {
+    try {
+        const userId = req.userId || req.body.userId;
+        const { name, phone } = req.body;
+        let { address } = req.body;
+
+        if (typeof address === 'string') {
+            try {
+                address = JSON.parse(address);
+            } catch (e) { console.log(e) }
+        }
+
+        const updateData = { name, phone, address };
+
+        if (req.file) {
+            updateData.image = `http://localhost:5000/uploads/${req.file.filename}`;
+        }
+
+        await userModel.findByIdAndUpdate(userId, updateData);
+
+        res.json({ success: true, message: "Profile Updated" });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile };
