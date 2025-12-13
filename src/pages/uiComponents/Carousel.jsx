@@ -10,7 +10,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
     const [isPaused, setIsPaused] = useState(false);
 
     useEffect(() => {
-        if (!autoPlay || isPaused) return;
+        if (!autoPlay || isPaused || !items || items.length === 0) return;
 
         const timer = setInterval(() => {
             setDirection(1);
@@ -18,7 +18,13 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
         }, interval);
 
         return () => clearInterval(timer);
-    }, [autoPlay, interval, isPaused, items.length]);
+    }, [autoPlay, interval, isPaused, items?.length]);
+
+    if (!items || items.length === 0) {
+        return <div className="w-full h-[500px] md:h-[600px] flex items-center justify-center bg-silk-100 dark:bg-black/20 rounded-2xl">
+            <div className="animate-pulse text-silk-400">Loading New Arrivals...</div>
+        </div>;
+    }
 
     const nextSlide = () => {
         setDirection(1);

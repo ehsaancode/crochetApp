@@ -1,13 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { products } from '../data/products';
+import { ShopContext } from '../context/ShopContext';
 import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft } from 'lucide-react';
 
 function ProductDetail({ wishlist, toggleWishlist }) {
     const { id } = useParams();
-    const product = products.find(p => p.id === parseInt(id));
+    const { products } = useContext(ShopContext);
+    const [product, setProduct] = useState(null)
     const [activeImage, setActiveImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
+
+    const fetchProductData = async () => {
+        products.map((item) => {
+            if (item._id === id) {
+                setProduct(item)
+                return null;
+            }
+        })
+    }
+
+    useEffect(() => {
+        fetchProductData();
+    }, [id, products])
 
     // Scroll to top when product loads
     useEffect(() => {
@@ -24,11 +38,11 @@ function ProductDetail({ wishlist, toggleWishlist }) {
     }
 
     const nextImage = () => {
-        setActiveImage((prev) => (prev + 1) % product.images.length);
+        setActiveImage((prev) => (prev + 1) % product.image.length);
     };
 
     const prevImage = () => {
-        setActiveImage((prev) => (prev - 1 + product.images.length) % product.images.length);
+        setActiveImage((prev) => (prev - 1 + product.image.length) % product.image.length);
     };
 
     return (
@@ -46,7 +60,7 @@ function ProductDetail({ wishlist, toggleWishlist }) {
                 <div className="space-y-6">
                     <div className="relative aspect-[4/5] bg-silk-100 rounded-2xl overflow-hidden shadow-sm">
                         <img
-                            src={product.images[activeImage]}
+                            src={product.image[activeImage]}
                             alt={product.name}
                             className="w-full h-full object-cover transition-opacity duration-500"
                         />
@@ -68,7 +82,7 @@ function ProductDetail({ wishlist, toggleWishlist }) {
 
                     {/* Thumbnails */}
                     <div className="flex space-x-4 overflow-x-auto pb-2">
-                        {product.images.map((img, index) => (
+                        {product.image.map((img, index) => (
                             <button
                                 key={index}
                                 onClick={() => setActiveImage(index)}
@@ -83,7 +97,7 @@ function ProductDetail({ wishlist, toggleWishlist }) {
                 {/* Product Details */}
                 <div className="flex flex-col">
                     <div className="mb-2">
-                        <span className="text-sm font-medium text-silk-500 uppercase tracking-wider">{product.type}</span>
+                        <span className="text-sm font-medium text-silk-500 uppercase tracking-wider">{product.category}</span>
                     </div>
                     <h1 className="text-4xl font-serif text-silk-900 mb-4">{product.name}</h1>
 
@@ -126,10 +140,10 @@ function ProductDetail({ wishlist, toggleWishlist }) {
                                 <span>Add to Cart</span>
                             </button>
                             <button
-                                onClick={(e) => toggleWishlist(e, product.id)}
-                                className={`p-3 border rounded-full transition-colors ${wishlist.includes(product.id) ? 'border-red-200 bg-red-50 text-red-500' : 'border-silk-200 hover:bg-silk-50 text-silk-600 hover:fill-red-500 hover:text-red-500'}`}
+                                onClick={(e) => toggleWishlist(e, product._id)}
+                                className={`p-3 border rounded-full transition-colors ${wishlist.includes(product._id) ? 'border-red-200 bg-red-50 text-red-500' : 'border-silk-200 hover:bg-silk-50 text-silk-600 hover:fill-red-500 hover:text-red-500'}`}
                             >
-                                <Heart className={`w-6 h-6 ${wishlist.includes(product.id) ? 'fill-current' : 'hover:fill-red-500'}`} />
+                                <Heart className={`w-6 h-6 ${wishlist.includes(product._id) ? 'fill-current' : 'hover:fill-red-500'}`} />
                             </button>
                         </div>
                         <button className="w-full border border-silk-900 text-silk-900 px-8 py-3 rounded-full font-medium tracking-wide hover:bg-silk-900 hover:text-white transition-all duration-300 hover:shadow-lg">
@@ -150,7 +164,7 @@ function ProductDetail({ wishlist, toggleWishlist }) {
                     </div>
                 </div>
             </div>
-        </div>
+        </div >
     );
 }
 

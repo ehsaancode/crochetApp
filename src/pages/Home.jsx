@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Mail, Phone, Instagram } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { products } from '../data/products';
+import { ShopContext } from '../context/ShopContext'; // Added context
 import FadeContent from './uiComponents/FadeContent'
 import DarkVeil from './uiComponents/DarkVeil';
 import Carousel from './uiComponents/Carousel';
@@ -11,16 +11,23 @@ import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useTheme } from '../context/ThemeContext';
 import Masonry from './uiComponents/Masonry';
 
-const masonryItems = products.slice(0, 12).map((product, index) => ({
-    id: product.id,
-    img: product.img,
-    name: product.name,
-    url: `/product/${product.id}`,
-    height: index % 4 === 1 ? 400 : index % 3 === 2 ? 300 : 300
-}));
-
 function Home() {
     const { theme } = useTheme();
+    const { products } = useContext(ShopContext);
+    const [masonryItems, setMasonryItems] = useState([]);
+
+    useEffect(() => {
+        if (products.length > 0) {
+            const items = products.slice(0, 12).map((product, index) => ({
+                id: product._id,
+                img: product.image[0],
+                name: product.name,
+                url: `/product/${product._id}`,
+                height: index % 4 === 1 ? 400 : index % 3 === 2 ? 300 : 300
+            }));
+            setMasonryItems(items);
+        }
+    }, [products]);
 
     return (
         <>
@@ -69,12 +76,12 @@ function Home() {
                 </div>
 
                 <div className="mb-16">
-                    <Carousel items={products.slice(0, 5)} />
+                    <Carousel items={products.slice(0, 5).map(p => ({ ...p, img: p.image[0], id: p._id }))} />
                 </div>
             </section>
 
             <div className="mb-16 h-[80vh] w-full overflow-hidden">
-                <GridMotion items={products.map(product => product.img)} />
+                <GridMotion items={products.map(product => product.image[0])} />
             </div>
 
 

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { ShoppingBag, Filter, X, Star, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
-
-import { products } from '../data/products';
+import { ShopContext } from '../context/ShopContext';
 
 function Collection({ wishlist, toggleWishlist }) {
+    const { products } = useContext(ShopContext);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [priceRange, setPriceRange] = useState(300);
     const [isScrolled, setIsScrolled] = useState(false);
@@ -116,7 +116,7 @@ function Collection({ wishlist, toggleWishlist }) {
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
                     {products.map((item) => (
-                        <Link to={`/product/${item.id}`} key={item.id} className="group cursor-pointer" onClick={saveScrollPosition}>
+                        <Link to={`/product/${item._id}`} key={item._id} className="group cursor-pointer" onClick={saveScrollPosition}>
                             <div className="h-full flex flex-col rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 relative border border-silk-200 dark:border-silk-blue-border/30">
                                 {/* Default Background */}
                                 <div className="absolute inset-0 bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark transition-opacity duration-500"></div>
@@ -126,16 +126,16 @@ function Collection({ wishlist, toggleWishlist }) {
 
                                 <div className="relative z-10 aspect-[3/4] overflow-hidden">
                                     <button
-                                        onClick={(e) => toggleWishlist(e, item.id)}
+                                        onClick={(e) => toggleWishlist(e, item._id)}
                                         className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 z-10"
                                     >
                                         <Heart
-                                            className={`w-5 h-5 transition-colors duration-300 ${wishlist.includes(item.id) ? 'fill-red-500 text-red-500' : 'text-silk-900 hover:fill-red-500 hover:text-red-500'}`}
+                                            className={`w-5 h-5 transition-colors duration-300 ${wishlist.includes(item._id) ? 'fill-red-500 text-red-500' : 'text-silk-900 hover:fill-red-500 hover:text-red-500'}`}
                                             strokeWidth={1.5}
                                         />
                                     </button>
                                     <div className="w-full h-full bg-silk-200 dark:bg-gray-900 group-hover:scale-105 transition-transform duration-700 ease-out">
-                                        <img src={item.img} alt={item.name} className="w-full h-full object-cover" />
+                                        <img src={item.image[0]} alt={item.name} className="w-full h-full object-cover" />
                                     </div>
                                     <button className="absolute bottom-4 right-4 w-10 h-10 bg-white text-silk-900 rounded-full flex items-center justify-center shadow-lg translate-y-14 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-100 hover:bg-silk-900 hover:text-white">
                                         <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />
@@ -146,10 +146,10 @@ function Collection({ wishlist, toggleWishlist }) {
                                     <div>
                                         <h4 className="font-serif text-lg mb-1 text-silk-900 dark:text-white group-hover:text-silk-600 dark:group-hover:text-silk-300 transition-colors">{item.name}</h4>
                                         <div className="flex justify-between items-center mt-2">
-                                            <p className="text-silk-900 dark:text-silk-200 font-medium">₹{item.price.toFixed(2)}</p>
+                                            <p className="text-silk-900 dark:text-silk-200 font-medium">₹{item.price}</p>
                                             <div className="flex text-silk-400 dark:text-silk-500">
                                                 <Star className="w-3 h-3 fill-current" />
-                                                <span className="text-xs ml-1">{item.rating}.0</span>
+                                                <span className="text-xs ml-1">{item.rating || 0}.0</span>
                                             </div>
                                         </div>
                                     </div>
