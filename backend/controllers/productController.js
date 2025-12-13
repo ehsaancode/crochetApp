@@ -3,7 +3,7 @@ const productModel = require("../models/Product");
 // Function for add product
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, category, subCategory, sizes, bestseller } = req.body;
+        const { name, description, price, category, subCategory, sizes, bestseller, shippingFee } = req.body;
 
         const image1 = req.files.image1 && req.files.image1[0];
         const image2 = req.files.image2 && req.files.image2[0];
@@ -28,7 +28,8 @@ const addProduct = async (req, res) => {
             bestseller: bestseller === "true" ? true : false,
             sizes: JSON.parse(sizes),
             image: imagesUrl,
-            date: Date.now()
+            date: Date.now(),
+            shippingFee: shippingFee ? Number(shippingFee) : 100
         }
 
         const product = new productModel(productData);
@@ -88,4 +89,49 @@ const listNewArrivals = async (req, res) => {
     }
 }
 
-module.exports = { listProducts, addProduct, removeProduct, singleProduct, listNewArrivals };
+// Function for updating product
+const updateProduct = async (req, res) => {
+    try {
+        const { productId, name, description, price, category, subCategory, sizes, bestseller, shippingFee } = req.body;
+
+        const product = await productModel.findById(productId);
+        if (!product) {
+            return res.json({ success: false, message: "Product not found" });
+        }
+
+        let updatedImages = [...product.image];
+
+        // Handle image updates by index
+        if (req.files.image1) updatedImages[0] = `http://localhost:5000/uploads/${req.files.image1[0].filename}`;
+        if (req.files.image2) updatedImages[1] = `http://localhost:5000/uploads/${req.files.image2[0].filename}`;
+        if (req.files.image3) updatedImages[2] = `http://localhost:5000/uploads/${req.files.image3[0].filename}`;
+        if (req.files.image4) updatedImages[3] = `http://localhost:5000/uploads/${req.files.image4[0].filename}`;
+
+        // Filter out any potential gaps if the original array was shorter and we added to a later index, 
+        // though typically we want to preserve order. 
+        // If we strictly map 1->0, 2->1, 3->2, 4->3, gaps might appear if 3 is missing but 4 added.
+        // Let's filter undefined/nulls to be safe, assuming we want a compact list.
+        updatedImages = updatedImages.filter(item => item);
+
+        const updateData = {
+            name,
+            description,
+            price: Number(price),
+            category,
+            subCategory,
+            bestseller: bestseller === "true" ? true : false,
+            sizes: JSON.parse(sizes),
+            image: updatedImages,
+            shippingFee: shippingFee ? Number(shippingFee) : 100
+        };
+
+        await productModel.findByIdAndUpdate(productId, updateData);
+        res.json({ success: true, message: "Product Updated" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+module.exports = { listProducts, addProduct, removeProduct, singleProduct, listNewArrivals, updateProduct };

@@ -157,4 +157,15 @@ const updateProfile = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile };
+// Route for getting all users (Admin)
+const allUsers = async (req, res) => {
+    try {
+        const users = await userModel.find({}).select('-password');
+        res.json({ success: true, users });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers };

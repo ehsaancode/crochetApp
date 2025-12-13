@@ -10,7 +10,8 @@ const productSchema = new mongoose.Schema({
     sizes: { type: Array, required: true },
     bestseller: { type: Boolean },
     date: { type: Number, required: true },
-    rating: { type: Number, default: 0 }
+    rating: { type: Number, default: 0 },
+    shippingFee: { type: Number, default: 100 }
 });
 
 const productModel = mongoose.models.product || mongoose.model("product", productSchema);

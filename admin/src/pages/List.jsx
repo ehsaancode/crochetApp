@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { backendUrl } from '../config'
 import axios from 'axios'
 import { toast } from 'react-toastify'
-import { X } from 'lucide-react'
+import { X, Pencil } from 'lucide-react'
+import { useNavigate } from 'react-router-dom'
 
 const List = ({ token }) => {
 
+    const navigate = useNavigate();
     const [list, setList] = useState([])
 
     const fetchList = async () => {
@@ -62,7 +64,10 @@ const List = ({ token }) => {
                         <p className="font-medium truncate">{item.name}</p>
                         <p>{item.category}</p>
                         <p className="font-semibold text-silk-600 dark:text-silk-400">{currency}{item.price}</p>
-                        <div className='flex justify-center'>
+                        <div className='flex justify-center gap-2'>
+                            <button onClick={() => navigate(`/edit/${item._id}`)} className='cursor-pointer text-silk-600 hover:bg-silk-50 p-2 rounded-full transition-colors'>
+                                <Pencil className="w-5 h-5" />
+                            </button>
                             <button onClick={() => removeProduct(item._id)} className='cursor-pointer text-destructive hover:bg-destructive/10 p-2 rounded-full transition-colors'>
                                 <X className="w-5 h-5" />
                             </button>

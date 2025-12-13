@@ -3,8 +3,10 @@ import Navbar from './components/Navbar'
 import Sidebar from './components/Sidebar'
 import { Routes, Route } from 'react-router-dom'
 import Add from './pages/Add'
+import Edit from './pages/Edit'
 import List from './pages/List'
 import Orders from './pages/Orders'
+import Users from './pages/Users'
 import Login from './components/Login'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -33,8 +35,10 @@ const App = () => {
             <div className={`main-content transition-all duration-300 w-full mx-auto my-8 text-foreground text-base ${sidebarOpen ? 'ml-[250px]' : 'ml-0'}`}>
               <Routes>
                 <Route path='/add' element={<Add token={token} />} />
+                <Route path='/edit/:id' element={<Edit token={token} />} />
                 <Route path='/list' element={<List token={token} />} />
                 <Route path='/orders' element={<Orders token={token} />} />
+                <Route path='/users' element={<Users token={token} />} />
               </Routes>
             </div>
           </div>

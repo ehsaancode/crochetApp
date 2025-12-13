@@ -3,6 +3,7 @@ import { ShopContext } from '../context/ShopContext'
 import { Trash2 } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom';
 import CartTotal from '../components/CartTotal';
+import { RainbowButton } from "../components/ui/rainbow-button";
 
 const Cart = () => {
 
@@ -99,7 +100,7 @@ const Cart = () => {
                     <div className='w-full sm:w-[450px]'>
                         <CartTotal />
                         <div className='w-full text-end'>
-                            <button onClick={() => routerNavigate('/place-order')} className='bg-silk-900 dark:bg-silk-50 text-white dark:text-silk-900 text-sm my-8 px-8 py-3 hover:bg-black dark:hover:bg-white/90 transition-colors'>PROCEED TO CHECKOUT</button>
+                            <RainbowButton onClick={() => routerNavigate('/place-order')} className='my-8 px-6 py-2.5 w-auto text-sm font-semibold'>PROCEED TO CHECKOUT</RainbowButton>
                         </div>
                     </div>
                 </div>

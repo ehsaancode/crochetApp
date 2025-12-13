@@ -8,7 +8,6 @@ export const ShopContext = createContext();
 const ShopContextProvider = (props) => {
 
     const currency = '₹';
-    const delivery_fee = 100;
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000";
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
@@ -121,6 +120,26 @@ const ShopContextProvider = (props) => {
         return totalAmount;
     }
 
+    const getDeliveryFee = () => {
+        let maxFee = 0;
+        for (const items in cartItems) {
+            let itemInfo = products.find((product) => product._id === items);
+            if (itemInfo) {
+                for (const item in cartItems[items]) {
+                    try {
+                        if (cartItems[items][item] > 0) {
+                            const fee = itemInfo.shippingFee || 100;
+                            if (fee > maxFee) maxFee = fee;
+                        }
+                    } catch (error) {
+                        console.log(error);
+                    }
+                }
+            }
+        }
+        return maxFee;
+    }
+
     const getUserCart = async (token) => {
         try {
             const response = await axios.post(backendUrl + '/api/cart/get', {}, { headers: { token } });
@@ -143,7 +162,7 @@ const ShopContextProvider = (props) => {
     const navigate = useNavigate();
 
     const value = {
-        products, currency, delivery_fee,
+        products, currency, delivery_fee: getDeliveryFee(),
         search, setSearch, showSearch, setShowSearch,
         cartItems, addToCart, setCartItems,
         getCartCount, updateQuantity,
