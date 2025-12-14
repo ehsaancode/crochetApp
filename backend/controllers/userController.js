@@ -2,6 +2,7 @@ const userModel = require('../models/User');
 const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const orderModel = require('../models/Order');
 
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET);
@@ -168,4 +169,178 @@ const allUsers = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers };
+// Add to wishlist
+const addToWishlist = async (req, res) => {
+    try {
+        const { userId, product } = req.body;
+
+        const user = await userModel.findById(userId);
+        let wishlist = user.wishlist || [];
+
+        const exists = wishlist.some(item => item.productId === product._id);
+        if (exists) {
+            return res.json({ success: false, message: "Item already in wishlist" });
+        }
+
+        wishlist.push({
+            productId: product._id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            description: product.description,
+            addedAt: new Date()
+        });
+
+        await userModel.findByIdAndUpdate(userId, { wishlist });
+        res.json({ success: true, message: "Added to wishlist" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Remove from wishlist
+const removeFromWishlist = async (req, res) => {
+    try {
+        const { userId, productId } = req.body;
+
+        const user = await userModel.findById(userId);
+        let wishlist = user.wishlist || [];
+
+        wishlist = wishlist.filter(item => item.productId !== productId);
+
+        await userModel.findByIdAndUpdate(userId, { wishlist });
+        res.json({ success: true, message: "Removed from wishlist" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Request Product
+const requestProduct = async (req, res) => {
+    try {
+        const { userId, productId } = req.body;
+        const user = await userModel.findById(userId);
+
+        const updatedWishlist = user.wishlist.map(item => {
+            if (item.productId === productId) {
+                return { ...item, requestStatus: 'pending', requestedAt: new Date() };
+            }
+            return item;
+        });
+
+        await userModel.findByIdAndUpdate(userId, { wishlist: updatedWishlist });
+        res.json({ success: true, message: "Request sent successfully" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Get All Requests (Admin)
+const getAllRequests = async (req, res) => {
+    try {
+        const requests = await userModel.aggregate([
+            { $unwind: "$wishlist" },
+            { $match: { "wishlist.requestStatus": { $in: ["pending", "message_received"] } } },
+            {
+                $addFields: {
+                    productIdObjectId: {
+                        $convert: {
+                            input: "$wishlist.productId",
+                            to: "objectId",
+                            onError: null,
+                            onNull: null
+                        }
+                    }
+                }
+            },
+            {
+                $lookup: {
+                    from: "products",
+                    localField: "productIdObjectId",
+                    foreignField: "_id",
+                    as: "liveProduct"
+                }
+            },
+            {
+                $project: {
+                    userId: "$_id",
+                    userName: "$name",
+                    userEmail: "$email",
+                    product: "$wishlist",
+                    isAvailable: { $gt: [{ $size: "$liveProduct" }, 0] }
+                }
+            }
+        ]);
+        res.json({ success: true, requests });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Handle Request (Admin)
+const handleRequest = async (req, res) => {
+    try {
+        const { userId, productId, action, message } = req.body;
+        const user = await userModel.findById(userId);
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        if (action === 'message') {
+            const itemIndex = user.wishlist.findIndex(item => String(item.productId) === String(productId));
+            if (itemIndex > -1) {
+                user.wishlist[itemIndex].adminMessage = message;
+                user.wishlist[itemIndex].requestStatus = 'message_received';
+                user.markModified('wishlist');
+                await user.save();
+                res.json({ success: true, message: "Message sent to user" });
+            } else {
+                const dump = user.wishlist.map(i => i.productId ? `${i.productId}` : 'NO_ID').join(', ');
+                res.json({ success: false, message: `Item not found. Target: ${productId}. Length: ${user.wishlist.length}. Available: ${dump}` });
+            }
+        } else if (action === 'accept') {
+            // Create Order
+            const wishlistItem = user.wishlist.find(item => String(item.productId) === String(productId));
+            if (!wishlistItem) {
+                const dump = user.wishlist.map(i => i.productId ? `${i.productId}` : 'NO_ID').join(', ');
+                return res.json({ success: false, message: `Item not found (Accept). Target: ${productId}. Length: ${user.wishlist.length}. Available: ${dump}` });
+            }
+
+            const newOrder = new orderModel({
+                userId,
+                items: [wishlistItem], // Using snapshot
+                amount: wishlistItem.price,
+                address: user.address || {},
+                status: 'Order Placed',
+                paymentMethod: 'Request/COD',
+                payment: false,
+                date: Date.now()
+            });
+            await newOrder.save();
+
+            // Update wishlist
+            const itemIndex = user.wishlist.findIndex(item => String(item.productId) === String(productId));
+            if (itemIndex > -1) {
+                user.wishlist[itemIndex].requestStatus = 'accepted';
+                user.wishlist[itemIndex].adminMessage = 'Order Request Accepted!';
+                user.markModified('wishlist');
+                await user.save();
+            }
+            res.json({ success: true, message: "Request accepted and order created" });
+        }
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest };

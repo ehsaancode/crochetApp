@@ -21,6 +21,10 @@ const Sidebar = ({ isOpen }) => {
                 <NavLink className={({ isActive }) => `sidebar-link ${isActive ? 'bg-silk-500 text-white shadow-lg' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`} to='/users'>
                     <p className="font-medium">Users</p>
                 </NavLink>
+
+                <NavLink className={({ isActive }) => `sidebar-link ${isActive ? 'bg-silk-500 text-white shadow-lg' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`} to='/requests'>
+                    <p className="font-medium">Requested</p>
+                </NavLink>
             </div>
         </div>
     )

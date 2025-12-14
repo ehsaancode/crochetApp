@@ -19,6 +19,7 @@ const Add = ({ token }) => {
     const [subCategory, setSubCategory] = useState("Topwear");
     const [bestseller, setBestseller] = useState(false);
     const [sizes, setSizes] = useState([]);
+    const [productId, setProductId] = useState("");
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
@@ -34,6 +35,7 @@ const Add = ({ token }) => {
             formData.append("subCategory", subCategory)
             formData.append("bestseller", bestseller)
             formData.append("sizes", JSON.stringify(sizes))
+            formData.append("productId", productId)
 
             image1 && formData.append("image1", image1)
             image2 && formData.append("image2", image2)
@@ -52,6 +54,7 @@ const Add = ({ token }) => {
                 setImage4(false)
                 setPrice('')
                 setShippingFee('')
+                setProductId('')
             } else {
                 toast.error(response.data.message)
             }
@@ -98,6 +101,12 @@ const Add = ({ token }) => {
                             <input onChange={(e) => setImage4(e.target.files[0])} type="file" id="image4" hidden />
                         </label>
                     </div>
+                </div>
+
+                <div className='w-full'>
+                    <p className='mb-2 font-medium'>Product ID (Optional)</p>
+                    <input onChange={(e) => setProductId(e.target.value)} value={productId} className='w-full max-w-[500px] px-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all font-mono text-sm' type="text" placeholder='Paste ID to restore product (e.g. 660...)' />
+                    <p className='text-xs text-gray-500 mt-1'>Leave empty for auto-generated ID.</p>
                 </div>
 
                 <div className='w-full'>

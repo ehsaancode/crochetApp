@@ -3,7 +3,7 @@ const productModel = require("../models/Product");
 // Function for add product
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, category, subCategory, sizes, bestseller, shippingFee } = req.body;
+        const { name, description, price, category, subCategory, sizes, bestseller, shippingFee, productId } = req.body;
 
         const image1 = req.files.image1 && req.files.image1[0];
         const image2 = req.files.image2 && req.files.image2[0];
@@ -30,6 +30,10 @@ const addProduct = async (req, res) => {
             image: imagesUrl,
             date: Date.now(),
             shippingFee: shippingFee ? Number(shippingFee) : 100
+        }
+
+        if (productId && productId.trim() !== "") {
+            productData._id = productId.trim();
         }
 
         const product = new productModel(productData);

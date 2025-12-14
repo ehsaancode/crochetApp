@@ -8,6 +8,7 @@ const userSchema = new mongoose.Schema({
     image: { type: String, default: "" },
     address: { type: Object, default: { street: '', city: '', state: '', zip: '', country: '' } },
     cartData: { type: Object, default: {} },
+    wishlist: { type: Array, default: [] },
     role: { type: String, default: 'user' }
 }, { minimize: false });
 

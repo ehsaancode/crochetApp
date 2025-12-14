@@ -3,11 +3,23 @@ import { ShoppingBag, Filter, X, Star, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 
-function Collection({ wishlist, toggleWishlist }) {
-    const { products } = useContext(ShopContext);
+function Collection() {
+    const { products, userData, addToWishlist, removeFromWishlist } = useContext(ShopContext);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [priceRange, setPriceRange] = useState(300);
     const [isScrolled, setIsScrolled] = useState(false);
+
+    const isInWishlist = (id) => userData?.wishlist?.some(item => item.productId === id);
+
+    const handleWishlistToggle = (e, product) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (isInWishlist(product._id)) {
+            removeFromWishlist(product._id);
+        } else {
+            addToWishlist(product);
+        }
+    };
 
     useEffect(() => {
         const handleScroll = () => {
@@ -126,11 +138,11 @@ function Collection({ wishlist, toggleWishlist }) {
 
                                 <div className="relative z-10 aspect-[3/4] overflow-hidden">
                                     <button
-                                        onClick={(e) => toggleWishlist(e, item._id)}
+                                        onClick={(e) => handleWishlistToggle(e, item)}
                                         className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 z-10"
                                     >
                                         <Heart
-                                            className={`w-5 h-5 transition-colors duration-300 ${wishlist.includes(item._id) ? 'fill-red-500 text-red-500' : 'text-silk-900 hover:fill-red-500 hover:text-red-500'}`}
+                                            className={`w-5 h-5 transition-colors duration-300 ${isInWishlist(item._id) ? 'fill-red-500 text-red-500' : 'text-silk-900 hover:fill-red-500 hover:text-red-500'}`}
                                             strokeWidth={1.5}
                                         />
                                     </button>

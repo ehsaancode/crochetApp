@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers } = require('../controllers/userController');
+const { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest } = require('../controllers/userController');
 const authMiddleware = require('../middleware/auth');
 const upload = require('../middleware/multer');
 const userRouter = express.Router();
@@ -10,5 +10,10 @@ userRouter.post('/admin', adminLogin);
 userRouter.get('/profile', authMiddleware, getProfile);
 userRouter.post('/update-profile', authMiddleware, upload.single('image'), updateProfile);
 userRouter.post('/all-users', allUsers);
+userRouter.post('/wishlist/add', authMiddleware, addToWishlist);
+userRouter.post('/wishlist/remove', authMiddleware, removeFromWishlist);
+userRouter.post('/request', authMiddleware, requestProduct);
+userRouter.get('/admin/requests', authMiddleware, getAllRequests);
+userRouter.post('/admin/request-handle', authMiddleware, handleRequest);
 
 module.exports = userRouter;

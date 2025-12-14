@@ -3,9 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft } from 'lucide-react';
 
-function ProductDetail({ wishlist, toggleWishlist }) {
+function ProductDetail() {
     const { id } = useParams();
-    const { products, addToCart } = useContext(ShopContext);
+    const { products, addToCart, userData, addToWishlist, removeFromWishlist } = useContext(ShopContext);
     const [product, setProduct] = useState(null)
     const [activeImage, setActiveImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
@@ -21,11 +21,19 @@ function ProductDetail({ wishlist, toggleWishlist }) {
         })
     }
 
-
-
     useEffect(() => {
         fetchProductData();
     }, [id, products])
+
+    const isInWishlist = userData?.wishlist?.some(item => item.productId === product?._id);
+
+    const handleWishlistToggle = () => {
+        if (isInWishlist) {
+            removeFromWishlist(product._id);
+        } else {
+            addToWishlist(product);
+        }
+    };
 
     // Scroll to top when product loads
     useEffect(() => {
@@ -157,10 +165,10 @@ function ProductDetail({ wishlist, toggleWishlist }) {
                                 <span>Add to Cart</span>
                             </button>
                             <button
-                                onClick={(e) => toggleWishlist(e, product._id)}
-                                className={`p-3 border rounded-full transition-colors ${wishlist.includes(product._id) ? 'border-red-200 bg-red-50 text-red-500' : 'border-silk-200 hover:bg-silk-50 text-silk-600 hover:fill-red-500 hover:text-red-500'}`}
+                                onClick={handleWishlistToggle}
+                                className={`p-3 border rounded-full transition-colors ${isInWishlist ? 'border-red-200 bg-red-50 text-red-500' : 'border-silk-200 hover:bg-silk-50 text-silk-600 hover:fill-red-500 hover:text-red-500'}`}
                             >
-                                <Heart className={`w-6 h-6 ${wishlist.includes(product._id) ? 'fill-current' : 'hover:fill-red-500'}`} />
+                                <Heart className={`w-6 h-6 ${isInWishlist ? 'fill-current' : 'hover:fill-red-500'}`} />
                             </button>
                         </div>
                         <button className="w-full border border-silk-900 text-silk-900 px-8 py-3 rounded-full font-medium tracking-wide hover:bg-silk-900 hover:text-white transition-all duration-300 hover:shadow-lg">

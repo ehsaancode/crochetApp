@@ -9,6 +9,7 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
+import Wishlist from './pages/Wishlist';
 import Login from './pages/Login';
 import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
@@ -86,10 +87,10 @@ function Navigation() {
 
                     <div className="mt-auto border-t border-silk-200 dark:border-silk-800 pt-8 md:hidden">
                         <div className="flex justify-center space-x-8 mb-8">
-                            <a href="#" className="flex flex-col items-center text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-50">
+                            <Link to="/wishlist" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-50">
                                 <Heart className="w-6 h-6 mb-2" strokeWidth={1.5} />
                                 <span className="text-xs uppercase tracking-widest">Wishlist</span>
-                            </a>
+                            </Link>
                             <Link to="/cart" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-50">
                                 <ShoppingBag className="w-6 h-6 mb-2" strokeWidth={1.5} />
                                 <span className="text-xs uppercase tracking-widest">Cart ({getCartCount()})</span>
@@ -131,9 +132,9 @@ function Navigation() {
                     </Link>
                     <nav className="flex items-center space-x-2 ml-auto md:ml-0">
                         <ThemeToggle />
-                        <button className="p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
+                        <Link to="/wishlist" className="p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
                             <Heart className="w-5 h-5 text-silk-900 dark:text-white" strokeWidth={1.5} />
-                        </button>
+                        </Link>
                         <Link to="/cart" className="relative p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
                             <ShoppingBag className="w-5 h-5 text-silk-900 dark:text-white" strokeWidth={1.5} />
                             <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>{getCartCount()}</p>
@@ -160,10 +161,10 @@ function Navigation() {
                     <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">Cart</span>
                 </Link>
-                <button className="flex flex-col items-center text-silk-900 dark:text-white hover:text-silk-600 transition-colors p-1">
+                <Link to="/wishlist" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/wishlist' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
                     <Heart className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">Wishlist</span>
-                </button>
+                </Link>
                 <Link to="/account" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/account' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
                     <User className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">Account</span>
@@ -174,17 +175,7 @@ function Navigation() {
 }
 
 function App() {
-    const [wishlist, setWishlist] = useState([]);
-
-    const toggleWishlist = (e, productId) => {
-        e.preventDefault();
-        e.stopPropagation();
-        setWishlist(prev =>
-            prev.includes(productId)
-                ? prev.filter(id => id !== productId)
-                : [...prev, productId]
-        );
-    };
+    // State moved to ShopContext
 
     return (
         <ThemeProvider>
@@ -194,11 +185,12 @@ function App() {
                 <main className="pb-24 md:pb-0">
                     <Routes>
                         <Route path="/" element={<Home />} />
-                        <Route path="/collection" element={<Collection wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
+                        <Route path="/collection" element={<Collection />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
-                        <Route path="/product/:id" element={<ProductDetail wishlist={wishlist} toggleWishlist={toggleWishlist} />} />
+                        <Route path="/product/:id" element={<ProductDetail />} />
                         <Route path="/cart" element={<Cart />} />
+                        <Route path="/wishlist" element={<Wishlist />} />
                         <Route path="/account" element={<Login />} />
                         {/* <Route path="/place-order" element={<PlaceOrder />} /> */}
                     </Routes>
