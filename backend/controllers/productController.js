@@ -14,8 +14,7 @@ const addProduct = async (req, res) => {
         let imagesUrl = await Promise.all(
             images.map(async (item) => {
                 // Return relative path or full URL
-                // For local: return `${req.protocol}://${req.get('host')}/uploads/${item.filename}`;
-                return `http://localhost:5000/uploads/${item.filename}`;
+                return `${req.protocol}://${req.get('host')}/uploads/${item.filename}`;
             })
         )
 
@@ -106,10 +105,10 @@ const updateProduct = async (req, res) => {
         let updatedImages = [...product.image];
 
         // Handle image updates by index
-        if (req.files.image1) updatedImages[0] = `http://localhost:5000/uploads/${req.files.image1[0].filename}`;
-        if (req.files.image2) updatedImages[1] = `http://localhost:5000/uploads/${req.files.image2[0].filename}`;
-        if (req.files.image3) updatedImages[2] = `http://localhost:5000/uploads/${req.files.image3[0].filename}`;
-        if (req.files.image4) updatedImages[3] = `http://localhost:5000/uploads/${req.files.image4[0].filename}`;
+        if (req.files.image1) updatedImages[0] = `${req.protocol}://${req.get('host')}/uploads/${req.files.image1[0].filename}`;
+        if (req.files.image2) updatedImages[1] = `${req.protocol}://${req.get('host')}/uploads/${req.files.image2[0].filename}`;
+        if (req.files.image3) updatedImages[2] = `${req.protocol}://${req.get('host')}/uploads/${req.files.image3[0].filename}`;
+        if (req.files.image4) updatedImages[3] = `${req.protocol}://${req.get('host')}/uploads/${req.files.image4[0].filename}`;
 
         // Filter out any potential gaps if the original array was shorter and we added to a later index, 
         // though typically we want to preserve order. 
