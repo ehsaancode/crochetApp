@@ -13,11 +13,7 @@ const addProduct = async (req, res) => {
         const images = [image1, image2, image3, image4].filter((item) => item !== undefined);
         let imagesUrl = await Promise.all(
             images.map(async (item) => {
-                let protocol = req.protocol;
-                if (req.get('host').includes('onrender.com')) {
-                    protocol = 'https';
-                }
-                return `${protocol}://${req.get('host')}/uploads/${item.filename}`;
+                return item.path;
             })
         )
 
@@ -107,19 +103,15 @@ const updateProduct = async (req, res) => {
 
         let updatedImages = [...product.image];
 
-        const getUrl = (filename) => {
-            let protocol = req.protocol;
-            if (req.get('host').includes('onrender.com')) {
-                protocol = 'https';
-            }
-            return `${protocol}://${req.get('host')}/uploads/${filename}`;
+        const getUrl = (file) => {
+            return file.path;
         }
 
         // Handle image updates by index
-        if (req.files.image1) updatedImages[0] = getUrl(req.files.image1[0].filename);
-        if (req.files.image2) updatedImages[1] = getUrl(req.files.image2[0].filename);
-        if (req.files.image3) updatedImages[2] = getUrl(req.files.image3[0].filename);
-        if (req.files.image4) updatedImages[3] = getUrl(req.files.image4[0].filename);
+        if (req.files.image1) updatedImages[0] = getUrl(req.files.image1[0]);
+        if (req.files.image2) updatedImages[1] = getUrl(req.files.image2[0]);
+        if (req.files.image3) updatedImages[2] = getUrl(req.files.image3[0]);
+        if (req.files.image4) updatedImages[3] = getUrl(req.files.image4[0]);
 
         // Filter out any potential gaps if the original array was shorter and we added to a later index, 
         // though typically we want to preserve order. 

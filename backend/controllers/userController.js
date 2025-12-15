@@ -50,7 +50,7 @@ const registerUser = async (req, res) => {
 
         let imageUrl = "";
         if (req.file) {
-            imageUrl = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+            imageUrl = req.file.path;
         }
 
         // Check if user already exists
@@ -146,7 +146,7 @@ const updateProfile = async (req, res) => {
         const updateData = { name, phone, address };
 
         if (req.file) {
-            updateData.image = `${req.protocol}://${req.get('host')}/uploads/${req.file.filename}`;
+            updateData.image = req.file.path;
         }
 
         await userModel.findByIdAndUpdate(userId, updateData);
