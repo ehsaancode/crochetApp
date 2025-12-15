@@ -14,6 +14,8 @@ connectDB();
 const app = express();
 const port = process.env.PORT || 5000;
 
+app.enable('trust proxy');
+
 app.use(express.json());
 app.use(cors());
 app.use('/uploads', express.static('uploads'));
