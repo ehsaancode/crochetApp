@@ -12,7 +12,7 @@ import Login from './components/Login'
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export const backendUrl = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
 const App = () => {
 
