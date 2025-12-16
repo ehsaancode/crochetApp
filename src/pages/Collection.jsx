@@ -6,7 +6,7 @@ import { ShopContext } from '../context/ShopContext';
 function Collection() {
     const { products, userData, addToWishlist, removeFromWishlist } = useContext(ShopContext);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
-    const [priceRange, setPriceRange] = useState(300);
+    const [priceRange, setPriceRange] = useState(2000);
     const [isScrolled, setIsScrolled] = useState(false);
     const [visibleProducts, setVisibleProducts] = useState(12);
 
@@ -15,6 +15,12 @@ function Collection() {
     };
 
     const isInWishlist = (id) => userData?.wishlist?.some(item => item.productId === id);
+
+    const filteredProducts = products.filter(product => product.price <= priceRange);
+
+    useEffect(() => {
+        setVisibleProducts(12);
+    }, [priceRange, products]);
 
     const handleWishlistToggle = (e, product) => {
         e.preventDefault();
@@ -75,7 +81,8 @@ function Collection() {
                         <input
                             type="range"
                             min="0"
-                            max="300"
+                            max="5000"
+                            step="20"
                             value={priceRange}
                             onChange={(e) => setPriceRange(e.target.value)}
                             className="w-full accent-silk-900 dark:accent-white"
@@ -128,11 +135,11 @@ function Collection() {
             <div className="flex-1">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="font-serif text-3xl text-silk-900 dark:text-white">All Products</h2>
-                    <span className="text-silk-500 dark:text-silk-400 text-sm">{products.length} items</span>
+                    <span className="text-silk-500 dark:text-silk-400 text-sm">{filteredProducts.length} items</span>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-                    {products.slice(0, visibleProducts).map((item) => (
+                    {filteredProducts.slice(0, visibleProducts).map((item) => (
                         <Link to={`/product/${item._id}`} key={item._id} className="group cursor-pointer" onClick={saveScrollPosition}>
                             <div className="h-full flex flex-col rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 relative border border-silk-200 dark:border-silk-blue-border/30">
                                 {/* Default Background */}
@@ -176,7 +183,7 @@ function Collection() {
                     ))}
                 </div>
 
-                {visibleProducts < products.length && (
+                {visibleProducts < filteredProducts.length && (
                     <div className="flex justify-center mt-12">
                         <button
                             onClick={handleLoadMore}
