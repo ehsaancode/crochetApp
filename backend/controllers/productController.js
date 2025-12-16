@@ -71,19 +71,10 @@ const addProduct = async (req, res) => {
 
 const listProducts = async (req, res) => {
     try {
-        const page = Number(req.query.page) || 1;
-        const limit = 12;
-        const skip = (page - 1) * limit;
-
-        const products = await productModel
-            .find({})
-            .sort({ date: -1 })
-            .skip(skip)
-            .limit(limit)
-            .select("name price image category subCategory bestseller shippingFee");
-
+        const products = await productModel.find({}).sort({ date: -1 });
         res.json({ success: true, products });
     } catch (error) {
+        console.log(error);
         res.json({ success: false, message: error.message });
     }
 };

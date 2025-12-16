@@ -8,6 +8,11 @@ function Collection() {
     const [isFilterOpen, setIsFilterOpen] = useState(false);
     const [priceRange, setPriceRange] = useState(300);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [visibleProducts, setVisibleProducts] = useState(12);
+
+    const handleLoadMore = () => {
+        setVisibleProducts(prev => prev + 12);
+    };
 
     const isInWishlist = (id) => userData?.wishlist?.some(item => item.productId === id);
 
@@ -127,7 +132,7 @@ function Collection() {
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-                    {products.map((item) => (
+                    {products.slice(0, visibleProducts).map((item) => (
                         <Link to={`/product/${item._id}`} key={item._id} className="group cursor-pointer" onClick={saveScrollPosition}>
                             <div className="h-full flex flex-col rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 relative border border-silk-200 dark:border-silk-blue-border/30">
                                 {/* Default Background */}
@@ -170,6 +175,17 @@ function Collection() {
                         </Link>
                     ))}
                 </div>
+
+                {visibleProducts < products.length && (
+                    <div className="flex justify-center mt-12">
+                        <button
+                            onClick={handleLoadMore}
+                            className="px-8 py-3 bg-silk-900 dark:bg-white text-white dark:text-black font-medium rounded-full hover:bg-silk-800 dark:hover:bg-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                        >
+                            Load More
+                        </button>
+                    </div>
+                )}
             </div>
         </div>
     );

@@ -81,7 +81,7 @@ function Home() {
             </section>
 
             <div className="mb-16 h-[80vh] w-full overflow-hidden">
-                <GridMotion items={products.map(product => product.image[0])} />
+                <GridMotion items={products.slice(0, 12).map(product => product.image[0])} />
             </div>
 
 
