@@ -11,9 +11,22 @@ const addProduct = async (req, res) => {
         const image4 = req.files.image4 && req.files.image4[0];
 
         const images = [image1, image2, image3, image4].filter((item) => item !== undefined);
+        // Helper to get image URL (Cloudinary or Local)
+        const getFileUrl = (item) => {
+            if (item.path && (item.path.startsWith('http:') || item.path.startsWith('https:'))) {
+                return item.path;
+            }
+            // Local fallback
+            let protocol = req.protocol;
+            if (req.get('host').includes('onrender.com')) {
+                protocol = 'https';
+            }
+            return `${protocol}://${req.get('host')}/uploads/${item.filename}`;
+        }
+
         let imagesUrl = await Promise.all(
             images.map(async (item) => {
-                return item.path;
+                return getFileUrl(item);
             })
         )
 
@@ -104,7 +117,14 @@ const updateProduct = async (req, res) => {
         let updatedImages = [...product.image];
 
         const getUrl = (file) => {
-            return file.path;
+            if (file.path && (file.path.startsWith('http:') || file.path.startsWith('https:'))) {
+                return file.path;
+            }
+            let protocol = req.protocol;
+            if (req.get('host').includes('onrender.com')) {
+                protocol = 'https';
+            }
+            return `${protocol}://${req.get('host')}/uploads/${file.filename}`;
         }
 
         // Handle image updates by index

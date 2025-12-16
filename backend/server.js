@@ -26,6 +26,15 @@ app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
 
+// Global Error Handler
+app.use((err, req, res, next) => {
+    if (res.headersSent) {
+        return next(err);
+    }
+    console.error(err.stack);
+    res.status(500).json({ success: false, message: err.message });
+});
+
 app.get('/', (req, res) => {
     res.send('API is running...');
 });
