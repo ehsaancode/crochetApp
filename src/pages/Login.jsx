@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -200,6 +201,16 @@ const Login = () => {
                                         <div onClick={() => setIsEditing(true)}>
                                             <RainbowButton className="w-full sm:w-auto">Edit Details</RainbowButton>
                                         </div>
+                                    </div>
+
+                                    {/* Mobile Only: About & Contact */}
+                                    <div className="grid grid-cols-2 gap-4 mt-2 md:hidden border-t border-silk-200 dark:border-silk-blue-border pt-6">
+                                        <Link to="/about" className="flex items-center justify-center py-3 px-4 border border-silk-200 dark:border-silk-blue-border rounded-xl text-silk-900 dark:text-silk-100 font-medium hover:bg-silk-100 dark:hover:bg-white/10 transition-colors bg-white/40 dark:bg-black/20 text-sm">
+                                            About Us
+                                        </Link>
+                                        <Link to="/contact" className="flex items-center justify-center py-3 px-4 border border-silk-200 dark:border-silk-blue-border rounded-xl text-silk-900 dark:text-silk-100 font-medium hover:bg-silk-100 dark:hover:bg-white/10 transition-colors bg-white/40 dark:bg-black/20 text-sm">
+                                            Contact
+                                        </Link>
                                     </div>
                                 </div>
                             </div>

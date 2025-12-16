@@ -23,7 +23,7 @@ function About() {
                     <div className="space-y-6 text-silk-800">
                         <h2 className="font-serif text-3xl text-silk-900">Weaving Stories,<br />One Stitch at a Time.</h2>
                         <p className="leading-relaxed text-silk-600">
-                            Crochet & Co. was born from a simple desire: to slow down. In a world of fast fashion and instant gratification, we chose to take the long route. Our journey began in a small sunlit studio, where the rhythmic click of hooks and the soft touch of yarn became our meditation.
+                            Aalaboo. was born from a simple desire: to slow down. In a world of fast fashion and instant gratification, we chose to take the long route. Our journey began in a small sunlit studio, where the rhythmic click of hooks and the soft touch of yarn became our meditation.
                         </p>
                         <p className="leading-relaxed text-silk-600">
                             We believe that luxury lies in the details—the slight irregularities that mark a human touch, the premium natural fibers that breathe with you, and the timeless designs that transcend seasons.
