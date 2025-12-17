@@ -186,6 +186,7 @@ const ToastContainer = () => {
         "bottom-right": "bottom-20 md:bottom-4 right-4 flex-col-reverse",
         "top-center": "top-4 left-1/2 -translate-x-1/2 flex-col",
         "bottom-center": "bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 flex-col-reverse",
+        "bottom": "bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 flex-col-reverse",
         "center": "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex-col",
         "center-right": "top-1/2 right-4 -translate-y-1/2 flex-col",
         "center-left": "top-1/2 left-4 -translate-y-1/2 flex-col",

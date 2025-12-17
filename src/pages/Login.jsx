@@ -55,15 +55,15 @@ const Login = () => {
                 if (response.data.success) {
                     setToken(response.data.token);
                     localStorage.setItem('token', response.data.token);
-                    QToast.success("Logged in successfully", { position: "bottom-right" });
+                    QToast.success("Logged in successfully", { position: "bottom" });
                     fetchUserProfile(response.data.token);
                 } else {
-                    QToast.error(response.data.message, { position: "top-right" });
+                    QToast.error(response.data.message, { position: "bottom" });
                 }
             }
         } catch (error) {
             console.log(error);
-            QToast.error(error.message, { position: "top-right" });
+            QToast.error(error.message, { position: "bottom" });
         }
     }
 
