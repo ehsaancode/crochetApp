@@ -55,7 +55,7 @@ const Login = () => {
                 if (response.data.success) {
                     setToken(response.data.token);
                     localStorage.setItem('token', response.data.token);
-                    QToast.success("Logged in successfully", { position: "top-center" });
+                    QToast.success("Logged in successfully", { position: "bottom-right" });
                     fetchUserProfile(response.data.token);
                 } else {
                     QToast.error(response.data.message, { position: "top-right" });

@@ -132,7 +132,7 @@ const ToastItem = ({
         <div
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}
-            className={`relative flex items-center justify-between max-w-sm w-auto min-w-[300px] px-4 py-2 rounded-xl shadow-lg z-50 pointer-events-auto ${themeClasses} ${transitionClasses} ${isVisible ? visibleClasses : hiddenClasses}`}
+            className={`relative flex items-center justify-between max-w-sm w-auto min-w-[300px] px-4 py-2 rounded-xl shadow-lg z-[9999] pointer-events-auto ${themeClasses} ${transitionClasses} ${isVisible ? visibleClasses : hiddenClasses}`}
         >
             <div className="flex items-center gap-3 overflow-hidden">
 
@@ -182,10 +182,10 @@ const ToastContainer = () => {
     const positionStyles = {
         "top-left": "top-4 left-4 flex-col",
         "top-right": "top-4 right-4 flex-col",
-        "bottom-left": "bottom-4 left-4 flex-col-reverse",
-        "bottom-right": "bottom-4 right-4 flex-col-reverse",
+        "bottom-left": "bottom-20 md:bottom-4 left-4 flex-col-reverse",
+        "bottom-right": "bottom-20 md:bottom-4 right-4 flex-col-reverse",
         "top-center": "top-4 left-1/2 -translate-x-1/2 flex-col",
-        "bottom-center": "bottom-4 left-1/2 -translate-x-1/2 flex-col-reverse",
+        "bottom-center": "bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 flex-col-reverse",
         "center": "top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 flex-col",
         "center-right": "top-1/2 right-4 -translate-y-1/2 flex-col",
         "center-left": "top-1/2 left-4 -translate-y-1/2 flex-col",
@@ -196,7 +196,7 @@ const ToastContainer = () => {
             {Object.entries(groupedToasts).map(([pos, toastsInGroup]) => (
                 <div
                     key={pos}
-                    className={`fixed z-50 flex gap-3 pointer-events-none ${positionStyles[pos] || positionStyles["top-right"]}`}
+                    className={`fixed z-[9999] flex gap-3 pointer-events-none ${positionStyles[pos] || positionStyles["top-right"]}`}
                 >
                     {toastsInGroup.map((toast) => (
                         <ToastItem

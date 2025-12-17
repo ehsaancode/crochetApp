@@ -37,19 +37,28 @@ function Navigation() {
         return () => clearTimeout(timer);
     }, []);
 
+    // Track if we have already greeted the user in this session
+    const hasGreetedRef = React.useRef(false);
+
     React.useEffect(() => {
         if (userData && userData.name) {
-            // Trigger greeting animation
-            setBrandText(`Hi, ${userData.name.split(' ')[0]}!`);
-            setIsGreeting(true);
-            setStartDecryption(true);
+            if (!hasGreetedRef.current) {
+                // Trigger greeting animation
+                setBrandText(`Hi, ${userData.name.split(' ')[0]}!`);
+                setIsGreeting(true);
+                setStartDecryption(true);
+                hasGreetedRef.current = true;
 
-            // Revert back to brand name after 4 seconds
-            const timer = setTimeout(() => {
-                setBrandText(phrases[0]);
-                setIsGreeting(false);
-            }, 2500);
-            return () => clearTimeout(timer);
+                // Revert back to brand name after 4 seconds
+                const timer = setTimeout(() => {
+                    setBrandText(phrases[0]);
+                    setIsGreeting(false);
+                }, 2500);
+                return () => clearTimeout(timer);
+            }
+        } else {
+            // Reset greeting flag when user logs out or no user data
+            hasGreetedRef.current = false;
         }
     }, [userData]);
 
