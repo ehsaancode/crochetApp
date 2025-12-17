@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { backendUrl } from '../config'
-import { toast } from 'react-toastify'
+import QToast from './QToast'
 
 const Login = ({ setToken }) => {
 
@@ -15,11 +15,11 @@ const Login = ({ setToken }) => {
             if (response.data.success) {
                 setToken(response.data.token)
             } else {
-                toast.error(response.data.message)
+                QToast.error(response.data.message, { position: "top-right" })
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.message)
+            QToast.error(error.message, { position: "top-right" })
         }
     }
 

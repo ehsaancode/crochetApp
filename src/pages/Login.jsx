@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
 import axios from 'axios'
-import { toast } from 'react-toastify'
+import QToast from './uiComponents/QToast'
 import FadeContent from './uiComponents/FadeContent'
 import { RainbowButton } from "@/components/ui/rainbow-button"
 
@@ -45,25 +45,25 @@ const Login = () => {
                 if (response.data.success) {
                     setToken(response.data.token);
                     localStorage.setItem('token', response.data.token);
-                    toast.success("Account created successfully");
+                    QToast.success("Account created successfully", { position: "top-center" });
                     fetchUserProfile(response.data.token);
                 } else {
-                    toast.error(response.data.message);
+                    QToast.error(response.data.message, { position: "top-right" });
                 }
             } else {
                 const response = await axios.post(backendUrl + '/api/user/login', { email, password });
                 if (response.data.success) {
                     setToken(response.data.token);
                     localStorage.setItem('token', response.data.token);
-                    toast.success("Logged in successfully");
+                    QToast.success("Logged in successfully", { position: "top-center" });
                     fetchUserProfile(response.data.token);
                 } else {
-                    toast.error(response.data.message);
+                    QToast.error(response.data.message, { position: "top-right" });
                 }
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.message);
+            QToast.error(error.message, { position: "top-right" });
         }
     }
 
@@ -88,11 +88,11 @@ const Login = () => {
                 }
                 setImage(false); // Reset image state
             } else {
-                toast.error(response.data.message);
+                QToast.error(response.data.message, { position: "top-right" });
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.message);
+            QToast.error(error.message, { position: "top-right" });
         }
     }
 
@@ -111,15 +111,15 @@ const Login = () => {
 
             const response = await axios.post(backendUrl + '/api/user/update-profile', formData, { headers: { token } });
             if (response.data.success) {
-                toast.success("Profile updated");
+                QToast.success("Profile updated", { position: "top-center" });
                 setIsEditing(false);
                 fetchUserProfile();
             } else {
-                toast.error(response.data.message);
+                QToast.error(response.data.message, { position: "top-right" });
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.message);
+            QToast.error(error.message, { position: "top-right" });
         }
     }
 
@@ -314,7 +314,7 @@ const Login = () => {
                     <div className='w-full flex justify-between text-sm mt-1 mb-8'>
                         <p
                             className='cursor-pointer text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white transition-colors'
-                            onClick={() => toast.info('Password reset feature coming soon!')}
+                            onClick={() => QToast.info('Password reset feature coming soon!', { position: "top-center" })}
                         >
                             Forgot your password?
                         </p>

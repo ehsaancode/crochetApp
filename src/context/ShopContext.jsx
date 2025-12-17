@@ -1,5 +1,5 @@
 import { createContext, useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import QToast from "../pages/uiComponents/QToast";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 
@@ -22,11 +22,11 @@ const ShopContextProvider = (props) => {
             if (response.data.success) {
                 setProducts(response.data.products)
             } else {
-                toast.error(response.data.message)
+                QToast.error(response.data.message, { position: "top-right" })
             }
         } catch (error) {
             console.log(error)
-            toast.error(error.message)
+            QToast.error(error.message, { position: "top-right" })
         }
     }
 
@@ -42,11 +42,11 @@ const ShopContextProvider = (props) => {
             if (response.data.success) {
                 setUserData(response.data.user);
             } else {
-                toast.error(response.data.message);
+                QToast.error(response.data.message, { position: "top-right" });
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.message);
+            QToast.error(error.message, { position: "top-right" });
         }
     }
 
@@ -56,7 +56,7 @@ const ShopContextProvider = (props) => {
 
         if (!finalSize) {
             if (productData && productData.sizes && productData.sizes.length > 0) {
-                toast.error('Select Product Size');
+                QToast.error('Select Product Size', { position: "top-center" });
                 return;
             } else {
                 finalSize = "Default";
@@ -76,14 +76,14 @@ const ShopContextProvider = (props) => {
             cartData[itemId][finalSize] = quantity;
         }
         setCartItems(cartData);
-        toast.success("Item added to cart");
+        QToast.success("Item added to cart", { position: "center" });
 
         if (token) {
             try {
                 await axios.post(backendUrl + '/api/cart/add', { itemId, size: finalSize, quantity }, { headers: { token } });
             } catch (error) {
                 console.log(error);
-                toast.error(error.message);
+                QToast.error(error.message, { position: "top-right" });
             }
         }
     }
@@ -114,7 +114,7 @@ const ShopContextProvider = (props) => {
                 await axios.post(backendUrl + '/api/cart/update', { itemId, size, quantity }, { headers: { token } });
             } catch (error) {
                 console.log(error);
-                toast.error(error.message);
+                QToast.error(error.message, { position: "top-right" });
             }
         }
     }
@@ -166,7 +166,7 @@ const ShopContextProvider = (props) => {
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.message);
+            QToast.error(error.message, { position: "top-right" });
         }
     }
 
@@ -183,14 +183,14 @@ const ShopContextProvider = (props) => {
 
     const addToWishlist = async (product) => {
         if (!token) {
-            toast.error("Please login to add to wishlist");
+            QToast.error("Please login to add to wishlist", { position: "top-center" });
             return;
         }
 
         if (userData) {
             const exists = userData.wishlist?.some(item => item.productId === product._id);
             if (exists) {
-                toast.info("Item already in wishlist");
+                QToast.info("Item already in wishlist", { position: "top-center" });
                 return;
             }
 
@@ -209,13 +209,13 @@ const ShopContextProvider = (props) => {
             try {
                 const response = await axios.post(backendUrl + '/api/user/wishlist/add', { product }, { headers: { token } });
                 if (response.data.success) {
-                    toast.success("Added to wishlist");
+                    QToast.success("Added to wishlist", { position: "top-center" });
                 } else {
-                    toast.error(response.data.message);
+                    QToast.error(response.data.message, { position: "top-right" });
                 }
             } catch (error) {
                 console.log(error);
-                toast.error(error.message);
+                QToast.error(error.message, { position: "top-right" });
             }
         }
     }
@@ -230,13 +230,13 @@ const ShopContextProvider = (props) => {
             try {
                 const response = await axios.post(backendUrl + '/api/user/wishlist/remove', { productId }, { headers: { token } });
                 if (response.data.success) {
-                    toast.success("Removed from wishlist");
+                    QToast.success("Removed from wishlist", { position: "top-center" });
                 } else {
-                    toast.error(response.data.message);
+                    QToast.error(response.data.message, { position: "top-right" });
                 }
             } catch (error) {
                 console.log(error);
-                toast.error(error.message);
+                QToast.error(error.message, { position: "top-right" });
             }
         }
     }
@@ -256,13 +256,13 @@ const ShopContextProvider = (props) => {
             try {
                 const response = await axios.post(backendUrl + '/api/user/request', { productId }, { headers: { token } });
                 if (response.data.success) {
-                    toast.success(response.data.message);
+                    QToast.success(response.data.message, { position: "center" });
                 } else {
-                    toast.error(response.data.message);
+                    QToast.error(response.data.message, { position: "top-right" });
                 }
             } catch (error) {
                 console.log(error);
-                toast.error(error.message);
+                QToast.error(error.message, { position: "top-right" });
             }
         }
     }

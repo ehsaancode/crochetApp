@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { backendUrl, currency } from '../config'
-import { toast } from 'react-toastify'
+import QToast from '../components/QToast'
 import { MessageSquare, CheckCircle, Package } from 'lucide-react'
 
 const Requests = ({ token }) => {
@@ -16,11 +16,11 @@ const Requests = ({ token }) => {
             if (response.data.success) {
                 setRequests(response.data.requests);
             } else {
-                toast.error(response.data.message);
+                QToast.error(response.data.message, { position: "top-right" });
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.message);
+            QToast.error(error.message, { position: "top-right" });
         }
     }
 
@@ -31,13 +31,13 @@ const Requests = ({ token }) => {
                 { headers: { token } }
             );
             if (response.data.success) {
-                toast.success(response.data.message);
+                QToast.success(response.data.message, { position: "top-right" });
                 fetchRequests();
                 if (action === 'message') {
                     setReplyMessage(prev => ({ ...prev, [`${userId}-${productId}`]: "" }));
                 }
             } else {
-                toast.error(response.data.message);
+                QToast.error(response.data.message, { position: "top-right" });
                 if (action === 'accept' && response.data.message === "Item not found") {
                     // Could mean item was removed from wishlist by user
                     fetchRequests();
@@ -45,7 +45,7 @@ const Requests = ({ token }) => {
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.message);
+            QToast.error(error.message, { position: "top-right" });
         }
     }
 
@@ -84,7 +84,7 @@ const Requests = ({ token }) => {
                                             <span className="select-none">ID:</span>
                                             <span
                                                 className="select-all font-medium text-gray-600 bg-gray-50 px-1 rounded cursor-pointer hover:bg-gray-100 border border-transparent hover:border-gray-200"
-                                                onClick={() => { navigator.clipboard.writeText(pid); toast.success("ID Copied!"); }}
+                                                onClick={() => { navigator.clipboard.writeText(pid); QToast.success("ID Copied!", { position: "top-right" }); }}
                                                 title="Click to copy"
                                             >
                                                 {pid}

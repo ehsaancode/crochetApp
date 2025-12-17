@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom'
 import { Heart, ShoppingBag, AlertCircle } from 'lucide-react'
 import { RainbowButton } from '../components/ui/rainbow-button'
 import FadeContent from './uiComponents/FadeContent'
-import { toast } from 'react-toastify'
+import QToast from './uiComponents/QToast'
 
 const Wishlist = () => {
 

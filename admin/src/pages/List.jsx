@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { backendUrl } from '../config'
 import axios from 'axios'
-import { toast } from 'react-toastify'
+import QToast from '../components/QToast'
 import { X, Pencil } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 
@@ -16,12 +16,12 @@ const List = ({ token }) => {
             if (response.data.success) {
                 setList(response.data.products);
             } else {
-                toast.error(response.data.message)
+                QToast.error(response.data.message, { position: "top-right" })
             }
 
         } catch (error) {
             console.log(error);
-            toast.error(error.message)
+            QToast.error(error.message, { position: "top-right" })
         }
     }
 
@@ -29,14 +29,14 @@ const List = ({ token }) => {
         try {
             const response = await axios.post(backendUrl + '/api/product/remove', { id }, { headers: { token } })
             if (response.data.success) {
-                toast.success(response.data.message)
+                QToast.success(response.data.message, { position: "top-right" })
                 await fetchList();
             } else {
-                toast.error(response.data.message)
+                QToast.error(response.data.message, { position: "top-right" })
             }
         } catch (error) {
             console.log(error);
-            toast.error(error.message)
+            QToast.error(error.message, { position: "top-right" })
         }
     }
 

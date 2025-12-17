@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2 } from 'lucide-react';
-import { toast } from 'react-toastify';
+import QToast from './uiComponents/QToast';
 
 function ProductDetail() {
     const { id } = useParams();
@@ -49,7 +49,7 @@ function ProductDetail() {
             }
         } else {
             navigator.clipboard.writeText(window.location.href);
-            toast.success("Link copied to clipboard!");
+            QToast.success("Link copied to clipboard!", { position: "top-center" });
         }
     };
 

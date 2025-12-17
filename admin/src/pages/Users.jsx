@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { backendUrl } from '../config' // Correct import path based on sibling pages
-import { toast } from 'react-toastify'
+import QToast from '../components/QToast'
 import { User, ShoppingBag, Heart, ChevronDown, ChevronUp } from 'lucide-react'
 
 const Users = ({ token }) => {
@@ -20,7 +20,7 @@ const Users = ({ token }) => {
             ])
 
             if (usersRes.data.success) setUsers(usersRes.data.users)
-            else toast.error(usersRes.data.message)
+            else QToast.error(usersRes.data.message, { position: "top-right" })
 
             if (productsRes.data.success) setProducts(productsRes.data.products)
             // ordersRes might handle success differently or just return list, checking standard pattern
@@ -28,7 +28,7 @@ const Users = ({ token }) => {
 
         } catch (error) {
             console.log(error)
-            toast.error(error.message)
+            QToast.error(error.message, { position: "top-right" })
         } finally {
             setLoading(false)
         }

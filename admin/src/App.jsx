@@ -9,8 +9,7 @@ import Orders from './pages/Orders'
 import Users from './pages/Users'
 import Requests from './pages/Requests'
 import Login from './components/Login'
-import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import QToast from './components/QToast';
 
 export const backendUrl = import.meta.env.VITE_BACKEND_URL;
 
@@ -25,7 +24,7 @@ const App = () => {
 
   return (
     <div className='bg-background min-h-screen app-container'>
-      <ToastContainer position="top-right" theme="dark" />
+      <QToast />
       {token === ""
         ? <Login setToken={setToken} />
         : <>

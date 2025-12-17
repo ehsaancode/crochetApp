@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Upload } from 'lucide-react'
 import axios from 'axios'
 import { backendUrl } from '../config'
-import { toast } from 'react-toastify'
+import QToast from '../components/QToast'
 import { useParams, useNavigate } from 'react-router-dom'
 
 const Edit = ({ token }) => {
@@ -42,11 +42,11 @@ const Edit = ({ token }) => {
                 setSizes(product.sizes);
                 setOldImages(product.image); // Array of URLs
             } else {
-                toast.error(response.data.message)
+                QToast.error(response.data.message, { position: "top-right" })
             }
         } catch (error) {
             console.log(error)
-            toast.error(error.message)
+            QToast.error(error.message, { position: "top-right" })
         }
     }
 
@@ -78,15 +78,15 @@ const Edit = ({ token }) => {
             const response = await axios.post(backendUrl + "/api/product/update", formData, { headers: { token } })
 
             if (response.data.success) {
-                toast.success(response.data.message)
+                QToast.success(response.data.message, { position: "top-right" })
                 navigate('/list');
             } else {
-                toast.error(response.data.message)
+                QToast.error(response.data.message, { position: "top-right" })
             }
 
         } catch (error) {
             console.log(error);
-            toast.error(error.response?.data?.message || error.message)
+            QToast.error(error.response?.data?.message || error.message, { position: "top-right" })
         }
     }
 

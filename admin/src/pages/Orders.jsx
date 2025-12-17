@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { useState } from 'react'
 import axios from 'axios'
 import { backendUrl } from '../config'
-import { toast } from 'react-toastify'
+import QToast from '../components/QToast'
 import { Package } from 'lucide-react'
 
 const Orders = ({ token }) => {
@@ -18,10 +18,10 @@ const Orders = ({ token }) => {
             if (response.data.success) {
                 setOrders(response.data.orders.reverse())
             } else {
-                toast.error(response.data.message)
+                QToast.error(response.data.message, { position: "top-right" })
             }
         } catch (error) {
-            toast.error(error.message)
+            QToast.error(error.message, { position: "top-right" })
         }
     }
 
@@ -33,7 +33,7 @@ const Orders = ({ token }) => {
             }
         } catch (error) {
             console.log(error);
-            toast.error(response.data.message)
+            QToast.error(error.message, { position: "top-right" })
         }
     }
 

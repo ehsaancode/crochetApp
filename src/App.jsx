@@ -14,8 +14,7 @@ import Login from './pages/Login';
 import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
 import { ShopContext } from './context/ShopContext';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import QToast from './pages/uiComponents/QToast';
 
 // Global state to track animation status across navigation (resets on full reload)
 let brandAnimationCompleted = false;
@@ -179,7 +178,7 @@ function App() {
 
     return (
         <ThemeProvider>
-            <ToastContainer position="bottom-right" theme="dark" />
+            <QToast />
             <div className="min-h-screen bg-silk-100 dark:bg-black text-accent-dark dark:text-silk-50 font-sans selection:bg-silk-200 dark:selection:bg-silk-800 transition-colors duration-300">
                 <Navigation />
                 <main className="pb-24 md:pb-0">
