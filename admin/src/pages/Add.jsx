@@ -11,6 +11,18 @@ const Add = ({ token }) => {
     const [image2, setImage2] = useState(false)
     const [image3, setImage3] = useState(false)
     const [image4, setImage4] = useState(false)
+    const [image5, setImage5] = useState(false)
+    const [image6, setImage6] = useState(false)
+
+    const handleImageChange = (e, startIndex) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+        const setters = [setImage1, setImage2, setImage3, setImage4, setImage5, setImage6];
+        files.forEach((file, i) => {
+            const index = startIndex + i;
+            if (index < 6) setters[index](file);
+        });
+    }
 
     const [isUploadPopupOpen, setIsUploadPopupOpen] = useState(false);
     const [isUploadSuccess, setIsUploadSuccess] = useState(false);
@@ -48,6 +60,8 @@ const Add = ({ token }) => {
             image2 && formData.append("image2", image2)
             image3 && formData.append("image3", image3)
             image4 && formData.append("image4", image4)
+            image5 && formData.append("image5", image5)
+            image6 && formData.append("image6", image6)
 
             const response = await axios.post(backendUrl + "/api/product/add", formData, { headers: { token } })
 
@@ -67,6 +81,8 @@ const Add = ({ token }) => {
                     setImage2(false)
                     setImage3(false)
                     setImage4(false)
+                    setImage5(false)
+                    setImage6(false)
                     setPrice('')
                     setShippingFee('')
                     setProductId('')
@@ -98,25 +114,37 @@ const Add = ({ token }) => {
                             <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
                                 {image1 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image1)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
                             </div>
-                            <input onChange={(e) => setImage1(e.target.files[0])} type="file" id="image1" hidden />
+                            <input onChange={(e) => handleImageChange(e, 0)} type="file" id="image1" hidden multiple />
                         </label>
                         <label htmlFor="image2">
                             <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
                                 {image2 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image2)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
                             </div>
-                            <input onChange={(e) => setImage2(e.target.files[0])} type="file" id="image2" hidden />
+                            <input onChange={(e) => handleImageChange(e, 1)} type="file" id="image2" hidden multiple />
                         </label>
                         <label htmlFor="image3">
                             <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
                                 {image3 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image3)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
                             </div>
-                            <input onChange={(e) => setImage3(e.target.files[0])} type="file" id="image3" hidden />
+                            <input onChange={(e) => handleImageChange(e, 2)} type="file" id="image3" hidden multiple />
                         </label>
                         <label htmlFor="image4">
                             <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
                                 {image4 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image4)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
                             </div>
-                            <input onChange={(e) => setImage4(e.target.files[0])} type="file" id="image4" hidden />
+                            <input onChange={(e) => handleImageChange(e, 3)} type="file" id="image4" hidden multiple />
+                        </label>
+                        <label htmlFor="image5">
+                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
+                                {image5 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image5)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
+                            </div>
+                            <input onChange={(e) => handleImageChange(e, 4)} type="file" id="image5" hidden multiple />
+                        </label>
+                        <label htmlFor="image6">
+                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
+                                {image6 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image6)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
+                            </div>
+                            <input onChange={(e) => handleImageChange(e, 5)} type="file" id="image6" hidden multiple />
                         </label>
                     </div>
                 </div>

@@ -9,8 +9,10 @@ const addProduct = async (req, res) => {
         const image2 = req.files.image2 && req.files.image2[0];
         const image3 = req.files.image3 && req.files.image3[0];
         const image4 = req.files.image4 && req.files.image4[0];
+        const image5 = req.files.image5 && req.files.image5[0];
+        const image6 = req.files.image6 && req.files.image6[0];
 
-        const images = [image1, image2, image3, image4].filter((item) => item !== undefined);
+        const images = [image1, image2, image3, image4, image5, image6].filter((item) => item !== undefined);
         // Helper to get image URL (Cloudinary or Local)
         const getFileUrl = (item) => {
             if (item.path && (item.path.startsWith('http:') || item.path.startsWith('https:'))) {
@@ -143,6 +145,8 @@ const updateProduct = async (req, res) => {
         if (req.files.image2) updatedImages[1] = getUrl(req.files.image2[0]);
         if (req.files.image3) updatedImages[2] = getUrl(req.files.image3[0]);
         if (req.files.image4) updatedImages[3] = getUrl(req.files.image4[0]);
+        if (req.files.image5) updatedImages[4] = getUrl(req.files.image5[0]);
+        if (req.files.image6) updatedImages[5] = getUrl(req.files.image6[0]);
 
         // Filter out any potential gaps if the original array was shorter and we added to a later index, 
         // though typically we want to preserve order. 
