@@ -104,7 +104,7 @@ const Add = ({ token }) => {
     }
 
     return (
-        <div className="bg-card rounded-xl shadow-sm border border-border p-6 max-w-4xl">
+        <div className="bg-card m-4 rounded-xl shadow-sm border border-border p-6 max-w-4xl">
             <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-5 text-foreground'>
 
                 <div>

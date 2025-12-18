@@ -43,8 +43,8 @@ const Orders = ({ token }) => {
 
     return (
         <div>
-            <h3 className='mb-4 font-semibold text-lg text-foreground'>Order Page</h3>
-            <div className="flex flex-col gap-4">
+            <h3 className='mb-4 pl-4 font-semibold text-lg text-foreground'>Order Page</h3>
+            <div className="flex flex-col p-4 gap-4">
                 {orders.map((order, index) => (
                     <div className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-4 items-start border border-border bg-card shadow-sm rounded-xl p-6 text-xs sm:text-sm text-muted-foreground' key={index}>
                         <div className="flex justify-center sm:justify-start">

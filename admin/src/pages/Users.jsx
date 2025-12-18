@@ -39,7 +39,7 @@ const Users = ({ token }) => {
     }, [token])
 
     return (
-        <div className='w-full'>
+        <div className='w-full p-4'>
             <p className='mb-4 font-semibold text-lg text-foreground'>Users Management</p>
             <div className='flex flex-col gap-4'>
                 {users.map((user, index) => (

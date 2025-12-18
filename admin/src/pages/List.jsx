@@ -46,8 +46,8 @@ const List = ({ token }) => {
 
     return (
         <>
-            <p className='mb-4 font-semibold text-lg text-foreground'>All Products List</p>
-            <div className='flex flex-col gap-2'>
+            <p className='mb-4 pl-4 font-semibold text-lg text-foreground'>All Products List</p>
+            <div className='flex flex-col p-4 gap-2'>
                 {/* List Table Title */}
                 <div className='hidden md:grid grid-cols-[1fr_3fr_1fr_1fr_1fr] items-center py-3 px-4 border border-border bg-muted/50 rounded-lg text-sm font-medium text-foreground'>
                     <b>Image</b>

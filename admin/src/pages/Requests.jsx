@@ -57,7 +57,7 @@ const Requests = ({ token }) => {
         <div className='p-6'>
             <h2 className='text-2xl font-serif text-silk-900 mb-6'>Product Requests</h2>
 
-            <div className='space-y-6'>
+            <div className='space-y-6 p-4'>
                 {requests.length === 0 ? (
                     <p className='text-gray-500'>No pending requests found.</p>
                 ) : (
