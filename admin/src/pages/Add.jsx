@@ -3,6 +3,7 @@ import { Upload } from 'lucide-react'
 import axios from 'axios'
 import { backendUrl } from '../config'
 import QToast from '../components/QToast'
+import UploadProgressPopup from '../components/UploadProgressPopup'
 
 const Add = ({ token }) => {
 
@@ -10,6 +11,9 @@ const Add = ({ token }) => {
     const [image2, setImage2] = useState(false)
     const [image3, setImage3] = useState(false)
     const [image4, setImage4] = useState(false)
+
+    const [isUploadPopupOpen, setIsUploadPopupOpen] = useState(false);
+    const [isUploadSuccess, setIsUploadSuccess] = useState(false);
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -25,6 +29,9 @@ const Add = ({ token }) => {
         e.preventDefault();
 
         try {
+            setIsUploadPopupOpen(true);
+            setIsUploadSuccess(false);
+
             const formData = new FormData()
 
             formData.append("name", name)
@@ -45,22 +52,33 @@ const Add = ({ token }) => {
             const response = await axios.post(backendUrl + "/api/product/add", formData, { headers: { token } })
 
             if (response.data.success) {
-                QToast.success(response.data.message, { position: "top-right" })
-                setName('')
-                setDescription('')
-                setImage1(false)
-                setImage2(false)
-                setImage3(false)
-                setImage4(false)
-                setPrice('')
-                setShippingFee('')
-                setProductId('')
+                // Show success state in popup
+                setIsUploadSuccess(true);
+
+                // Hide popup after delay and reset form
+                setTimeout(() => {
+                    setIsUploadPopupOpen(false);
+                    setIsUploadSuccess(false);
+                    QToast.success(response.data.message, { position: "top-right" })
+
+                    setName('')
+                    setDescription('')
+                    setImage1(false)
+                    setImage2(false)
+                    setImage3(false)
+                    setImage4(false)
+                    setPrice('')
+                    setShippingFee('')
+                    setProductId('')
+                }, 2000);
             } else {
+                setIsUploadPopupOpen(false); // Close popup on error
                 QToast.error(response.data.message, { position: "top-right" })
             }
 
         } catch (error) {
             console.log(error);
+            setIsUploadPopupOpen(false); // Close popup on error
             QToast.error(error.response?.data?.message || error.message, { position: "top-right" })
         }
     }
@@ -176,6 +194,10 @@ const Add = ({ token }) => {
                 <button type="submit" className='min-w-[120px] py-3 mt-4 bg-silk-600 text-white font-bold rounded-lg hover:bg-silk-700 transition-all shadow-md active:scale-95'>Add Product</button>
 
             </form>
+            <UploadProgressPopup
+                isOpen={isUploadPopupOpen}
+                isSuccess={isUploadSuccess}
+            />
         </div>
     )
 }
