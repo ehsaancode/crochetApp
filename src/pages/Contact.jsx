@@ -30,7 +30,7 @@ function Contact() {
                                     <Mail className="w-4 h-4" />
                                     <span className="text-xs uppercase tracking-widest">Email</span>
                                 </div>
-                                <p className="text-silk-900 font-medium">hello@crochetco.com</p>
+                                <p className="text-silk-900 font-medium">hello@aalaboo.com</p>
                             </div>
                             <div className="space-y-2">
                                 <div className="flex items-center space-x-2 text-silk-400 mb-1">

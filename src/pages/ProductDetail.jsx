@@ -41,7 +41,7 @@ function ProductDetail() {
             try {
                 await navigator.share({
                     title: product.name,
-                    text: `Check out ${product.name} on Crochet & Co.`,
+                    text: `Check out ${product.name} on Aalaboo`,
                     url: window.location.href,
                 });
             } catch (error) {

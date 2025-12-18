@@ -88,7 +88,7 @@ function Home() {
 
             <footer className="bg-silk-900 text-silk-100 py-12 px-6 hidden md:block">
                 <div className="max-w-md mx-auto text-center">
-                    <h4 className="font-serif text-2xl mb-6">Crochet & Co.</h4>
+                    <h4 className="font-serif text-2xl mb-6">Aalaboo</h4>
                     <div className="flex justify-center space-x-6 mb-8">
                         <a href="#" className="hover:text-white transition-colors"><Instagram className="w-5 h-5" /></a>
                         <a href="#" className="hover:text-white transition-colors"><Mail className="w-5 h-5" /></a>
