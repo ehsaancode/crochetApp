@@ -36,9 +36,11 @@ const Cart = () => {
     return (
         <div className='border-t pt-32 px-4 sm:px-12 md:px-24 min-h-[80vh]'>
 
-            <div className='text-2xl mb-3'>
-                <h1 className='font-serif text-3xl text-silk-900 dark:text-silk-50'>YOUR <span className='text-silk-600 font-medium'>CART</span></h1>
-            </div>
+            {cartData.length > 0 && (
+                <div className='text-2xl mb-3'>
+                    <h1 className='font-serif text-3xl text-silk-900 dark:text-silk-50'>YOUR <span className='text-silk-600 font-medium'>CART</span></h1>
+                </div>
+            )}
 
             {cartData.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
