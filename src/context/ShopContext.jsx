@@ -8,8 +8,7 @@ export const ShopContext = createContext();
 const ShopContextProvider = (props) => {
 
     const currency = '₹';
-    // const backendUrl = import.meta.env.VITE_BACKEND_URL
-    const backendUrl = "http://localhost:5000" // Using local backend for development
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
     const [cartItems, setCartItems] = useState({});
