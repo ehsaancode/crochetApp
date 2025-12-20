@@ -5,6 +5,9 @@ import axios from 'axios'
 import QToast from './uiComponents/QToast'
 import FadeContent from './uiComponents/FadeContent'
 import { RainbowButton } from "@/components/ui/rainbow-button"
+import { User, Heart, Package, MapPin, LogOut, Edit2 } from 'lucide-react'
+import Wishlist from './Wishlist'
+import Orders from './Orders'
 
 const Login = () => {
 
@@ -13,6 +16,7 @@ const Login = () => {
     const [currentState, setCurrentState] = useState('Login');
     const [userData, setUserData] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
+    const [activeTab, setActiveTab] = useState('profile');
 
     // Form States
     const [name, setName] = useState('');
@@ -75,7 +79,6 @@ const Login = () => {
             if (response.data.success) {
                 setUserData(response.data.user);
                 // Pre-fill edit form
-                // ... (rest of the logic remains same, just ensuring we don't need to repeat it in instruction if replace content is full block)
                 setName(response.data.user.name);
                 setEmail(response.data.user.email);
                 setPhone(response.data.user.phone || '');
@@ -138,145 +141,181 @@ const Login = () => {
 
     if (token && userData) {
         return (
-            <div className='min-h-screen pt-32 pb-12 px-4 max-w-4xl mx-auto flex items-center justify-center'>
+            <div className='min-h-screen pt-24 pb-12 px-4 max-w-7xl mx-auto'>
                 <FadeContent blur={true} duration={0.6}>
-                    <div className='relative bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark rounded-2xl p-8 shadow-xl border border-silk-200 dark:border-silk-blue-border w-full'>
+                    <div className='flex flex-col lg:flex-row gap-8'>
 
-                        <div className="absolute top-4 right-4 z-10">
-                            <button onClick={logout} className='text-red-500 hover:text-red-700 text-xs font-medium uppercase tracking-wider'>Sign Out</button>
-                        </div>
-
-                        {!isEditing ? (
-                            <div className='flex flex-col gap-8'>
-                                {/* Section 1: Identity */}
-                                <div className='flex flex-col items-center text-center'>
-                                    <div className='w-32 h-32 rounded-full bg-silk-100 dark:bg-black/40 flex items-center justify-center text-4xl text-silk-900 dark:text-silk-100 font-serif border-2 border-silk-200 dark:border-silk-blue-border overflow-hidden shadow-lg'>
-                                        {userData.image ? (
-                                            <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
-                                        ) : (
-                                            userData.name.charAt(0).toUpperCase()
-                                        )}
-                                    </div>
-                                    <h2 className='text-3xl font-serif text-silk-900 dark:text-white mt-4 mb-1'>{userData.name}</h2>
-                                    <p className='text-silk-600 dark:text-silk-200'>{userData.email}</p>
-                                </div>
-
-                                {/* Section 2: Account Details */}
-                                <div className='w-full'>
-                                    <h3 className='text-lg font-serif text-silk-900 dark:text-silk-100 border-b border-silk-200 dark:border-silk-blue-border pb-2 text-center mb-6'>Account Information</h3>
-
-                                    <div className='flex flex-wrap gap-4 justify-center'>
-                                        <div className='flex-1 min-w-[250px] p-4 bg-white/50 dark:bg-black/20 backdrop-blur-sm rounded-xl border border-silk-100 dark:border-silk-blue-border/30 transition-all hover:bg-white/80 dark:hover:bg-black/40'>
-                                            <p className='text-xs text-silk-500 dark:text-silk-400 uppercase tracking-widest mb-1'>Phone</p>
-                                            <p className='text-silk-900 dark:text-silk-100 font-medium break-words'>{userData.phone || 'Not set'}</p>
-                                        </div>
-
-                                        <div className='flex-1 min-w-[250px] p-4 bg-white/50 dark:bg-black/20 backdrop-blur-sm rounded-xl border border-silk-100 dark:border-silk-blue-border/30 transition-all hover:bg-white/80 dark:hover:bg-black/40'>
-                                            <p className='text-xs text-silk-500 dark:text-silk-400 uppercase tracking-widest mb-1'>Street Address</p>
-                                            <p className='text-silk-900 dark:text-silk-100 font-medium break-words'>{userData.address?.street || 'Not set'}</p>
-                                        </div>
-
-                                        <div className='flex-1 min-w-[250px] p-4 bg-white/50 dark:bg-black/20 backdrop-blur-sm rounded-xl border border-silk-100 dark:border-silk-blue-border/30 transition-all hover:bg-white/80 dark:hover:bg-black/40'>
-                                            <p className='text-xs text-silk-500 dark:text-silk-400 uppercase tracking-widest mb-1'>City</p>
-                                            <p className='text-silk-900 dark:text-silk-100 font-medium break-words'>{userData.address?.city || 'Not set'}</p>
-                                        </div>
-
-                                        <div className='flex-1 min-w-[250px] p-4 bg-white/50 dark:bg-black/20 backdrop-blur-sm rounded-xl border border-silk-100 dark:border-silk-blue-border/30 transition-all hover:bg-white/80 dark:hover:bg-black/40'>
-                                            <p className='text-xs text-silk-500 dark:text-silk-400 uppercase tracking-widest mb-1'>State/Province</p>
-                                            <p className='text-silk-900 dark:text-silk-100 font-medium break-words'>{userData.address?.state || 'Not set'}</p>
-                                        </div>
-
-                                        <div className='flex-1 min-w-[250px] p-4 bg-white/50 dark:bg-black/20 backdrop-blur-sm rounded-xl border border-silk-100 dark:border-silk-blue-border/30 transition-all hover:bg-white/80 dark:hover:bg-black/40'>
-                                            <p className='text-xs text-silk-500 dark:text-silk-400 uppercase tracking-widest mb-1'>Zip Code</p>
-                                            <p className='text-silk-900 dark:text-silk-100 font-medium break-words'>{userData.address?.zip || 'Not set'}</p>
-                                        </div>
-
-                                        <div className='flex-1 min-w-[250px] p-4 bg-white/50 dark:bg-black/20 backdrop-blur-sm rounded-xl border border-silk-100 dark:border-silk-blue-border/30 transition-all hover:bg-white/80 dark:hover:bg-black/40'>
-                                            <p className='text-xs text-silk-500 dark:text-silk-400 uppercase tracking-widest mb-1'>Country</p>
-                                            <p className='text-silk-900 dark:text-silk-100 font-medium break-words'>{userData.address?.country || 'Not set'}</p>
+                        {/* Sidebar / Top Compact Profile */}
+                        <div className='w-full lg:w-1/4 flex flex-col gap-6'>
+                            <div className='bg-silk-50 dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-silk-100 dark:border-gray-800 text-center relative overflow-hidden'>
+                                <div className='absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-silk-200 to-silk-300 dark:from-gray-800 dark:to-gray-700 opacity-30'></div>
+                                <div className='relative z-10 flex flex-col items-center mt-8 space-y-3'>
+                                    <div className='w-24 h-24 rounded-full bg-white dark:bg-gray-800 p-1 shadow-md'>
+                                        <div className='w-full h-full rounded-full overflow-hidden bg-silk-100 dark:bg-gray-700 flex items-center justify-center text-3xl font-serif'>
+                                            {userData.image ? (
+                                                <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
+                                            ) : (
+                                                userData.name.charAt(0).toUpperCase()
+                                            )}
                                         </div>
                                     </div>
-
-                                    <div className='mt-8 flex justify-center'>
-                                        <div onClick={() => setIsEditing(true)}>
-                                            <RainbowButton className="w-full sm:w-auto">Edit Details</RainbowButton>
-                                        </div>
+                                    <div>
+                                        <h2 className='text-xl font-bold text-silk-900 dark:text-white'>{userData.name}</h2>
+                                        <p className='text-sm text-silk-500 dark:text-silk-400'>{userData.email}</p>
                                     </div>
-
-                                    {/* Mobile Only: About & Contact */}
-                                    <div className="grid grid-cols-2 gap-4 mt-2 md:hidden border-t border-silk-200 dark:border-silk-blue-border pt-6">
-                                        <Link to="/about" className="flex items-center justify-center py-3 px-4 border border-silk-200 dark:border-silk-blue-border rounded-xl text-silk-900 dark:text-silk-100 font-medium hover:bg-silk-100 dark:hover:bg-white/10 transition-colors bg-white/40 dark:bg-black/20 text-sm">
-                                            About Us
-                                        </Link>
-                                        <Link to="/contact" className="flex items-center justify-center py-3 px-4 border border-silk-200 dark:border-silk-blue-border rounded-xl text-silk-900 dark:text-silk-100 font-medium hover:bg-silk-100 dark:hover:bg-white/10 transition-colors bg-white/40 dark:bg-black/20 text-sm">
-                                            Contact
-                                        </Link>
-                                    </div>
+                                    <button onClick={logout} className='flex items-center gap-2 text-sm text-red-500 hover:text-red-700 font-medium px-4 py-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors mt-2'>
+                                        <LogOut className='w-4 h-4' /> Sign Out
+                                    </button>
                                 </div>
                             </div>
-                        ) : (
-                            <form onSubmit={updateProfileHandler} className='flex flex-col items-center gap-6 animate-fade-in'>
-                                {/* Editable Image Section */}
-                                <label htmlFor="profile-image-upload" className="cursor-pointer relative group">
-                                    <div className='w-32 h-32 rounded-full bg-silk-100 dark:bg-black/40 flex items-center justify-center text-4xl text-silk-900 dark:text-silk-100 font-serif border-2 border-silk-200 dark:border-silk-blue-border overflow-hidden shadow-lg relative'>
-                                        {image ? (
-                                            <img src={URL.createObjectURL(image)} alt="Profile" className="w-full h-full object-cover" />
-                                        ) : userData.image ? (
-                                            <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
-                                        ) : (
-                                            userData.name.charAt(0).toUpperCase()
-                                        )}
 
-                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-100 transition-opacity">
-                                            <span className="text-white text-xl">✏️</span>
-                                        </div>
-                                    </div>
-                                    <input type="file" id="profile-image-upload" hidden onChange={(e) => setImage(e.target.files[0])} />
-                                    <p className='text-center text-sm text-silk-600 dark:text-silk-400 mt-2'>Change Picture</p>
-                                </label>
+                            {/* Tab Navigation */}
+                            <div className='bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-silk-100 dark:border-gray-800 overflow-hidden flex flex-row lg:flex-col'>
+                                <button
+                                    onClick={() => setActiveTab('profile')}
+                                    className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-colors ${activeTab === 'profile' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white border-b-2 lg:border-b-0 lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+                                >
+                                    <User className='w-5 h-5' /> <span className='hidden sm:inline'>Profile</span>
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('wishlist')}
+                                    className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-colors ${activeTab === 'wishlist' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white border-b-2 lg:border-b-0 lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+                                >
+                                    <Heart className='w-5 h-5' /> <span className='hidden sm:inline'>Wishlist</span>
+                                </button>
+                                <button
+                                    onClick={() => setActiveTab('orders')}
+                                    className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-colors ${activeTab === 'orders' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white border-b-2 lg:border-b-0 lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+                                >
+                                    <Package className='w-5 h-5' /> <span className='hidden sm:inline'>Orders</span>
+                                </button>
+                            </div>
+                        </div>
 
-                                <div className='w-full grid grid-cols-1 gap-4'>
-                                    <div>
-                                        <label className='block text-sm font-medium text-silk-700 dark:text-silk-300 mb-1'>Full Name</label>
-                                        <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-4 py-2 rounded-lg border border-silk-200 dark:border-silk-blue-border bg-white/60 dark:bg-black/30 backdrop-blur-sm text-silk-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                        {/* Content Area */}
+                        <div className='flex-1 lg:w-3/4'>
+                            {activeTab === 'profile' && (
+                                <div className='bg-white dark:bg-gray-900 rounded-2xl p-6 md:p-8 shadow-sm border border-silk-100 dark:border-gray-800 animate-fade-in'>
+                                    <div className='flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800'>
+                                        <h3 className='text-xl font-serif text-silk-900 dark:text-white'>Profile Details</h3>
+                                        <button onClick={() => setIsEditing(!isEditing)} className='flex items-center gap-2 text-silk-600 hover:text-silk-900 dark:text-silk-400 dark:hover:text-white transition-colors'>
+                                            <Edit2 className='w-4 h-4' /> {isEditing ? 'Cancel Edit' : 'Edit'}
+                                        </button>
                                     </div>
-                                    <div>
-                                        <label className='block text-sm font-medium text-silk-700 dark:text-silk-300 mb-1'>Phone Number</label>
-                                        <input onChange={(e) => setPhone(e.target.value)} value={phone} type="text" className='w-full px-4 py-2 rounded-lg border border-silk-200 dark:border-silk-blue-border bg-white/60 dark:bg-black/30 backdrop-blur-sm text-silk-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                    </div>
-                                    <div>
-                                        <label className='block text-sm font-medium text-silk-700 dark:text-silk-300 mb-1'>Street Address</label>
-                                        <input onChange={(e) => setStreet(e.target.value)} value={street} type="text" className='w-full px-4 py-2 rounded-lg border border-silk-200 dark:border-silk-blue-border bg-white/60 dark:bg-black/30 backdrop-blur-sm text-silk-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                    </div>
-                                    <div className='grid grid-cols-2 gap-4'>
-                                        <div>
-                                            <label className='block text-sm font-medium text-silk-700 dark:text-silk-300 mb-1'>City</label>
-                                            <input onChange={(e) => setCity(e.target.value)} value={city} type="text" className='w-full px-4 py-2 rounded-lg border border-silk-200 dark:border-silk-blue-border bg-white/60 dark:bg-black/30 backdrop-blur-sm text-silk-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+
+                                    {!isEditing ? (
+                                        <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
+                                            <div className='space-y-6'>
+                                                <div>
+                                                    <p className='text-xs text-gray-500 uppercase tracking-widest mb-1'>Full Name</p>
+                                                    <p className='font-medium text-lg text-gray-900 dark:text-white'>{userData.name}</p>
+                                                </div>
+                                                <div>
+                                                    <p className='text-xs text-gray-500 uppercase tracking-widest mb-1'>Email Address</p>
+                                                    <p className='font-medium text-lg text-gray-900 dark:text-white'>{userData.email}</p>
+                                                </div>
+                                                <div>
+                                                    <p className='text-xs text-gray-500 uppercase tracking-widest mb-1'>Phone</p>
+                                                    <p className='font-medium text-lg text-gray-900 dark:text-white'>{userData.phone || 'Not set'}</p>
+                                                </div>
+                                            </div>
+                                            <div className='space-y-6'>
+                                                <div className='flex items-start gap-3'>
+                                                    <MapPin className='w-5 h-5 text-silk-600 mt-1' />
+                                                    <div>
+                                                        <p className='text-xs text-gray-500 uppercase tracking-widest mb-1'>Address</p>
+                                                        <p className='font-medium text-gray-900 dark:text-white'>
+                                                            {userData.address ? (
+                                                                <>
+                                                                    {userData.address.street}<br />
+                                                                    {userData.address.city}, {userData.address.state}<br />
+                                                                    {userData.address.zip}, {userData.address.country}
+                                                                </>
+                                                            ) : 'No address saved'}
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
                                         </div>
-                                        <div>
-                                            <label className='block text-sm font-medium text-silk-700 dark:text-silk-300 mb-1'>State</label>
-                                            <input onChange={(e) => setState(e.target.value)} value={state} type="text" className='w-full px-4 py-2 rounded-lg border border-silk-200 dark:border-silk-blue-border bg-white/60 dark:bg-black/30 backdrop-blur-sm text-silk-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                        </div>
-                                    </div>
-                                    <div className='grid grid-cols-2 gap-4'>
-                                        <div>
-                                            <label className='block text-sm font-medium text-silk-700 dark:text-silk-300 mb-1'>Zip Code</label>
-                                            <input onChange={(e) => setZip(e.target.value)} value={zip} type="text" className='w-full px-4 py-2 rounded-lg border border-silk-200 dark:border-silk-blue-border bg-white/60 dark:bg-black/30 backdrop-blur-sm text-silk-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                        </div>
-                                        <div>
-                                            <label className='block text-sm font-medium text-silk-700 dark:text-silk-300 mb-1'>Country</label>
-                                            <input onChange={(e) => setCountry(e.target.value)} value={country} type="text" className='w-full px-4 py-2 rounded-lg border border-silk-200 dark:border-silk-blue-border bg-white/60 dark:bg-black/30 backdrop-blur-sm text-silk-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                        </div>
-                                    </div>
+                                    ) : (
+                                        <form onSubmit={updateProfileHandler} className='flex flex-col gap-6'>
+                                            {/* Editable Image Section */}
+                                            <label htmlFor="profile-image-upload" className="cursor-pointer relative group w-24 h-24 mx-auto">
+                                                <div className='w-full h-full rounded-full overflow-hidden bg-silk-100 dark:bg-gray-700 relative border-2 border-dashed border-silk-300'>
+                                                    {image ? (
+                                                        <img src={URL.createObjectURL(image)} alt="Profile" className="w-full h-full object-cover" />
+                                                    ) : userData.image ? (
+                                                        <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
+                                                    ) : (
+                                                        <div className='w-full h-full flex items-center justify-center text-2xl font-serif'>{userData.name.charAt(0)}</div>
+                                                    )}
+                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                                                        <Edit2 className="w-6 h-6 text-white" />
+                                                    </div>
+                                                </div>
+                                                <input type="file" id="profile-image-upload" hidden onChange={(e) => setImage(e.target.files[0])} />
+                                            </label>
+
+                                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
+                                                <div>
+                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Full Name</label>
+                                                    <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                                </div>
+                                                <div>
+                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Phone</label>
+                                                    <input onChange={(e) => setPhone(e.target.value)} value={phone} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                                </div>
+                                                <div className='md:col-span-2'>
+                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Street Address</label>
+                                                    <input onChange={(e) => setStreet(e.target.value)} value={street} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                                </div>
+                                                <div>
+                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>City</label>
+                                                    <input onChange={(e) => setCity(e.target.value)} value={city} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                                </div>
+                                                <div>
+                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>State</label>
+                                                    <input onChange={(e) => setState(e.target.value)} value={state} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                                </div>
+                                                <div>
+                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Zip Code</label>
+                                                    <input onChange={(e) => setZip(e.target.value)} value={zip} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                                </div>
+                                                <div>
+                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Country</label>
+                                                    <input onChange={(e) => setCountry(e.target.value)} value={country} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                                </div>
+                                            </div>
+                                            <div className='flex gap-4 mt-6'>
+                                                <RainbowButton type='submit'>Save Changes</RainbowButton>
+                                                <button type='button' onClick={() => setIsEditing(false)} className='px-6 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'>Cancel</button>
+                                            </div>
+                                        </form>
+                                    )}
                                 </div>
+                            )}
 
-                                <div className='flex gap-4 mt-4'>
-                                    <RainbowButton type='submit'>Save</RainbowButton>
-                                    <button type='button' onClick={() => setIsEditing(false)} className='px-6 py-2 border border-silk-300 dark:border-silk-blue-border text-silk-900 dark:text-white rounded-full hover:bg-silk-50 dark:hover:bg-black/40 transition-colors'>Cancel</button>
+                            {/* Wishlist Tab Content */}
+                            {activeTab === 'wishlist' && (
+                                <div className='bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-silk-100 dark:border-gray-800 overflow-hidden min-h-[500px]'>
+                                    {/* Hacking styles to make Wishlist fit cleaner: Using css modules often better but here we just render it. 
+                                        Since Wishlist has its own container logic, it might have double padding. 
+                                        Ideally we'd pass a "compact" prop, but for now let's just see. 
+                                        We might need to adjust Wishlist.jsx if it renders a full page structure.
+                                        Wishlist.jsx starts with `pt-14`. We might want to remove that top padding with a prop.
+                                    */}
+                                    <Wishlist compact={true} />
                                 </div>
-                            </form>
-                        )}
+                            )}
 
+                            {/* Orders Tab Content */}
+                            {activeTab === 'orders' && (
+                                <div className='bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-silk-100 dark:border-gray-800 overflow-hidden min-h-[500px]'>
+                                    {/* Similarly for Orders */}
+                                    <Orders compact={true} />
+                                </div>
+                            )}
+                        </div>
                     </div>
                 </FadeContent>
             </div>
@@ -287,6 +326,7 @@ const Login = () => {
         <div className='min-h-screen pt-32 pb-12 flex items-center justify-center px-4'>
             <FadeContent blur={true} duration={0.6}>
                 <form onSubmit={onSubmitHandler} className='flex flex-col items-center w-full max-w-md m-auto bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark rounded-2xl p-8 shadow-2xl border border-silk-200 dark:border-silk-blue-border text-silk-800 dark:text-gray-200'>
+                    {/* ... (Keep existing login form code) ... */}
                     <div className='inline-flex items-center gap-2 mb-6'>
                         <p className='font-serif text-3xl font-medium text-silk-900 dark:text-white'>{currentState}</p>
                         <hr className='border-none h-[1.5px] w-8 bg-silk-900 dark:bg-white' />

@@ -158,6 +158,33 @@ const updateProfile = async (req, res) => {
     }
 }
 
+// Add new address
+const addAddress = async (req, res) => {
+    try {
+        const userId = req.userId || req.body.userId;
+        let { address } = req.body;
+
+        if (typeof address === 'string') {
+            try {
+                address = JSON.parse(address);
+            } catch (e) {
+                return res.json({ success: false, message: "Invalid address format" });
+            }
+        }
+
+        const user = await userModel.findById(userId);
+        let addresses = user.addresses || [];
+        addresses.push(address);
+
+        await userModel.findByIdAndUpdate(userId, { addresses });
+        res.json({ success: true, message: "Address added successfully", addresses });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
 // Route for getting all users (Admin)
 const allUsers = async (req, res) => {
     try {
@@ -343,4 +370,4 @@ const handleRequest = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest };
+module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest, addAddress };

@@ -6,6 +6,11 @@ import { ShopContext } from '../context/ShopContext';
 function Collection() {
     const { products, userData, addToWishlist, removeFromWishlist } = useContext(ShopContext);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+    const isVideo = (url) => {
+        if (!url) return false;
+        return url.match(/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i) || url.includes('/video/upload/');
+    };
     const [priceRange, setPriceRange] = useState(2000);
     const [isScrolled, setIsScrolled] = useState(false);
     const [visibleProducts, setVisibleProducts] = useState(12);
@@ -159,7 +164,11 @@ function Collection() {
                                         />
                                     </button>
                                     <div className="w-full h-full bg-silk-200 dark:bg-gray-900 group-hover:scale-105 transition-transform duration-700 ease-out">
-                                        <img src={item.image[0]} alt={item.name} className="w-full h-full object-cover" />
+                                        {isVideo(item.image[0]) ? (
+                                            <video src={item.image[0]} className="w-full h-full object-cover" muted loop autoPlay playsInline />
+                                        ) : (
+                                            <img src={item.image[0]} alt={item.name} className="w-full h-full object-cover" />
+                                        )}
                                     </div>
                                     <button className="absolute bottom-4 right-4 w-10 h-10 bg-white text-silk-900 rounded-full flex items-center justify-center shadow-lg translate-y-14 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-100 hover:bg-silk-900 hover:text-white">
                                         <ShoppingBag className="w-5 h-5" strokeWidth={1.5} />

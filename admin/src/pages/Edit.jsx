@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Upload } from 'lucide-react'
+import { Upload, X } from 'lucide-react'
 import axios from 'axios'
 import { backendUrl } from '../config'
 import QToast from '../components/QToast'
@@ -10,13 +10,9 @@ const Edit = ({ token }) => {
     const { id } = useParams();
     const navigate = useNavigate();
 
-    const [image1, setImage1] = useState(false)
-    const [image2, setImage2] = useState(false)
-    const [image3, setImage3] = useState(false)
-    const [image4, setImage4] = useState(false)
-
-    // Store original URLs for preview if no new file selected
+    const [images, setImages] = useState([false, false, false, false, false, false]);
     const [oldImages, setOldImages] = useState([]);
+    const [deletedIndices, setDeletedIndices] = useState([]);
 
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
@@ -69,11 +65,13 @@ const Edit = ({ token }) => {
             formData.append("subCategory", subCategory)
             formData.append("bestseller", bestseller)
             formData.append("sizes", JSON.stringify(sizes))
+            formData.append("deletedIndices", JSON.stringify(deletedIndices))
 
-            image1 && formData.append("image1", image1)
-            image2 && formData.append("image2", image2)
-            image3 && formData.append("image3", image3)
-            image4 && formData.append("image4", image4)
+            images.forEach((image, index) => {
+                if (image) {
+                    formData.append(`image${index + 1}`, image);
+                }
+            });
 
             const response = await axios.post(backendUrl + "/api/product/update", formData, { headers: { token } })
 
@@ -102,61 +100,75 @@ const Edit = ({ token }) => {
                 <div>
                     <h3 className='text-lg font-semibold mb-4'>Upload Images (Click to replace)</h3>
                     <div className='flex gap-4 flex-wrap'>
-                        {/* Image 1 */}
-                        <label htmlFor="image1">
-                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
-                                {image1 ? (
-                                    <img className='w-full h-full object-cover' src={URL.createObjectURL(image1)} alt="" />
-                                ) : oldImages[0] ? (
-                                    <img className='w-full h-full object-cover' src={oldImages[0]} alt="" />
-                                ) : (
-                                    <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />
-                                )}
-                            </div>
-                            <input onChange={(e) => setImage1(e.target.files[0])} type="file" id="image1" hidden />
-                        </label>
+                        {/* Images 1-6 */}
+                        {images.map((img, index) => {
+                            const showOldImage = !img && oldImages[index] && !deletedIndices.includes(index);
+                            const showNewImage = !!img;
+                            const showUpload = !showOldImage && !showNewImage;
 
-                        {/* Image 2 */}
-                        <label htmlFor="image2">
-                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
-                                {image2 ? (
-                                    <img className='w-full h-full object-cover' src={URL.createObjectURL(image2)} alt="" />
-                                ) : oldImages[1] ? (
-                                    <img className='w-full h-full object-cover' src={oldImages[1]} alt="" />
-                                ) : (
-                                    <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />
-                                )}
-                            </div>
-                            <input onChange={(e) => setImage2(e.target.files[0])} type="file" id="image2" hidden />
-                        </label>
+                            const isVideo = (fileOrUrl) => {
+                                if (!fileOrUrl) return false;
+                                if (typeof fileOrUrl === 'string') {
+                                    const ext = fileOrUrl.split('.').pop().toLowerCase();
+                                    return ['mp4', 'webm', 'ogg', 'mov', 'avi', 'mkv'].includes(ext) || fileOrUrl.includes('/video/');
+                                }
+                                return fileOrUrl.type?.startsWith('video/');
+                            };
 
-                        {/* Image 3 */}
-                        <label htmlFor="image3">
-                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
-                                {image3 ? (
-                                    <img className='w-full h-full object-cover' src={URL.createObjectURL(image3)} alt="" />
-                                ) : oldImages[2] ? (
-                                    <img className='w-full h-full object-cover' src={oldImages[2]} alt="" />
-                                ) : (
-                                    <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />
-                                )}
-                            </div>
-                            <input onChange={(e) => setImage3(e.target.files[0])} type="file" id="image3" hidden />
-                        </label>
+                            const mediaSource = showNewImage ? URL.createObjectURL(img) : showOldImage ? oldImages[index] : null;
+                            const isMediaVideo = isVideo(showNewImage ? img : (showOldImage ? oldImages[index] : null));
 
-                        {/* Image 4 */}
-                        <label htmlFor="image4">
-                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
-                                {image4 ? (
-                                    <img className='w-full h-full object-cover' src={URL.createObjectURL(image4)} alt="" />
-                                ) : oldImages[3] ? (
-                                    <img className='w-full h-full object-cover' src={oldImages[3]} alt="" />
-                                ) : (
-                                    <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />
-                                )}
-                            </div>
-                            <input onChange={(e) => setImage4(e.target.files[0])} type="file" id="image4" hidden />
-                        </label>
+
+                            return (
+                                <div key={index} className='relative group'>
+                                    <label htmlFor={`image${index}`}>
+                                        <div className={`w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden relative ${!showUpload ? 'border-solid' : ''}`}>
+                                            {showNewImage || showOldImage ? (
+                                                isMediaVideo ? (
+                                                    <video className='w-full h-full object-cover' src={mediaSource} muted loop autoPlay />
+                                                ) : (
+                                                    <img className='w-full h-full object-cover' src={mediaSource} alt={`Preview ${index}`} />
+                                                )
+                                            ) : (
+                                                <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />
+                                            )}
+                                        </div>
+                                        <input
+                                            onChange={(e) => {
+                                                const file = e.target.files[0];
+                                                if (file) {
+                                                    const newImages = [...images];
+                                                    newImages[index] = file;
+                                                    setImages(newImages);
+                                                }
+                                            }}
+                                            type="file"
+                                            id={`image${index}`}
+                                            accept="image/*,video/*"
+                                            hidden
+                                        />
+                                    </label>
+                                    {(showNewImage || showOldImage) && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (showNewImage) {
+                                                    const newImages = [...images];
+                                                    newImages[index] = false;
+                                                    setImages(newImages);
+                                                } else {
+                                                    setDeletedIndices(prev => [...prev, index]);
+                                                }
+                                            }}
+                                            className='absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 shadow-md hover:bg-destructive/90 transition-colors z-10'
+                                            title="Remove media"
+                                        >
+                                            <X className='w-3 h-3' />
+                                        </button>
+                                    )}
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
 

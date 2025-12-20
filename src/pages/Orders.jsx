@@ -1,0 +1,164 @@
+import React, { useContext, useEffect, useState } from 'react'
+import { ShopContext } from '../context/ShopContext'
+import axios from 'axios';
+import { Package, Star, X } from 'lucide-react';
+import QToast from './uiComponents/QToast';
+
+const Orders = ({ compact }) => {
+
+    const { backendUrl, token, currency, getProductsData } = useContext(ShopContext);
+    const [orderData, setOrderData] = useState([])
+
+    // Review Modal State
+    const [isReviewOpen, setIsReviewOpen] = useState(false);
+    const [reviewData, setReviewData] = useState({ productId: '', rating: 0, comment: '' });
+
+    const loadOrderData = async () => {
+        try {
+            if (!token) {
+                return null
+            }
+
+            const response = await axios.post(backendUrl + '/api/order/userorders', {}, { headers: { token } })
+            if (response.data.success) {
+                let allOrdersItem = []
+                response.data.orders.map((order) => {
+                    order.items.map((item) => {
+                        item['status'] = order.status
+                        item['payment'] = order.payment
+                        item['paymentMethod'] = order.paymentMethod
+                        item['date'] = order.date
+                        allOrdersItem.push(item)
+                    })
+                })
+                setOrderData(allOrdersItem.reverse())
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const openReviewModal = (productId) => {
+        setReviewData({ productId, rating: 5, comment: '' });
+        setIsReviewOpen(true);
+    };
+
+    const handleReviewSubmit = async () => {
+        try {
+            const response = await axios.post(backendUrl + '/api/product/review', reviewData, { headers: { token } });
+            if (response.data.success) {
+                QToast.success("Review submitted successfully", { position: "top-center" });
+                setIsReviewOpen(false);
+                getProductsData(); // Refresh products to update ratings
+            } else {
+                QToast.error(response.data.message, { position: "top-right" });
+            }
+        } catch (error) {
+            console.log(error);
+            QToast.error(error.message, { position: "top-right" });
+        }
+    }
+
+    useEffect(() => {
+        loadOrderData()
+    }, [token])
+
+    return (
+        <div className={compact ? 'p-6' : 'border-t pt-24 px-4 sm:px-12 md:px-24 min-h-[80vh]'}>
+
+            {!compact && (
+                <div className='text-2xl mb-8'>
+                    <h2 className='font-serif text-3xl text-silk-900 dark:text-silk-50'>MY <span className='text-silk-600 font-medium'>ORDERS</span></h2>
+                </div>
+            )}
+
+            <div className='flex flex-col gap-4'>
+                {orderData.length === 0 ? (
+                    <div className={`flex flex-col items-center justify-center text-center animate-fade-in ${compact ? 'py-12' : 'py-20'}`}>
+                        <Package className={`text-silk-200 mb-4 ${compact ? 'w-12 h-12' : 'w-16 h-16'}`} />
+                        <h3 className="text-xl font-medium text-silk-900 dark:text-silk-50 mb-2">No orders yet</h3>
+                        <p className="text-silk-500 mb-6">Looks like you haven't placed any orders yet.</p>
+                    </div>
+                ) : (
+                    orderData.map((item, index) => (
+                        <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
+                            <div className='flex items-start gap-6 text-sm'>
+                                <img className='w-16 sm:w-20' src={item.image[0]} alt="" />
+                                <div>
+                                    <p className='sm:text-base font-medium'>{item.name}</p>
+                                    <div className='flex items-center gap-3 mt-1 text-base text-gray-700 dark:text-gray-300'>
+                                        <p>{currency}{item.price}</p>
+                                        <p>Quantity: {item.quantity}</p>
+                                        <p>Size: {item.size}</p>
+                                    </div>
+                                    <p className='mt-1'>Date: <span className='text-gray-400'>{new Date(item.date).toDateString()}</span></p>
+                                    <p className='mt-1'>Payment: <span className='text-gray-400'>{item.paymentMethod}</span></p>
+                                </div>
+                            </div>
+                            <div className='md:w-1/2 flex justify-between'>
+                                <div className='flex items-center gap-2'>
+                                    <p className={`min-w-2 h-2 rounded-full ${item.status === 'Delivered' ? 'bg-green-500' : 'bg-green-500'}`}></p>
+                                    <p className='text-sm md:text-base'>{item.status}</p>
+                                </div>
+                                {item.status === 'Delivered' ? (
+                                    <button
+                                        onClick={() => openReviewModal(item._id)}
+                                        className='border px-4 py-2 text-sm font-medium rounded-sm border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
+                                    >
+                                        Write a Review
+                                    </button>
+                                ) : (
+                                    <button onClick={loadOrderData} className='border px-4 py-2 text-sm font-medium rounded-sm border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all'>Track Order</button>
+                                )}
+                            </div>
+                        </div>
+                    ))
+                )}
+            </div>
+
+            {/* Review Modal */}
+            {isReviewOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+                    <div className="bg-white dark:bg-[#1a1a1a] p-6 rounded-xl w-full max-w-md shadow-2xl animate-fade-in relative">
+                        <button
+                            onClick={() => setIsReviewOpen(false)}
+                            className="absolute top-4 right-4 text-gray-400 hover:text-black dark:hover:text-white"
+                        >
+                            <X className="w-5 h-5" />
+                        </button>
+                        <h3 className="text-xl font-serif mb-4 text-silk-900 dark:text-white">Write a Review</h3>
+
+                        <div className="flex flex-col gap-4">
+                            {/* Star Rating */}
+                            <div className="flex gap-1 justify-center py-2">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <Star
+                                        key={star}
+                                        className={`w-8 h-8 cursor-pointer transition-colors ${reviewData.rating >= star ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
+                                        onClick={() => setReviewData({ ...reviewData, rating: star })}
+                                    />
+                                ))}
+                            </div>
+
+                            <textarea
+                                className="w-full p-3 border rounded-lg h-32 resize-none focus:outline-none focus:border-silk-500 dark:bg-black dark:border-gray-700 dark:text-white"
+                                placeholder="Share your thoughts about the product..."
+                                value={reviewData.comment}
+                                onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
+                            />
+
+                            <button
+                                onClick={handleReviewSubmit}
+                                className="w-full bg-silk-900 text-white py-3 rounded-lg hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-colors"
+                            >
+                                Submit Review
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+
+export default Orders

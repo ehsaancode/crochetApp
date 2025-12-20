@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
+import { useDrag } from '@use-gesture/react';
 import { useParams, Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
-import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2 } from 'lucide-react';
+import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, Maximize2, X } from 'lucide-react';
 import QToast from './uiComponents/QToast';
 
 function ProductDetail() {
@@ -11,6 +12,7 @@ function ProductDetail() {
     const [activeImage, setActiveImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [size, setSize] = useState("");
+    const [isFullscreen, setIsFullscreen] = useState(false);
 
     const fetchProductData = async () => {
         products.map((item) => {
@@ -58,6 +60,31 @@ function ProductDetail() {
         window.scrollTo(0, 0);
     }, [id]);
 
+    const nextImage = () => {
+        if (product && product.image) {
+            setActiveImage((prev) => (prev + 1) % product.image.length);
+        }
+    };
+
+    const prevImage = () => {
+        if (product && product.image) {
+            setActiveImage((prev) => (prev - 1 + product.image.length) % product.image.length);
+        }
+    };
+
+    const isVideo = (url) => {
+        if (!url) return false;
+        return url.match(/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i) || url.includes('/video/upload/');
+    };
+
+    const bind = useDrag(({ swipe: [swipeX] }) => {
+        if (swipeX === -1) {
+            nextImage();
+        } else if (swipeX === 1) {
+            prevImage();
+        }
+    });
+
     if (!product) {
         return (
             <div className="min-h-screen pt-32 px-4 text-center dark:bg-black">
@@ -66,14 +93,6 @@ function ProductDetail() {
             </div>
         );
     }
-
-    const nextImage = () => {
-        setActiveImage((prev) => (prev + 1) % product.image.length);
-    };
-
-    const prevImage = () => {
-        setActiveImage((prev) => (prev - 1 + product.image.length) % product.image.length);
-    };
 
     return (
         <div className="pt-24 px-4 max-w-7xl mx-auto">
@@ -88,12 +107,31 @@ function ProductDetail() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20">
                 {/* Image Gallery */}
                 <div className="space-y-6">
-                    <div className="relative aspect-[4/5] bg-silk-100 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-sm">
-                        <img
-                            src={product.image[activeImage]}
-                            alt={product.name}
-                            className="w-full h-full object-cover transition-opacity duration-500"
-                        />
+                    <div {...bind()} className="relative aspect-[4/5] bg-silk-100 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-sm group touch-pan-y">
+                        {isVideo(product.image[activeImage]) ? (
+                            <div className="relative w-full h-full cursor-pointer" onClick={() => setIsFullscreen(true)}>
+                                <video
+                                    src={product.image[activeImage]}
+                                    className="w-full h-full object-cover transition-opacity duration-500"
+                                    muted
+                                    playsInline
+                                    loop // loop for preview if needed, but static is better for performance if not playing
+                                />
+                                <div className="absolute inset-0 flex items-center justify-center bg-black/20 group-hover:bg-black/30 transition-colors">
+                                    <div className="bg-white/90 dark:bg-black/80 backdrop-blur-sm p-4 rounded-full shadow-lg transform group-hover:scale-110 transition-transform">
+                                        <Play className="w-8 h-8 text-silk-900 dark:text-white fill-current" />
+                                    </div>
+                                </div>
+                            </div>
+                        ) : (
+                            <div className="w-full h-full cursor-pointer" onClick={() => setIsFullscreen(true)}>
+                                <img
+                                    src={product.image[activeImage]}
+                                    alt={product.name}
+                                    className="w-full h-full object-cover transition-opacity duration-500"
+                                />
+                            </div>
+                        )}
 
                         {/* Wishlist Button (On Image) */}
                         <button
@@ -105,14 +143,14 @@ function ProductDetail() {
 
                         {/* Navigation Arrows */}
                         <button
-                            onClick={prevImage}
-                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-black/50 backdrop-blur-sm p-2 rounded-full shadow-sm hover:bg-white dark:hover:bg-black/70 transition-colors"
+                            onClick={(e) => { e.stopPropagation(); prevImage(); }}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-black/50 backdrop-blur-sm p-2 rounded-full shadow-sm hover:bg-white dark:hover:bg-black/70 transition-colors z-10"
                         >
                             <ChevronLeft className="w-5 h-5 text-silk-900 dark:text-white" />
                         </button>
                         <button
-                            onClick={nextImage}
-                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-black/50 backdrop-blur-sm p-2 rounded-full shadow-sm hover:bg-white dark:hover:bg-black/70 transition-colors"
+                            onClick={(e) => { e.stopPropagation(); nextImage(); }}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 dark:bg-black/50 backdrop-blur-sm p-2 rounded-full shadow-sm hover:bg-white dark:hover:bg-black/70 transition-colors z-10"
                         >
                             <ChevronRight className="w-5 h-5 text-silk-900 dark:text-white" />
                         </button>
@@ -126,7 +164,11 @@ function ProductDetail() {
                                 onClick={() => setActiveImage(index)}
                                 className={`relative w-20 h-24 flex-shrink-0 rounded-lg overflow-hidden border-2 transition-all ${activeImage === index ? 'border-silk-900' : 'border-transparent hover:border-silk-300'}`}
                             >
-                                <img src={img} alt={`View ${index + 1}`} className="w-full h-full object-cover" />
+                                {isVideo(img) ? (
+                                    <video src={img} className="w-full h-full object-cover" muted />
+                                ) : (
+                                    <img src={img} alt={`View ${index + 1}`} className="w-full h-full object-cover" />
+                                )}
                             </button>
                         ))}
                     </div>
@@ -144,11 +186,11 @@ function ProductDetail() {
                     <div className="flex items-center space-x-4 mb-6">
                         <div className="flex items-center text-yellow-500">
                             {[...Array(5)].map((_, i) => (
-                                <Star key={i} className={`w-4 h-4 ${i < product.rating ? 'fill-current' : 'text-gray-300'}`} />
+                                <Star key={i} className={`w-4 h-4 ${i < Math.round(product.rating || 0) ? 'fill-current' : 'text-gray-300'}`} />
                             ))}
                         </div>
                         <span className="text-silk-400 text-sm">|</span>
-                        <span className="text-silk-600 text-sm">42 Reviews</span>
+                        <span className="text-silk-600 text-sm">{product.numReviews || 0} Reviews</span>
                     </div>
 
                     <p className="text-2xl font-light text-silk-900 dark:text-silk-200 mb-8">₹{product.price.toFixed(2)}</p>
@@ -215,7 +257,7 @@ function ProductDetail() {
             </div>
 
             {/* Trust Badges (Static) */}
-            <div className="flex justify-center items-center mt-12">
+            <div className="flex justify-center items-center mt-12 mb-16">
                 <div className="bg-silk-50/90 dark:bg-black/80 backdrop-blur-md px-6 py-2 rounded-full shadow-sm flex items-center gap-6">
                     <div className="flex items-center space-x-2 text-silk-700 dark:text-silk-300">
                         <Truck className="w-4 h-4" />
@@ -228,6 +270,117 @@ function ProductDetail() {
                     </div>
                 </div>
             </div>
+
+            {/* Reviews Section */}
+            <div className="mt-20">
+                <div className="text-center mb-12">
+                    <h2 className="text-3xl font-serif text-silk-900 dark:text-white mb-4">Customer Reviews</h2>
+                    <div className="flex items-center justify-center gap-2">
+                        <div className="flex text-yellow-400">
+                            {[...Array(5)].map((_, i) => (
+                                <Star key={i} className={`w-5 h-5 ${i < Math.round(product.rating || 0) ? 'fill-current' : 'text-gray-300'}`} />
+                            ))}
+                        </div>
+                        <p className="text-silk-600 dark:text-silk-300 font-medium">
+                            {product.rating ? product.rating.toFixed(1) : '0'} / 5
+                            <span className="text-gray-400 mx-2">•</span>
+                            {product.numReviews || 0} Reviews
+                        </p>
+                    </div>
+                </div>
+
+                <div className="max-w-3xl mx-auto space-y-8">
+                    {product.reviews && product.reviews.length > 0 ? (
+                        product.reviews.map((review, index) => (
+                            <div key={index} className="bg-silk-50 dark:bg-gray-900 p-6 rounded-2xl animate-fade-in text-left">
+                                <div className="flex justify-between items-start mb-4">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 rounded-full bg-silk-200 dark:bg-gray-700 flex items-center justify-center text-silk-700 dark:text-white font-bold">
+                                            {review.userName ? review.userName.charAt(0).toUpperCase() : 'U'}
+                                        </div>
+                                        <div>
+                                            <p className="font-medium text-silk-900 dark:text-white">{review.userName || 'Anonymous'}</p>
+                                            <div className="flex text-yellow-400 text-xs">
+                                                {[...Array(5)].map((_, i) => (
+                                                    <Star key={i} className={`w-3 h-3 ${i < review.rating ? 'fill-current' : 'text-gray-300'}`} />
+                                                ))}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                                        {new Date(review.date).toLocaleDateString()}
+                                    </span>
+                                </div>
+                                <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-left">
+                                    {review.comment}
+                                </p>
+                            </div>
+                        ))
+                    ) : (
+                        <div className="text-center py-10 bg-gray-50 dark:bg-white/5 rounded-xl border border-dashed border-gray-300 dark:border-gray-700">
+                            <p className="text-gray-500 dark:text-gray-400">No reviews yet. Be the first to review this product!</p>
+                        </div>
+                    )}
+                </div>
+            </div>
+            {/* Fullscreen Modal */}
+            {isFullscreen && (
+                <div className="fixed inset-0 z-[100] bg-black/95 backdrop-blur-md flex items-center justify-center p-4">
+                    <button
+                        onClick={() => setIsFullscreen(false)}
+                        className="absolute top-6 right-6 p-2 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors z-50"
+                    >
+                        <X className="w-8 h-8" />
+                    </button>
+
+                    <button
+                        onClick={prevImage}
+                        className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 p-4 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors z-40"
+                    >
+                        <ChevronLeft className="w-8 h-8" />
+                    </button>
+                    <button
+                        onClick={nextImage}
+                        className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 p-4 text-white/80 hover:text-white bg-white/10 hover:bg-white/20 rounded-full transition-colors z-40"
+                    >
+                        <ChevronRight className="w-8 h-8" />
+                    </button>
+
+                    <div {...bind()} className="w-full h-full max-w-5xl max-h-[85vh] flex items-center justify-center touch-pan-y">
+                        {isVideo(product.image[activeImage]) ? (
+                            <video
+                                src={product.image[activeImage]}
+                                className="max-w-full max-h-full rounded-lg shadow-2xl"
+                                controls
+                                autoPlay
+                            />
+                        ) : (
+                            <img
+                                src={product.image[activeImage]}
+                                alt={product.name}
+                                className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+                            />
+                        )}
+                    </div>
+
+                    <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex gap-2 overflow-x-auto max-w-[90vw] p-2">
+                        {product.image.map((img, index) => (
+                            <button
+                                key={index}
+                                onClick={() => setActiveImage(index)}
+                                className={`relative w-16 h-16 flex-shrink-0 rounded-md overflow-hidden border-2 transition-all ${activeImage === index ? 'border-white' : 'border-white/20 hover:border-white/50'}`}
+                            >
+                                <img src={img} alt="" className="w-full h-full object-cover" />
+                                {isVideo(img) && (
+                                    <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                                        <Play className="w-4 h-4 text-white fill-current" />
+                                    </div>
+                                )}
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )}
         </div>
     );
 }

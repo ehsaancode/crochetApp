@@ -76,6 +76,21 @@ const productSchema = new mongoose.Schema(
         shippingFee: {
             type: Number,
             default: 100
+        },
+
+        reviews: [
+            {
+                userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+                userName: String,
+                rating: Number,
+                comment: String,
+                date: { type: Date, default: Date.now }
+            }
+        ],
+
+        numReviews: {
+            type: Number,
+            default: 0
         }
     },
     {

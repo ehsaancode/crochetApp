@@ -140,6 +140,16 @@ const updateProduct = async (req, res) => {
             return `${protocol}://${req.get('host')}/uploads/${file.filename}`;
         }
 
+        // Handle deleted images
+        if (req.body.deletedIndices) {
+            const deleted = JSON.parse(req.body.deletedIndices);
+            deleted.forEach(index => {
+                if (index >= 0 && index < updatedImages.length) {
+                    updatedImages[index] = null;
+                }
+            });
+        }
+
         // Handle image updates by index
         if (req.files.image1) updatedImages[0] = getUrl(req.files.image1[0]);
         if (req.files.image2) updatedImages[1] = getUrl(req.files.image2[0]);
@@ -175,4 +185,76 @@ const updateProduct = async (req, res) => {
     }
 }
 
-module.exports = { listProducts, addProduct, removeProduct, singleProduct, listNewArrivals, updateProduct };
+// Function for best sellers
+const listBestSellers = async (req, res) => {
+    try {
+        const products = await productModel.find({ bestseller: true });
+        res.json({ success: true, products });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Add Product Review
+const addProductReview = async (req, res) => {
+    try {
+        const { rating, comment, productId } = req.body;
+        // User is attached to req by auth middleware
+        const userId = req.body.userId; // Middleware adds this to body in some setups, or req.userId 
+        const userModel = require('../models/User'); // Lazy load or move to top if prefer
+        const user = await userModel.findById(userId);
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        const product = await productModel.findById(productId);
+
+        if (!product) {
+            return res.json({ success: false, message: "Product not found" });
+        }
+
+        const review = {
+            userId: userId,
+            userName: user.name,
+            rating: Number(rating),
+            comment: comment,
+            date: Date.now()
+        };
+
+        // Check if user already reviewed
+        const alreadyReviewed = product.reviews.find(
+            (r) => r.userId.toString() === userId.toString()
+        );
+
+        if (alreadyReviewed) {
+            // Update existing review
+            product.reviews.forEach((review) => {
+                if (review.userId.toString() === userId.toString()) {
+                    review.comment = comment;
+                    review.rating = Number(rating);
+                    review.date = Date.now();
+                }
+            });
+        } else {
+            // Add new review
+            product.reviews.push(review);
+            product.numReviews = product.reviews.length;
+        }
+
+        // Calculate Average
+        product.rating =
+            product.reviews.reduce((acc, item) => item.rating + acc, 0) /
+            product.reviews.length;
+
+        await product.save();
+        res.status(201).json({ success: true, message: "Review added" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+module.exports = { listProducts, addProduct, removeProduct, singleProduct, listNewArrivals, updateProduct, listBestSellers, addProductReview };

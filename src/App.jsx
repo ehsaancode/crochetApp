@@ -1,7 +1,7 @@
 import React, { useState, useContext } from 'react';
 import DecryptedText from './pages/uiComponents/DecryptedText';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User } from 'lucide-react';
+import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User, Package } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Home from './pages/Home';
 import Collection from './pages/Collection';
@@ -11,6 +11,8 @@ import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Wishlist from './pages/Wishlist';
 import Login from './pages/Login';
+import PlaceOrder from './pages/PlaceOrder';
+import Orders from './pages/Orders';
 import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
 import { ShopContext } from './context/ShopContext';
@@ -90,7 +92,9 @@ function Navigation() {
                         <Link to="/" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Home</Link>
                         <Link to="/collection" onClick={() => { setIsMenuOpen(false); sessionStorage.removeItem('collectionScrollY'); }} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Shop</Link>
                         <Link to="/about" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">About</Link>
+
                         <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Contact</Link>
+                        <Link to="/orders" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Orders</Link>
                     </nav>
 
                     <div className="mt-auto border-t border-silk-200 dark:border-silk-800 pt-8 md:hidden">
@@ -169,9 +173,10 @@ function Navigation() {
                     <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
                     <span className="sr-only">Cart</span>
                 </Link>
-                <Link to="/wishlist" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/wishlist' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
-                    <Heart className="w-6 h-6" strokeWidth={1.5} />
-                    <span className="sr-only">Wishlist</span>
+
+                <Link to="/orders" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/orders' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
+                    <Package className="w-6 h-6" strokeWidth={1.5} />
+                    <span className="sr-only">Orders</span>
                 </Link>
                 <Link to="/account" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/account' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
                     <User className="w-6 h-6" strokeWidth={1.5} />
@@ -200,7 +205,8 @@ function App() {
                         <Route path="/cart" element={<Cart />} />
                         <Route path="/wishlist" element={<Wishlist />} />
                         <Route path="/account" element={<Login />} />
-                        {/* <Route path="/place-order" element={<PlaceOrder />} /> */}
+                        <Route path="/place-order" element={<PlaceOrder />} />
+                        <Route path="/orders" element={<Orders />} />
                     </Routes>
                 </main>
             </div>

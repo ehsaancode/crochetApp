@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Upload } from 'lucide-react'
+import { Upload, X } from 'lucide-react'
 import axios from 'axios'
 import { backendUrl } from '../config'
 import QToast from '../components/QToast'
@@ -110,42 +110,34 @@ const Add = ({ token }) => {
                 <div>
                     <h3 className='text-lg font-semibold mb-4'>Upload Images</h3>
                     <div className='flex gap-4 flex-wrap'>
-                        <label htmlFor="image1">
-                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
-                                {image1 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image1)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
+                        {[image1, image2, image3, image4, image5, image6].map((img, index) => (
+                            <div key={index} className='relative group'>
+                                <label htmlFor={`image${index}`}>
+                                    <div className={`w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden relative ${!img ? 'border-dashed' : 'border-solid'}`}>
+                                        {img ? (
+                                            img.type.startsWith('video/') ? (
+                                                <video className='w-full h-full object-cover' src={URL.createObjectURL(img)} muted loop autoPlay />
+                                            ) : (
+                                                <img className='w-full h-full object-cover' src={URL.createObjectURL(img)} alt={`Product ${index + 1}`} />
+                                            )
+                                        ) : (
+                                            <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />
+                                        )}
+                                    </div>
+                                    <input onChange={(e) => handleImageChange(e, index)} type="file" id={`image${index}`} accept="image/*,video/*" hidden multiple />
+                                </label>
+                                {img && (
+                                    <button
+                                        type="button"
+                                        onClick={() => [setImage1, setImage2, setImage3, setImage4, setImage5, setImage6][index](false)}
+                                        className='absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 shadow-md hover:bg-destructive/90 transition-colors z-10'
+                                        title="Remove media"
+                                    >
+                                        <X className='w-3 h-3' />
+                                    </button>
+                                )}
                             </div>
-                            <input onChange={(e) => handleImageChange(e, 0)} type="file" id="image1" hidden multiple />
-                        </label>
-                        <label htmlFor="image2">
-                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
-                                {image2 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image2)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
-                            </div>
-                            <input onChange={(e) => handleImageChange(e, 1)} type="file" id="image2" hidden multiple />
-                        </label>
-                        <label htmlFor="image3">
-                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
-                                {image3 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image3)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
-                            </div>
-                            <input onChange={(e) => handleImageChange(e, 2)} type="file" id="image3" hidden multiple />
-                        </label>
-                        <label htmlFor="image4">
-                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
-                                {image4 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image4)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
-                            </div>
-                            <input onChange={(e) => handleImageChange(e, 3)} type="file" id="image4" hidden multiple />
-                        </label>
-                        <label htmlFor="image5">
-                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
-                                {image5 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image5)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
-                            </div>
-                            <input onChange={(e) => handleImageChange(e, 4)} type="file" id="image5" hidden multiple />
-                        </label>
-                        <label htmlFor="image6">
-                            <div className='w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden group'>
-                                {image6 ? <img className='w-full h-full object-cover' src={URL.createObjectURL(image6)} alt="" /> : <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />}
-                            </div>
-                            <input onChange={(e) => handleImageChange(e, 5)} type="file" id="image6" hidden multiple />
-                        </label>
+                        ))}
                     </div>
                 </div>
 
