@@ -95,6 +95,7 @@ function Navigation() {
 
                         <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Contact</Link>
                         <Link to="/orders" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Orders</Link>
+                        <Link to="/account" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Profile</Link>
                     </nav>
 
                     <div className="mt-auto border-t border-silk-200 dark:border-silk-800 pt-8 md:hidden">
@@ -115,7 +116,7 @@ function Navigation() {
             <header className="fixed top-0 left-0 w-full bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark backdrop-blur-sm z-40 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
-                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900 dark:text-white absolute left-1/2 -translate-x-1/2 md:relative md:translate-x-0 group flex items-center justify-center gap-2">
+                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900 dark:text-white absolute left-1/2 -translate-x-1/2 group flex items-center justify-center gap-2">
                         <DecryptedText
                             text={brandText}
                             speed={100}
@@ -142,7 +143,7 @@ function Navigation() {
                             )}
                         </AnimatePresence>
                     </Link>
-                    <nav className="flex items-center space-x-2 ml-auto md:ml-0">
+                    <nav className="flex items-center space-x-2 ml-auto">
                         <ThemeToggle />
                         <Link to="/wishlist" className="p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
                             <Heart className="w-5 h-5 text-silk-900 dark:text-white" strokeWidth={1.5} />
