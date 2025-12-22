@@ -7,12 +7,21 @@ import QToast from './uiComponents/QToast';
 
 function ProductDetail() {
     const { id } = useParams();
-    const { products, addToCart, userData, addToWishlist, removeFromWishlist } = useContext(ShopContext);
+    const { products, addToCart, userData, addToWishlist, removeFromWishlist, navigate } = useContext(ShopContext);
     const [product, setProduct] = useState(null)
     const [activeImage, setActiveImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [size, setSize] = useState("");
     const [isFullscreen, setIsFullscreen] = useState(false);
+
+    const handleBuyNow = () => {
+        if (product.sizes && product.sizes.length > 0 && !size) {
+            QToast.error('Select Product Size', { position: "top-center" });
+            return;
+        }
+        addToCart(product._id, size, quantity);
+        navigate('/place-order');
+    }
 
     const fetchProductData = async () => {
         products.map((item) => {
@@ -240,7 +249,9 @@ function ProductDetail() {
 
                         {/* Buttons Stack */}
                         <div className="flex flex-col gap-3 pt-4">
-                            <button className="w-full bg-silk-900 dark:bg-white text-white dark:text-black px-8 py-4 rounded-full font-medium tracking-wide hover:bg-silk-800 dark:hover:bg-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl">
+                            <button
+                                onClick={handleBuyNow}
+                                className="w-full bg-silk-900 dark:bg-white text-white dark:text-black px-8 py-4 rounded-full font-medium tracking-wide hover:bg-silk-800 dark:hover:bg-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl">
                                 Buy Now
                             </button>
                             <button

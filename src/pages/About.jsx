@@ -20,20 +20,20 @@ function About() {
             {/* Content Section */}
             <div className="max-w-4xl mx-auto px-6 py-24">
                 <div className="grid md:grid-cols-2 gap-16 items-center">
-                    <div className="space-y-6 text-silk-800">
-                        <h2 className="font-serif text-3xl text-silk-900">Weaving Stories,<br />One Stitch at a Time.</h2>
-                        <p className="leading-relaxed text-silk-600">
+                    <div className="space-y-6 text-silk-800 dark:text-silk-200">
+                        <h2 className="font-serif text-3xl text-silk-900 dark:text-silk-50">Weaving Stories,<br />One Stitch at a Time.</h2>
+                        <p className="leading-relaxed text-silk-600 dark:text-silk-400">
                             Aalaboo. was born from a simple desire: to slow down. In a world of fast fashion and instant gratification, we chose to take the long route. Our journey began in a small sunlit studio, where the rhythmic click of hooks and the soft touch of yarn became our meditation.
                         </p>
-                        <p className="leading-relaxed text-silk-600">
+                        <p className="leading-relaxed text-silk-600 dark:text-silk-400">
                             We believe that luxury lies in the details—the slight irregularities that mark a human touch, the premium natural fibers that breathe with you, and the timeless designs that transcend seasons.
                         </p>
                     </div>
-                    <div className="bg-silk-100 p-10 rounded-2xl text-center relative">
-                        <div className="absolute top-0 left-0 w-full h-full border border-silk-200 rounded-2xl transform translate-x-4 translate-y-4 -z-10"></div>
+                    <div className="bg-silk-100 dark:bg-silk-900 p-10 rounded-2xl text-center relative transition-colors duration-300">
+                        <div className="absolute top-0 left-0 w-full h-full border border-silk-200 dark:border-silk-700 rounded-2xl transform translate-x-4 translate-y-4 -z-10 transition-colors duration-300"></div>
                         <Heart className="w-12 h-12 text-silk-400 mx-auto mb-6" strokeWidth={1} />
-                        <h3 className="font-serif text-xl mb-4 text-silk-900">Our Values</h3>
-                        <ul className="space-y-4 text-sm uppercase tracking-widest text-silk-600">
+                        <h3 className="font-serif text-xl mb-4 text-silk-900 dark:text-silk-50">Our Values</h3>
+                        <ul className="space-y-4 text-sm uppercase tracking-widest text-silk-600 dark:text-silk-300">
                             <li>Sustainable Materials</li>
                             <li>Ethical Production</li>
                             <li>Artisan Craftsmanship</li>
