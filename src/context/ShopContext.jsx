@@ -11,6 +11,7 @@ const ShopContextProvider = (props) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
+
     const [cartItems, setCartItems] = useState({});
     const [products, setProducts] = useState([]);
     const [token, setToken] = useState("");

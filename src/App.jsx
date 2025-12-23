@@ -182,7 +182,13 @@ function Navigation() {
                     <span className="sr-only">Orders</span>
                 </Link>
                 <Link to="/account" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/account' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
-                    <User className="w-6 h-6" strokeWidth={1.5} />
+                    {userData && userData.image ? (
+                        <div className="w-6 h-6 rounded-full overflow-hidden border border-silk-200 dark:border-silk-700">
+                            <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
+                        </div>
+                    ) : (
+                        <User className="w-6 h-6" strokeWidth={1.5} />
+                    )}
                     <span className="sr-only">Account</span>
                 </Link>
             </div>
