@@ -3,7 +3,7 @@ const productModel = require("../models/Product");
 // Function for add product
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, category, subCategory, sizes, bestseller, shippingFee, productId } = req.body;
+        const { name, description, price, category, subCategory, sizes, colors, bestseller, shippingFee, productId } = req.body;
 
         const image1 = req.files.image1 && req.files.image1[0];
         const image2 = req.files.image2 && req.files.image2[0];
@@ -40,6 +40,7 @@ const addProduct = async (req, res) => {
             subCategory,
             bestseller: bestseller === "true" ? true : false,
             sizes: JSON.parse(sizes),
+            colors: colors ? JSON.parse(colors) : [],
             image: imagesUrl,
             date: Date.now(),
             shippingFee: shippingFee ? Number(shippingFee) : 100
@@ -120,7 +121,7 @@ const listNewArrivals = async (req, res) => {
 // Function for updating product
 const updateProduct = async (req, res) => {
     try {
-        const { productId, name, description, price, category, subCategory, sizes, bestseller, shippingFee } = req.body;
+        const { productId, name, description, price, category, subCategory, sizes, colors, bestseller, shippingFee } = req.body;
 
         const product = await productModel.findById(productId);
         if (!product) {
@@ -172,9 +173,13 @@ const updateProduct = async (req, res) => {
             subCategory,
             bestseller: bestseller === "true" ? true : false,
             sizes: JSON.parse(sizes),
+            colors: colors ? JSON.parse(colors) : undefined, // Only update if provided
             image: updatedImages,
             shippingFee: shippingFee ? Number(shippingFee) : 100
         };
+
+        // Clean undefined (optional but cleaner)
+        if (updateData.colors === undefined) delete updateData.colors;
 
         await productModel.findByIdAndUpdate(productId, updateData);
         res.json({ success: true, message: "Product Updated" });

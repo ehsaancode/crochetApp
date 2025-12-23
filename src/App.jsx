@@ -3,6 +3,7 @@ import DecryptedText from './pages/uiComponents/DecryptedText';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User, Package } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+
 import Home from './pages/Home';
 import Collection from './pages/Collection';
 import About from './pages/About';
@@ -17,6 +18,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
 import { ShopContext } from './context/ShopContext';
 import QToast from './pages/uiComponents/QToast';
+
 
 // Global state to track animation status across navigation (resets on full reload)
 let brandAnimationCompleted = false;

@@ -12,6 +12,7 @@ function ProductDetail() {
     const [activeImage, setActiveImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
     const [size, setSize] = useState("");
+    const [color, setColor] = useState("");
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     const handleBuyNow = () => {
@@ -19,6 +20,12 @@ function ProductDetail() {
             QToast.error('Select Product Size', { position: "top-center" });
             return;
         }
+        if (product.colors && product.colors.length > 0 && !color) {
+            QToast.error('Select Product Color', { position: "top-center" });
+            return;
+        }
+        // Hack: combining size and color for cart if needed, or just ignoring color for now as per minimal change
+        // Users often want distinct fields. For now, I will just validate selection.
         addToCart(product._id, size, quantity);
         navigate('/place-order');
     }
@@ -219,6 +226,23 @@ function ProductDetail() {
                         </div>
                     )}
 
+                    {product.colors && product.colors.length > 0 && (
+                        <div className="flex flex-col gap-4 mb-8">
+                            <p className="text-sm font-medium text-silk-900 dark:text-silk-50">Select Color</p>
+                            <div className="flex gap-2">
+                                {product.colors.map((item, index) => (
+                                    <button
+                                        onClick={() => setColor(item)}
+                                        className={`w-8 h-8 rounded-full border-2 shadow-sm ${item === color ? 'border-silk-900 dark:border-white ring-2 ring-offset-2 ring-silk-300' : 'border-gray-300'}`}
+                                        style={{ backgroundColor: item.toLowerCase() }}
+                                        key={index}
+                                        title={item}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                     {/* Actions */}
                     <div className="space-y-4 mb-10">
                         {/* Quantity & Share Row */}
@@ -255,7 +279,17 @@ function ProductDetail() {
                                 Buy Now
                             </button>
                             <button
-                                onClick={() => addToCart(product._id, size, quantity)}
+                                onClick={() => {
+                                    if (product.sizes && product.sizes.length > 0 && !size) {
+                                        QToast.error('Select Product Size', { position: "top-center" });
+                                        return;
+                                    }
+                                    if (product.colors && product.colors.length > 0 && !color) {
+                                        QToast.error('Select Product Color', { position: "top-center" });
+                                        return;
+                                    }
+                                    addToCart(product._id, size, quantity);
+                                }}
                                 className="w-full border border-silk-300 dark:border-silk-600 text-silk-900 dark:text-white bg-transparent px-8 py-3 rounded-full font-medium tracking-wide hover:bg-silk-50 dark:hover:bg-white/10 transition-all duration-300 flex items-center justify-center space-x-2"
                             >
                                 <ShoppingBag className="w-5 h-5" />

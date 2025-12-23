@@ -62,6 +62,11 @@ const productSchema = new mongoose.Schema(
             required: true
         },
 
+        colors: {
+            type: [String],
+            required: false
+        },
+
         bestseller: {
             type: Boolean,
             default: false,

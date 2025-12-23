@@ -27,15 +27,59 @@ const Add = ({ token }) => {
     const [isUploadPopupOpen, setIsUploadPopupOpen] = useState(false);
     const [isUploadSuccess, setIsUploadSuccess] = useState(false);
 
+
+
+    const categoryList = {
+        "Men": {
+            "Wearables": ["Sweaters", "Cardigans", "Vests", "Shrugs", "Scarves", "Cowls", "Hats", "Beanies", "Berets", "Gloves", "Arm Warmers", "Socks", "Slippers", "Leg Warmers"],
+            "Accessories": ["Headbands", "Ear Warmers", "Belts", "Bracelets", "Necklaces", "Mug Cozies", "Bottle Sleeves"],
+            "Bags & Utility": ["Tote Bags", "Slings", "Backpacks", "Pouches", "Coin Purses", "Market Bags"],
+            "Functional Home Utility": ["Pot Holders", "Trivets", "Dishcloths", "Washcloths"]
+        },
+        "Women": {
+            "Wearables": ["Sweaters", "Cardigans", "Vests", "Shrugs", "Shawls", "Wraps", "Ponchos", "Capes", "Scarves", "Cowls", "Hats", "Beanies", "Berets", "Mittens", "Gloves", "Arm Warmers", "Socks", "Slippers", "Leg Warmers"],
+            "Accessories": ["Headbands", "Ear Warmers", "Hair Accessories", "Brooches", "Belts", "Bracelets", "Necklaces", "Anklets", "Mug Cozies", "Bottle Sleeves"],
+            "Bags & Utility": ["Tote Bags", "Handbags", "Slings", "Backpacks", "Pouches", "Coin Purses", "Storage Baskets", "Organizers", "Market Bags"],
+            "Home Decor": ["Blankets", "Afghans", "Throws", "Bedspreads", "Cushion Covers", "Pillow Shams", "Rugs", "Floor Mats", "Wall Hangings", "Tapestries", "Table Runners", "Table Mats", "Placemats", "Coasters", "Curtains", "Door Hangings"],
+            "Decorative & Art": ["Floral Crochet", "Leaf Motifs", "Mandala Crochet", "Tapestry Crochet", "Framed Crochet", "3D Crochet Art"],
+            "Jewelry & Small Art": ["Crochet Earrings", "Crochet Rings", "Crochet Pendants", "Mini Ornaments", "Bookmark Crochet"]
+        },
+        "Kids": {
+            "Wearables": ["Baby Sweaters", "Baby Caps", "Baby Socks", "Baby Booties", "Rompers", "Slippers", "Hats", "Beanies", "Mittens"],
+            "Toys & Amigurumi": ["Animal Amigurumi", "Doll Amigurumi", "Character Figures", "Mini Amigurumi", "Keychain Amigurumi", "Plush Toys"],
+            "Baby & Kids": ["Baby Blankets", "Soft Toys", "Nursery Decor"],
+            "Accessories": ["Headbands", "Hair Accessories"],
+            "Home & Utility": ["Blankets", "Door Stoppers"]
+        },
+        "All": {
+            "Seasonal": ["Seasonal & Festive Decor"],
+            "Wall Decor": ["Wall & Hanging Decor"],
+            "Techniques": ["Crochet Techniques / Styles"]
+        }
+    };
+
     const [name, setName] = useState("");
     const [description, setDescription] = useState("");
     const [price, setPrice] = useState("");
     const [shippingFee, setShippingFee] = useState("");
     const [category, setCategory] = useState("Men");
-    const [subCategory, setSubCategory] = useState("Topwear");
+    const [subCategory, setSubCategory] = useState("Sweaters");
     const [bestseller, setBestseller] = useState(false);
     const [sizes, setSizes] = useState([]);
+    const [colors, setColors] = useState([]);
+    const [currentColor, setCurrentColor] = useState("Red");
+    const [isColorListOpen, setIsColorListOpen] = useState(false);
     const [productId, setProductId] = useState("");
+
+    const addColor = () => {
+        if (!colors.includes(currentColor)) {
+            setColors(prev => [...prev, currentColor]);
+        }
+    }
+
+    const removeColor = (colorToRemove) => {
+        setColors(prev => prev.filter(c => c !== colorToRemove));
+    }
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
@@ -54,6 +98,7 @@ const Add = ({ token }) => {
             formData.append("subCategory", subCategory)
             formData.append("bestseller", bestseller)
             formData.append("sizes", JSON.stringify(sizes))
+            formData.append("colors", JSON.stringify(colors))
             formData.append("productId", productId)
 
             image1 && formData.append("image1", image1)
@@ -86,6 +131,8 @@ const Add = ({ token }) => {
                     setPrice('')
                     setShippingFee('')
                     setProductId('')
+                    setCategory('Men')
+                    setSubCategory('Sweaters')
                 }, 2000);
             } else {
                 setIsUploadPopupOpen(false); // Close popup on error
@@ -160,21 +207,37 @@ const Add = ({ token }) => {
                 <div className='flex flex-col sm:flex-row gap-4 w-full max-w-[500px]'>
                     <div className='flex-1'>
                         <p className='mb-2 font-medium'>Category</p>
-                        <select onChange={(e) => setCategory(e.target.value)} className='w-full px-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all cursor-pointer'>
-                            <option value="Men">Men</option>
-                            <option value="Women">Women</option>
-                            <option value="Kids">Kids</option>
-                            <option value="Unisex">Unisex</option>
-                            <option value="Not applicable">Not applicable</option>
+                        <select
+                            onChange={(e) => {
+                                const newCategory = e.target.value;
+                                setCategory(newCategory);
+                                // Set first subcategory of first group
+                                const firstGroup = Object.keys(categoryList[newCategory])[0];
+                                setSubCategory(categoryList[newCategory][firstGroup][0]);
+                            }}
+                            value={category}
+                            className='w-full px-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all cursor-pointer'
+                        >
+                            {Object.keys(categoryList).map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                            ))}
                         </select>
                     </div>
 
                     <div className='flex-1'>
                         <p className='mb-2 font-medium'>Sub Category</p>
-                        <select onChange={(e) => setSubCategory(e.target.value)} className='w-full px-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all cursor-pointer'>
-                            <option value="Topwear">Topwear</option>
-                            <option value="Bottomwear">Bottomwear</option>
-                            <option value="Winterwear">Winterwear</option>
+                        <select
+                            onChange={(e) => setSubCategory(e.target.value)}
+                            value={subCategory}
+                            className='w-full px-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all cursor-pointer dark:bg-black dark:text-white'
+                        >
+                            {Object.keys(categoryList[category]).map(group => (
+                                <optgroup key={group} label={group} className="text-silk-700 font-bold bg-silk-50/50 dark:text-silk-400 dark:bg-gray-800">
+                                    {categoryList[category][group].map(sub => (
+                                        <option key={sub} value={sub} className="text-foreground bg-white font-normal pl-4 dark:bg-black dark:text-white">{sub}</option>
+                                    ))}
+                                </optgroup>
+                            ))}
                         </select>
                     </div>
 
@@ -195,12 +258,66 @@ const Add = ({ token }) => {
                     </div>
                 </div>
 
+
                 <div>
                     <p className='mb-2 font-medium'>Product Sizes</p>
                     <div className='flex gap-2 flex-wrap'>
                         {['S', 'M', 'L', 'XL', 'XXL'].map((s) => (
                             <div onClick={() => toggleSize(s)} key={s}>
                                 <p className={`${sizes.includes(s) ? "bg-silk-100 ring-2 ring-silk-500 text-silk-700 font-semibold" : "bg-muted text-muted-foreground hover:bg-muted/80"} px-4 py-2 rounded cursor-pointer transition-all`}>{s}</p>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div>
+                    <p className='mb-2 font-medium'>Product Colors</p>
+                    <div className='flex items-end gap-3 mb-2'>
+                        <div className="flex flex-col gap-1 relative z-20">
+                            <label className="text-xs text-muted-foreground mr-1">Select Color</label>
+
+                            <div className="relative">
+                                <button
+                                    type="button"
+                                    onClick={() => setIsColorListOpen(!isColorListOpen)}
+                                    className="w-32 px-3 py-2.5 rounded-lg border border-border bg-input flex items-center justify-between text-sm transition-all focus:ring-2 focus:ring-silk-400 hover:bg-muted/50"
+                                >
+                                    <div className="flex items-center gap-2">
+                                        <div className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: currentColor.toLowerCase() }}></div>
+                                        <span className="truncate">{currentColor}</span>
+                                    </div>
+                                    <svg className={`w-4 h-4 transition-transform duration-200 text-muted-foreground ${isColorListOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                                </button>
+
+                                {isColorListOpen && (
+                                    <div className="absolute top-full left-0 mt-1 w-32 bg-popover text-popover-foreground border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent animate-in vide-in-from-top-1">
+                                        {['Red', 'Blue', 'Green', 'Yellow', 'Black', 'White', 'Pink', 'Purple', 'Orange', 'Gray', 'Brown', 'Beige', 'Navy', 'Maroon', 'Teal', 'Olive', 'Gold', 'Silver', 'Cream'].map((colorName) => (
+                                            <button
+                                                key={colorName}
+                                                type="button"
+                                                onClick={() => { setCurrentColor(colorName); setIsColorListOpen(false); }}
+                                                className={`w-full text-left px-3 py-2 hover:bg-muted/50 flex items-center gap-2 text-sm transition-colors ${currentColor === colorName ? 'bg-muted/30 font-medium' : ''}`}
+                                            >
+                                                <div className="w-3 h-3 rounded-full border border-gray-300 flex-shrink-0" style={{ backgroundColor: colorName.toLowerCase() }}></div>
+                                                {colorName}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                        <button type="button" onClick={addColor} className="px-4 py-2 bg-silk-100 text-silk-700 hover:bg-silk-200 rounded font-medium transition-colors border border-silk-300">
+                            Add
+                        </button>
+                    </div>
+                    <div className='flex gap-2 flex-wrap'>
+                        {colors.map((c, i) => (
+                            <div key={i} className='flex items-center gap-2 bg-muted/40 p-1 pr-3 rounded border border-border'>
+                                <div className="w-6 h-6 rounded-full border border-gray-300 shadow-sm" style={{ backgroundColor: c.toLowerCase() }}></div>
+                                <span className="text-sm font-mono">{c}</span>
+                                <button type="button" onClick={() => removeColor(c)} className="text-muted-foreground hover:text-destructive">
+                                    <X className="w-3 h-3" />
+                                </button>
                             </div>
                         ))}
                     </div>
