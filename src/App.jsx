@@ -163,34 +163,55 @@ function Navigation() {
             </header>
 
 
-            <div className="fixed bottom-0 left-0 right-0 bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark border-t border-silk-200 dark:border-silk-blue-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:hidden flex justify-around items-center py-4 pb-6 px-2">
-                <Link to="/" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
-                    <HomeIcon className="w-6 h-6" strokeWidth={1.5} />
-                    <span className="sr-only">Home</span>
-                </Link>
-                <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/collection' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
-                    <Store className="w-6 h-6" strokeWidth={1.5} />
-                    <span className="sr-only">All Products</span>
-                </Link>
-                <Link to="/cart" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/cart' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
-                    <ShoppingBag className="w-6 h-6" strokeWidth={1.5} />
-                    <span className="sr-only">Cart</span>
-                </Link>
-
-                <Link to="/orders" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/orders' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
-                    <Package className="w-6 h-6" strokeWidth={1.5} />
-                    <span className="sr-only">Orders</span>
-                </Link>
-                <Link to="/account" className={`flex flex-col items-center transition-colors p-1 ${location.pathname === '/account' ? 'text-silk-600 dark:text-silk-blue-light' : 'text-silk-900 dark:text-white hover:text-silk-600'}`}>
-                    {userData && userData.image ? (
-                        <div className="w-6 h-6 rounded-full overflow-hidden border border-silk-200 dark:border-silk-700">
-                            <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
-                        </div>
-                    ) : (
-                        <User className="w-6 h-6" strokeWidth={1.5} />
-                    )}
-                    <span className="sr-only">Account</span>
-                </Link>
+            <div className="fixed bottom-0 left-0 right-0 bg-silk-50/90 dark:bg-silk-blue-dark/95 backdrop-blur-md border-t border-silk-200 dark:border-silk-blue-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:hidden px-4 py-3 flex justify-between items-center pb-5">
+                {[
+                    { path: '/', icon: HomeIcon, label: 'Home' },
+                    { path: '/collection', icon: Store, label: 'Shop', onClick: () => sessionStorage.removeItem('collectionScrollY') },
+                    { path: '/cart', icon: ShoppingBag, label: 'Cart' },
+                    { path: '/orders', icon: Package, label: 'Orders' },
+                    { path: '/account', icon: User, label: 'Account', isProfile: true }
+                ].map((item) => {
+                    const isActive = location.pathname === item.path;
+                    return (
+                        <Link
+                            key={item.path}
+                            to={item.path}
+                            onClick={item.onClick}
+                            className={`relative flex items-center justify-center p-2 rounded-full transition-colors duration-300 ${isActive ? 'text-silk-900 dark:text-white' : 'text-silk-500 dark:text-white/50 hover:text-silk-700 dark:hover:text-white'}`}
+                        >
+                            {isActive && (
+                                <motion.div
+                                    layoutId="dock-active-bg"
+                                    className="absolute inset-0 bg-silk-200 dark:bg-white/10 rounded-full"
+                                    initial={false}
+                                    transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                                />
+                            )}
+                            <div className="relative z-10 flex items-center gap-2 px-2">
+                                {item.isProfile && userData && userData.image ? (
+                                    <div className="w-5 h-5 rounded-full overflow-hidden border border-silk-400 dark:border-silk-500">
+                                        <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
+                                    </div>
+                                ) : (
+                                    <item.icon className="w-5 h-5" strokeWidth={2} />
+                                )}
+                                <AnimatePresence>
+                                    {isActive && (
+                                        <motion.span
+                                            initial={{ width: 0, opacity: 0, marginLeft: 0 }}
+                                            animate={{ width: "auto", opacity: 1, marginLeft: 4 }}
+                                            exit={{ width: 0, opacity: 0, marginLeft: 0 }}
+                                            transition={{ duration: 0.3, ease: "easeInOut" }}
+                                            className="text-sm font-medium whitespace-nowrap overflow-hidden"
+                                        >
+                                            {item.label}
+                                        </motion.span>
+                                    )}
+                                </AnimatePresence>
+                            </div>
+                        </Link>
+                    );
+                })}
             </div>
         </>
     );

@@ -4,10 +4,11 @@ import { Trash2 } from 'lucide-react'
 import { useNavigate, Link } from 'react-router-dom';
 import CartTotal from '../components/CartTotal';
 import { RainbowButton } from "../components/ui/rainbow-button";
+import QToast from './uiComponents/QToast';
 
 const Cart = () => {
 
-    const { products, currency, cartItems, updateQuantity, navigate } = useContext(ShopContext);
+    const { products, currency, cartItems, updateQuantity, navigate, token } = useContext(ShopContext);
     const [cartData, setCartData] = useState([]);
     const routerNavigate = useNavigate();
 
@@ -44,8 +45,8 @@ const Cart = () => {
 
             {cartData.length === 0 ? (
                 <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
-                    <h2 className="text-2xl font-serif text-silk-900 dark:text-silk-50 mb-4">Your cart is empty</h2>
-                    <p className="text-silk-600 dark:text-silk-400 mb-8">Looks like you haven't added anything to your cart yet.</p>
+                    <h2 className="text-xl font-serif text-silk-900 dark:text-silk-50 mb-4">Your cart is empty</h2>
+                    <p className="text-silk-600 dark:text-silk-400 text-sm mb-8">Looks like you haven't added anything to your cart yet.</p>
                     <button
                         onClick={() => routerNavigate('/collection')}
                         className="bg-silk-900 dark:bg-silk-50 text-white dark:text-silk-900 px-8 py-3 hover:bg-black dark:hover:bg-white/90 transition-colors"
@@ -105,7 +106,14 @@ const Cart = () => {
                     <div className='w-full sm:w-[450px]'>
                         <CartTotal />
                         <div className='w-full text-end'>
-                            <RainbowButton onClick={() => routerNavigate('/place-order')} className='my-8 px-6 py-2.5 w-auto text-sm font-semibold'>PROCEED TO CHECKOUT</RainbowButton>
+                            <RainbowButton onClick={() => {
+                                if (!token) {
+                                    QToast.error('Please login to checkout', { position: "top-center" });
+                                    navigate('/login');
+                                    return;
+                                }
+                                routerNavigate('/place-order');
+                            }} className='my-8 px-6 py-2.5 w-auto text-sm font-semibold'>PROCEED TO CHECKOUT</RainbowButton>
                         </div>
                     </div>
                 </div>

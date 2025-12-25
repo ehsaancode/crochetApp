@@ -7,7 +7,7 @@ import QToast from './uiComponents/QToast';
 
 function ProductDetail() {
     const { id } = useParams();
-    const { products, addToCart, userData, addToWishlist, removeFromWishlist, navigate } = useContext(ShopContext);
+    const { products, addToCart, userData, addToWishlist, removeFromWishlist, navigate, token } = useContext(ShopContext);
     const [product, setProduct] = useState(null)
     const [activeImage, setActiveImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
@@ -16,6 +16,12 @@ function ProductDetail() {
     const [isFullscreen, setIsFullscreen] = useState(false);
 
     const handleBuyNow = () => {
+        if (!token) {
+            QToast.error('Please login to buy products', { position: "top-center" });
+            navigate('/login');
+            return;
+        }
+
         if (product.sizes && product.sizes.length > 0 && !size) {
             QToast.error('Select Product Size', { position: "top-center" });
             return;
@@ -280,6 +286,12 @@ function ProductDetail() {
                             </button>
                             <button
                                 onClick={() => {
+                                    if (!token) {
+                                        QToast.error('Please login to add items to cart', { position: "top-center" });
+                                        navigate('/login');
+                                        return;
+                                    }
+
                                     if (product.sizes && product.sizes.length > 0 && !size) {
                                         QToast.error('Select Product Size', { position: "top-center" });
                                         return;

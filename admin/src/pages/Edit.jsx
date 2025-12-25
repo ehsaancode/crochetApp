@@ -223,7 +223,7 @@ const Edit = ({ token }) => {
                 <div>
                     <p className='mb-2 font-medium'>Product Sizes</p>
                     <div className='flex gap-2 flex-wrap'>
-                        {['S', 'M', 'L', 'XL', 'XXL'].map((s) => (
+                        {['S', 'M', 'L', 'XL', 'XXL', 'Free Size'].map((s) => (
                             <div onClick={() => toggleSize(s)} key={s}>
                                 <p className={`${sizes.includes(s) ? "bg-silk-100 ring-2 ring-silk-500 text-silk-700 font-semibold" : "bg-muted text-muted-foreground hover:bg-muted/80"} px-4 py-2 rounded cursor-pointer transition-all`}>{s}</p>
                             </div>

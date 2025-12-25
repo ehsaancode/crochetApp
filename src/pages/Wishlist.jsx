@@ -8,7 +8,7 @@ import QToast from './uiComponents/QToast'
 
 const Wishlist = ({ compact }) => {
 
-    const { products, currency, userData, removeFromWishlist, addToCart, requestProduct, token, fetchUserProfile } = useContext(ShopContext);
+    const { products, currency, userData, removeFromWishlist, addToCart, requestProduct, token, fetchUserProfile, navigate } = useContext(ShopContext);
 
     useEffect(() => {
         if (token) {
@@ -111,7 +111,14 @@ const Wishlist = ({ compact }) => {
                                                         </button>
                                                     </Link>
                                                     <button
-                                                        onClick={() => addToCart(productData._id, productData.sizes[0] || 'Default')}
+                                                        onClick={() => {
+                                                            if (!token) {
+                                                                QToast.error('Please login to add items to cart', { position: "top-center" });
+                                                                navigate('/login');
+                                                                return;
+                                                            }
+                                                            addToCart(productData._id, productData.sizes[0] || 'Default')
+                                                        }}
                                                         className='p-2 bg-silk-900 dark:bg-silk-50 text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity'
                                                         title="Quick Add"
                                                     >

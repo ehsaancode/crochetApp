@@ -74,10 +74,10 @@ const Orders = ({ compact }) => {
 
             <div className='flex flex-col gap-4'>
                 {orderData.length === 0 ? (
-                    <div className={`flex flex-col items-center justify-center text-center animate-fade-in ${compact ? 'py-12' : 'py-20'}`}>
+                    <div className={`flex flex-col items-center justify-center text-center animate-fade-in ${compact ? 'py-10' : 'py-20'}`}>
                         <Package className={`text-silk-200 mb-4 ${compact ? 'w-12 h-12' : 'w-16 h-16'}`} />
                         <h3 className="text-xl font-medium text-silk-900 dark:text-silk-50 mb-2">No orders yet</h3>
-                        <p className="text-silk-500 mb-6">Looks like you haven't placed any orders yet.</p>
+                        <p className="text-silk-500 text-sm mb-6">Looks like you haven't placed any orders yet.</p>
                     </div>
                 ) : (
                     orderData.map((item, index) => (

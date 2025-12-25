@@ -65,7 +65,7 @@ const Add = ({ token }) => {
     const [category, setCategory] = useState("Men");
     const [subCategory, setSubCategory] = useState("Sweaters");
     const [bestseller, setBestseller] = useState(false);
-    const [sizes, setSizes] = useState([]);
+    const [sizes, setSizes] = useState(["Free Size"]);
     const [colors, setColors] = useState([]);
     const [currentColor, setCurrentColor] = useState("Red");
     const [isColorListOpen, setIsColorListOpen] = useState(false);
@@ -133,6 +133,8 @@ const Add = ({ token }) => {
                     setProductId('')
                     setCategory('Men')
                     setSubCategory('Sweaters')
+                    setSizes(["Free Size"])
+                    setColors([])
                 }, 2000);
             } else {
                 setIsUploadPopupOpen(false); // Close popup on error
@@ -262,7 +264,7 @@ const Add = ({ token }) => {
                 <div>
                     <p className='mb-2 font-medium'>Product Sizes</p>
                     <div className='flex gap-2 flex-wrap'>
-                        {['S', 'M', 'L', 'XL', 'XXL'].map((s) => (
+                        {['S', 'M', 'L', 'XL', 'XXL', 'Free Size'].map((s) => (
                             <div onClick={() => toggleSize(s)} key={s}>
                                 <p className={`${sizes.includes(s) ? "bg-silk-100 ring-2 ring-silk-500 text-silk-700 font-semibold" : "bg-muted text-muted-foreground hover:bg-muted/80"} px-4 py-2 rounded cursor-pointer transition-all`}>{s}</p>
                             </div>
