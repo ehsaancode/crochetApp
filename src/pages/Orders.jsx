@@ -8,6 +8,7 @@ const Orders = ({ compact }) => {
 
     const { backendUrl, token, currency, getProductsData } = useContext(ShopContext);
     const [orderData, setOrderData] = useState([])
+    const [customOrders, setCustomOrders] = useState([])
 
     // Review Modal State
     const [isReviewOpen, setIsReviewOpen] = useState(false);
@@ -19,6 +20,7 @@ const Orders = ({ compact }) => {
                 return null
             }
 
+            // Fetch Standard Orders
             const response = await axios.post(backendUrl + '/api/order/userorders', {}, { headers: { token } })
             if (response.data.success) {
                 let allOrdersItem = []
@@ -33,31 +35,19 @@ const Orders = ({ compact }) => {
                 })
                 setOrderData(allOrdersItem.reverse())
             }
-        } catch (error) {
-            console.log(error);
-        }
-    }
 
-    const openReviewModal = (productId) => {
-        setReviewData({ productId, rating: 5, comment: '' });
-        setIsReviewOpen(true);
-    };
-
-    const handleReviewSubmit = async () => {
-        try {
-            const response = await axios.post(backendUrl + '/api/product/review', reviewData, { headers: { token } });
-            if (response.data.success) {
-                QToast.success("Review submitted successfully", { position: "top-center" });
-                setIsReviewOpen(false);
-                getProductsData(); // Refresh products to update ratings
-            } else {
-                QToast.error(response.data.message, { position: "top-right" });
+            // Fetch Custom Orders
+            const customResponse = await axios.post(backendUrl + '/api/custom-order/userorders', { userId: token }, { headers: { token } }) // userId typically from taken in middleware, but passing body just in case logic needs it
+            if (customResponse.data.success) {
+                setCustomOrders(customResponse.data.orders)
             }
+
         } catch (error) {
             console.log(error);
-            QToast.error(error.message, { position: "top-right" });
         }
     }
+
+    // ... handleReviewSubmit ...
 
     useEffect(() => {
         loadOrderData()
@@ -72,49 +62,88 @@ const Orders = ({ compact }) => {
                 </div>
             )}
 
-            <div className='flex flex-col gap-4'>
-                {orderData.length === 0 ? (
-                    <div className={`flex flex-col items-center justify-center text-center animate-fade-in ${compact ? 'py-10' : 'py-20'}`}>
-                        <Package className={`text-silk-200 mb-4 ${compact ? 'w-12 h-12' : 'w-16 h-16'}`} />
-                        <h3 className="text-xl font-medium text-silk-900 dark:text-silk-50 mb-2">No orders yet</h3>
-                        <p className="text-silk-500 text-sm mb-6">Looks like you haven't placed any orders yet.</p>
-                    </div>
-                ) : (
-                    orderData.map((item, index) => (
-                        <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
-                            <div className='flex items-start gap-6 text-sm'>
-                                <img className='w-16 sm:w-20' src={item.image[0]} alt="" />
-                                <div>
-                                    <p className='sm:text-base font-medium'>{item.name}</p>
-                                    <div className='flex items-center gap-3 mt-1 text-base text-gray-700 dark:text-gray-300'>
-                                        <p>{currency}{item.price}</p>
-                                        <p>Quantity: {item.quantity}</p>
-                                        <p>Size: {item.size}</p>
-                                    </div>
-                                    <p className='mt-1'>Date: <span className='text-gray-400'>{new Date(item.date).toDateString()}</span></p>
-                                    <p className='mt-1'>Payment: <span className='text-gray-400'>{item.paymentMethod}</span></p>
-                                </div>
-                            </div>
-                            <div className='md:w-1/2 flex justify-between'>
-                                <div className='flex items-center gap-2'>
-                                    <p className={`min-w-2 h-2 rounded-full ${item.status === 'Delivered' ? 'bg-green-500' : 'bg-green-500'}`}></p>
-                                    <p className='text-sm md:text-base'>{item.status}</p>
-                                </div>
-                                {item.status === 'Delivered' ? (
-                                    <button
-                                        onClick={() => openReviewModal(item._id)}
-                                        className='border px-4 py-2 text-sm font-medium rounded-sm border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
-                                    >
-                                        Write a Review
-                                    </button>
-                                ) : (
-                                    <button onClick={loadOrderData} className='border px-4 py-2 text-sm font-medium rounded-sm border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all'>Track Order</button>
-                                )}
-                            </div>
+            {/* Standard Orders Section */}
+            <div className='mb-12'>
+                <h3 className="text-xl font-medium text-silk-900 dark:text-silk-50 mb-4 border-b pb-2">Standard Orders</h3>
+                <div className='flex flex-col gap-4'>
+                    {orderData.length === 0 ? (
+                        <div className={`flex flex-col items-center justify-center text-center animate-fade-in ${compact ? 'py-4' : 'py-10'}`}>
+                            <p className="text-silk-500 text-sm">No standard orders yet.</p>
                         </div>
-                    ))
-                )}
+                    ) : (
+                        orderData.map((item, index) => (
+                            <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
+                                <div className='flex items-start gap-6 text-sm'>
+                                    <img className='w-16 sm:w-20' src={item.image[0]} alt="" />
+                                    <div>
+                                        <p className='sm:text-base font-medium'>{item.name}</p>
+                                        <div className='flex items-center gap-3 mt-1 text-base text-gray-700 dark:text-gray-300'>
+                                            <p>{currency}{item.price}</p>
+                                            <p>Quantity: {item.quantity}</p>
+                                            <p>Size: {item.size}</p>
+                                        </div>
+                                        <p className='mt-1'>Date: <span className='text-gray-400'>{new Date(item.date).toDateString()}</span></p>
+                                        <p className='mt-1'>Payment: <span className='text-gray-400'>{item.paymentMethod}</span></p>
+                                    </div>
+                                </div>
+                                <div className='md:w-1/2 flex justify-between'>
+                                    <div className='flex items-center gap-2'>
+                                        <p className={`min-w-2 h-2 rounded-full ${item.status === 'Delivered' ? 'bg-green-500' : 'bg-green-500'}`}></p>
+                                        <p className='text-sm md:text-base'>{item.status}</p>
+                                    </div>
+                                    {item.status === 'Delivered' ? (
+                                        <button
+                                            onClick={() => openReviewModal(item._id)}
+                                            className='border px-4 py-2 text-sm font-medium rounded-sm border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
+                                        >
+                                            Write a Review
+                                        </button>
+                                    ) : (
+                                        <button onClick={loadOrderData} className='border px-4 py-2 text-sm font-medium rounded-sm border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all'>Track Order</button>
+                                    )}
+                                </div>
+                            </div>
+                        ))
+                    )}
+                </div>
             </div>
+
+            {/* Custom Orders Section */}
+            {!compact && (
+                <div>
+                    <h3 className="text-xl font-medium text-silk-900 dark:text-silk-50 mb-4 border-b pb-2">Custom Requests</h3>
+                    <div className='flex flex-col gap-4'>
+                        {customOrders.length === 0 ? (
+                            <div className="flex flex-col items-center justify-center text-center animate-fade-in py-10">
+                                <p className="text-silk-500 text-sm">No custom requests yet.</p>
+                            </div>
+                        ) : (
+                            customOrders.map((item, index) => (
+                                <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
+                                    <div className='flex items-start gap-6 text-sm'>
+                                        <img className='w-16 sm:w-20 rounded-md object-cover' src={item.image} alt="Custom Request" />
+                                        <div>
+                                            <p className='sm:text-base font-medium'>Custom Request ({item.size})</p>
+                                            <div className='space-y-1 mt-1 text-sm text-gray-600 dark:text-gray-400'>
+                                                <p>Color: {item.colorPreference === 'original' ? 'Original' : item.customColor}</p>
+                                                {item.yarnType && <p>Yarn: {item.yarnType}</p>}
+                                                <p className="italic">"{item.description}"</p>
+                                            </div>
+                                            <p className='mt-2'>Date: <span className='text-gray-400'>{new Date(item.date).toDateString()}</span></p>
+                                        </div>
+                                    </div>
+                                    <div className='md:w-1/2 flex justify-end'>
+                                        <div className='flex items-center gap-2'>
+                                            <p className={`min-w-2 h-2 rounded-full ${item.status === 'Completed' ? 'bg-green-500' : item.status === 'Cancelled' ? 'bg-red-500' : 'bg-yellow-500'}`}></p>
+                                            <p className='text-sm md:text-base font-medium'>{item.status === 'Accepted' ? 'Pending' : item.status}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
+            )}
 
             {/* Review Modal */}
             {isReviewOpen && (

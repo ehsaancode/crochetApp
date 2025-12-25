@@ -5,9 +5,12 @@ import { ShopContext } from '../context/ShopContext';
 import { useNavigate } from 'react-router-dom';
 import FadeContent from './uiComponents/FadeContent';
 import { toast } from 'react-toastify';
+import axios from 'axios';
 
 function CustomOrder() {
-    const { token } = useContext(ShopContext);
+    const { token, backendUrl } = useContext(ShopContext);
+    // Force local backend for testing if needed, or user needs to update env.
+    // console.log("Using Backend URL:", backendUrl);
     const navigate = useNavigate();
     const [image, setImage] = useState(null);
     const [previewUrl, setPreviewUrl] = useState(null);
@@ -54,7 +57,9 @@ function CustomOrder() {
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
-    const handleSubmit = (e) => {
+    const [loading, setLoading] = useState(false);
+
+    const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!token) {
@@ -68,12 +73,44 @@ function CustomOrder() {
             return;
         }
 
-        // Success logic
-        toast.success('Your custom request has been sent! We will contact you shortly.');
-        setDescription('');
-        setCustomColor('');
-        setYarnType('');
-        removeImage();
+        // Use a toast ID to update it later
+        const toastId = toast.loading("Submitting your request...");
+        setLoading(true);
+
+        try {
+            const formData = new FormData();
+            formData.append('image', image);
+            formData.append('size', size);
+            formData.append('colorPreference', colorOption);
+            formData.append('customColor', customColor);
+            formData.append('yarnType', yarnType);
+            formData.append('description', description);
+
+            console.log("Sending Custom Order Request...", { size, colorOption, description });
+
+            const response = await axios.post(backendUrl + '/api/custom-order/create', formData, {
+                headers: { token }
+            });
+
+            console.log("Response:", response.data);
+
+            if (response.data.success) {
+                toast.update(toastId, { render: "Request sent successfully!", type: "success", isLoading: false, autoClose: 3000 });
+                // Clear form
+                setDescription('');
+                setCustomColor('');
+                setYarnType('');
+                removeImage();
+            } else {
+                console.error("Server Error:", response.data.message);
+                toast.update(toastId, { render: response.data.message || 'Failed to submit request', type: "error", isLoading: false, autoClose: 3000 });
+            }
+        } catch (error) {
+            console.error("Submission Error:", error);
+            toast.update(toastId, { render: error.message || 'Something went wrong', type: "error", isLoading: false, autoClose: 3000 });
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -223,9 +260,10 @@ function CustomOrder() {
 
                                 <button
                                     type="submit"
-                                    className="w-full bg-silk-900 dark:bg-silk-100 text-white dark:text-black py-4 rounded-xl text-xs uppercase tracking-[0.15em] font-medium hover:bg-silk-800 dark:hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl transform active:scale-[0.99]"
+                                    disabled={loading}
+                                    className={`w-full bg-silk-900 dark:bg-silk-100 text-white dark:text-black py-4 rounded-xl text-xs uppercase tracking-[0.15em] font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform active:scale-[0.99] ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-silk-800 dark:hover:bg-white'}`}
                                 >
-                                    {token ? 'Request Quote' : 'Login to Request'}
+                                    {loading ? 'Processing...' : (token ? 'Request Quote' : 'Login to Request')}
                                 </button>
                             </div>
                         </form>
