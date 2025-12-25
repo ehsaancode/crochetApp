@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Mail, Phone, Instagram } from 'lucide-react';
+import { Mail, Phone, Instagram, Lock, Scissors, Globe, Banknote, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext'; // Added context
 import FadeContent from './uiComponents/FadeContent'
@@ -78,13 +78,66 @@ function Home() {
                 <div className="mb-16">
                     <Carousel items={products.slice(0, 5).map(p => ({ ...p, img: p.image[0], id: p._id }))} />
                 </div>
+
+                <div className="text-center py-32 px-8 md:px-32 bg-silk-200/30 dark:bg-[linear-gradient(135deg,#000000,#170D27)] w-screen relative left-[calc(-50vw+50%)] my-24 border-y border-transparent dark:border-white/5">
+                    <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
+                        <h3 className="font-serif text-4xl md:text-6xl mb-6 relative z-10 bg-gradient-to-r from-silk-900 to-silk-600 dark:from-white dark:to-silk-300 bg-clip-text text-transparent">
+                            No machines. <br className="hidden md:block" /> No mass production.
+                        </h3>
+                        <div className="w-16 h-0.5 bg-silk-400/50 dark:bg-white/20 mx-auto mb-6"></div>
+                        <p className="text-silk-600 dark:text-silk-400 text-sm md:text-base tracking-[0.2em] uppercase font-medium max-w-xl mx-auto relative z-10">
+                            Every piece is hand-crocheted by skilled artisans
+                        </p>
+                    </FadeContent>
+                </div>
             </section>
 
             <div className="mb-16 h-[80vh] w-full overflow-hidden">
                 <GridMotion items={products.slice(0, 12).map(product => product.image[0])} />
             </div>
 
+            <section className="py-24 px-6 text-center">
+                <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
+                    <h3 className="font-serif text-3xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
+                        Have a design in mind?
+                    </h3>
+                    <p className="text-silk-600 dark:text-silk-300 text-lg md:text-xl font-light mb-8">
+                        Upload an image and we’ll crochet it just for you
+                    </p>
+                    <Link to="/custom-order">
+                        <RainbowButton className="!text-sm !h-10 !px-6">Upload an Image</RainbowButton>
+                    </Link>
+                </FadeContent>
+            </section>
 
+
+
+            <section className="py-6 px-0 md:px-6 border-t border-silk-900/20 dark:border-white/30 bg-silk-50 dark:bg-black/20 overflow-hidden">
+                <div className="max-w-7xl mx-auto">
+                    <div className="flex flex-col items-center justify-center gap-3 px-4 md:px-0">
+                        <div className="flex flex-row justify-center items-center gap-6 md:gap-16 w-full">
+                            {[
+                                { title: 'Secure', icon: Lock },
+                                { title: 'Handmade', icon: Scissors },
+                                { title: 'COD', icon: Banknote }
+                            ].map((feature, idx) => (
+                                <div key={idx} className="flex flex-row items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                                    <feature.icon className="w-3 h-3 md:w-4 md:h-4 text-silk-600 dark:text-silk-400" strokeWidth={1.5} />
+                                    <span className="text-[9px] md:text-xs uppercase tracking-widest font-medium text-silk-600 dark:text-silk-400 whitespace-nowrap">
+                                        {feature.title}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="flex flex-row items-center gap-1.5 opacity-60 hover:opacity-100 transition-opacity duration-300">
+                            <Globe className="w-3 h-3 md:w-4 md:h-4 text-silk-600 dark:text-silk-400" strokeWidth={1.5} />
+                            <span className="text-[9px] md:text-xs uppercase tracking-widest font-medium text-silk-600 dark:text-silk-400 whitespace-nowrap flex items-center gap-1">
+                                Crafted in India with <Heart className="w-2.5 h-2.5 md:w-3 md:h-3 text-red-500 fill-red-500" strokeWidth={0} />
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
             <footer className="bg-silk-900 text-silk-100 py-12 px-6 hidden md:block">
                 <div className="max-w-md mx-auto text-center">

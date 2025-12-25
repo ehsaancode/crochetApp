@@ -14,6 +14,7 @@ import Wishlist from './pages/Wishlist';
 import Login from './pages/Login';
 import PlaceOrder from './pages/PlaceOrder';
 import Orders from './pages/Orders';
+import CustomOrder from './pages/CustomOrder';
 import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
 import { ShopContext } from './context/ShopContext';
@@ -231,6 +232,7 @@ function App() {
                         <Route path="/collection" element={<Collection />} />
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
+                        <Route path="/custom-order" element={<CustomOrder />} />
                         <Route path="/product/:id" element={<ProductDetail />} />
                         <Route path="/cart" element={<Cart />} />
                         <Route path="/wishlist" element={<Wishlist />} />
