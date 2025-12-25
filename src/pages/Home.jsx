@@ -79,15 +79,19 @@ function Home() {
                     <Carousel items={products.slice(0, 5).map(p => ({ ...p, img: p.image[0], id: p._id }))} />
                 </div>
 
-                <div className="text-center py-32 px-8 md:px-32 bg-silk-200/30 dark:bg-[linear-gradient(135deg,#000000,#170D27)] w-screen relative left-[calc(-50vw+50%)] my-24 border-y border-transparent dark:border-white/5">
+                <div className="text-center py-24 px-6 md:px-32 my-12">
                     <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
-                        <h3 className="font-serif text-4xl md:text-6xl mb-6 relative z-10 bg-gradient-to-r from-silk-900 to-silk-600 dark:from-white dark:to-silk-300 bg-clip-text text-transparent">
-                            No machines. <br className="hidden md:block" /> No mass production.
+                        <h3 className="font-serif text-3xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
+                            Have a design in mind?
                         </h3>
-                        <div className="w-16 h-0.5 bg-silk-400/50 dark:bg-white/20 mx-auto mb-6"></div>
-                        <p className="text-silk-600 dark:text-silk-400 text-sm md:text-base tracking-[0.2em] uppercase font-medium max-w-xl mx-auto relative z-10">
-                            Every piece is hand-crocheted by skilled artisans
+                        <p className="text-silk-600 dark:text-silk-300 text-lg md:text-xl font-light mb-8 max-w-2xl mx-auto">
+                            Upload an image and we’ll crochet it just for you
                         </p>
+                        <Link to="/custom-order">
+                            <button className="bg-silk-900 dark:bg-silk-100 text-white dark:text-black text-sm h-10 px-6 rounded-xl font-medium transition-all hover:bg-silk-800 dark:hover:bg-white shadow-md hover:shadow-lg">
+                                Upload an image
+                            </button>
+                        </Link>
                     </FadeContent>
                 </div>
             </section>
@@ -96,17 +100,15 @@ function Home() {
                 <GridMotion items={products.slice(0, 12).map(product => product.image[0])} />
             </div>
 
-            <section className="py-24 px-6 text-center">
+            <section className="text-center py-32 px-8 md:px-32 bg-silk-200/30 dark:bg-[linear-gradient(135deg,#000000,#170D27)] w-full border-y border-transparent dark:border-white/5">
                 <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
-                    <h3 className="font-serif text-3xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
-                        Have a design in mind?
+                    <h3 className="font-serif text-4xl md:text-6xl mb-6 relative z-10 bg-gradient-to-r from-silk-900 to-silk-600 dark:from-white dark:to-silk-300 bg-clip-text text-transparent">
+                        No machines. <br className="hidden md:block" /> No mass production.
                     </h3>
-                    <p className="text-silk-600 dark:text-silk-300 text-lg md:text-xl font-light mb-8">
-                        Upload an image and we’ll crochet it just for you
+                    <div className="w-16 h-0.5 bg-silk-400/50 dark:bg-white/20 mx-auto mb-6"></div>
+                    <p className="text-silk-600 dark:text-silk-400 text-sm md:text-base tracking-[0.2em] uppercase font-medium max-w-xl mx-auto relative z-10">
+                        Every piece is hand-crocheted by skilled artisans
                     </p>
-                    <Link to="/custom-order">
-                        <RainbowButton className="!text-sm !h-10 !px-6">Upload an Image</RainbowButton>
-                    </Link>
                 </FadeContent>
             </section>
 
