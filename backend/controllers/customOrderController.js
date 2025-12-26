@@ -59,6 +59,21 @@ const createCustomOrder = async (req, res) => {
             date: Date.now()
         });
 
+        // Update User Address if provided (Address snapshot logic)
+        const { street, city, state, zip, country, phone, landmark } = req.body;
+        if (street && city && state && zip && country) {
+            try {
+                // Only update if User found
+                await User.findByIdAndUpdate(userId, {
+                    address: { street, city, state, zip, country, landmark },
+                    phone: phone || undefined
+                });
+                console.log("User address updated from custom order");
+            } catch (err) {
+                console.log("Failed to update user address:", err);
+            }
+        }
+
         console.log("Saving new order:", customOrder);
         const savedOrder = await customOrder.save();
         console.log("Order saved successfully:", savedOrder._id);

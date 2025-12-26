@@ -1,4 +1,4 @@
-import React, { useState, useRef, useContext } from 'react';
+import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Upload, X, Info } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShopContext } from '../context/ShopContext';
@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 
 function CustomOrder() {
-    const { token, backendUrl } = useContext(ShopContext);
+    const { token, backendUrl, userData, fetchUserProfile } = useContext(ShopContext); // added userData
     // Force local backend for testing if needed, or user needs to update env.
     // console.log("Using Backend URL:", backendUrl);
     const navigate = useNavigate();
@@ -19,6 +19,32 @@ function CustomOrder() {
     const [colorOption, setColorOption] = useState('original'); // 'original' or 'custom'
     const [customColor, setCustomColor] = useState('');
     const [yarnType, setYarnType] = useState('');
+
+    const [addressData, setAddressData] = useState({
+        street: '', city: '', state: '', zip: '', country: '', phone: '', landmark: ''
+    });
+
+    const isAddressMissing = !userData?.address?.street || !userData?.address?.city || !userData?.address?.state || !userData?.address?.zip || !userData?.address?.country || !userData?.phone;
+
+    useEffect(() => {
+        if (userData) {
+            setAddressData({
+                street: userData.address?.street || '',
+                city: userData.address?.city || '',
+                state: userData.address?.state || '',
+                zip: userData.address?.zip || '',
+                landmark: userData.address?.landmark || '',
+                country: userData.address?.country || '',
+                phone: userData.phone || '',
+
+            });
+        }
+    }, [userData]);
+
+    const handleAddressChange = (e) => {
+        const { name, value } = e.target;
+        setAddressData(prev => ({ ...prev, [name]: value }));
+    };
 
     const fileInputRef = useRef(null);
 
@@ -73,6 +99,13 @@ function CustomOrder() {
             return;
         }
 
+        if (isAddressMissing) {
+            if (!addressData.street || !addressData.city || !addressData.state || !addressData.zip || !addressData.country || !addressData.phone) {
+                toast.error("Please complete your shipping details");
+                return;
+            }
+        }
+
         // Use a toast ID to update it later
         const toastId = toast.loading("Submitting your request...");
         setLoading(true);
@@ -85,6 +118,16 @@ function CustomOrder() {
             formData.append('customColor', customColor);
             formData.append('yarnType', yarnType);
             formData.append('description', description);
+
+            if (isAddressMissing) {
+                formData.append('street', addressData.street);
+                formData.append('city', addressData.city);
+                formData.append('state', addressData.state);
+                formData.append('zip', addressData.zip);
+                formData.append('country', addressData.country);
+                formData.append('phone', addressData.phone);
+                if (addressData.landmark) formData.append('landmark', addressData.landmark);
+            }
 
             console.log("Sending Custom Order Request...", { size, colorOption, description });
 
@@ -257,6 +300,24 @@ function CustomOrder() {
                                         placeholder="Any specific requests?"
                                     ></textarea>
                                 </div>
+
+                                {/* Address Form (Conditional) */}
+                                {isAddressMissing && (
+                                    <div className="border-t border-silk-200 dark:border-silk-800 pt-6 mt-2 animate-fade-in">
+                                        <h4 className="font-medium text-silk-900 dark:text-silk-100 mb-4 flex items-center gap-2">
+                                            <Info className="w-4 h-4" /> Shipping Details Required
+                                        </h4>
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                            <input name="street" value={addressData.street} onChange={handleAddressChange} placeholder="Street Address" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                            <input name="city" value={addressData.city} onChange={handleAddressChange} placeholder="City" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                            <input name="zip" value={addressData.zip} onChange={handleAddressChange} placeholder="Zip Code" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                            <input name="landmark" value={addressData.landmark} onChange={handleAddressChange} placeholder="Landmark (Optional)" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" />
+                                            <input name="state" value={addressData.state} onChange={handleAddressChange} placeholder="State" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                            <input name="country" value={addressData.country} onChange={handleAddressChange} placeholder="Country" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                            <input name="phone" value={addressData.phone} onChange={handleAddressChange} placeholder="Phone Number" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                        </div>
+                                    </div>
+                                )}
 
                                 <button
                                     type="submit"
