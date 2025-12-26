@@ -19,6 +19,7 @@ import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
 import { ShopContext } from './context/ShopContext';
 import QToast from './pages/uiComponents/QToast';
+import ScrollToTop from './components/ScrollToTop';
 
 
 // Global state to track animation status across navigation (resets on full reload)
@@ -93,7 +94,7 @@ function Navigation() {
 
                     <nav className="flex flex-col space-y-6 text-center">
                         <Link to="/" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Home</Link>
-                        <Link to="/collection" onClick={() => { setIsMenuOpen(false); sessionStorage.removeItem('collectionScrollY'); }} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Shop</Link>
+                        <Link to="/collection" onClick={() => { setIsMenuOpen(false); sessionStorage.removeItem('collectionScrollY'); sessionStorage.removeItem('collectionVisibleProducts'); }} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Shop</Link>
                         <Link to="/about" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">About</Link>
 
                         <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Contact</Link>
@@ -167,7 +168,7 @@ function Navigation() {
             <div className="fixed bottom-0 left-0 right-0 bg-silk-50/90 dark:bg-silk-blue-dark/95 backdrop-blur-md border-t border-silk-200 dark:border-silk-blue-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:hidden px-4 py-3 flex justify-between items-center pb-5">
                 {[
                     { path: '/', icon: HomeIcon, label: 'Home' },
-                    { path: '/collection', icon: Store, label: 'Shop', onClick: () => sessionStorage.removeItem('collectionScrollY') },
+                    { path: '/collection', icon: Store, label: 'Shop', onClick: () => { sessionStorage.removeItem('collectionScrollY'); sessionStorage.removeItem('collectionVisibleProducts'); } },
                     { path: '/cart', icon: ShoppingBag, label: 'Cart' },
                     { path: '/orders', icon: Package, label: 'Orders' },
                     { path: '/account', icon: User, label: 'Account', isProfile: true }
@@ -218,12 +219,16 @@ function Navigation() {
     );
 }
 
+
+
+
 function App() {
     // State moved to ShopContext
 
     return (
         <ThemeProvider>
             <QToast />
+            <ScrollToTop />
             <div className="min-h-screen bg-silk-100 dark:bg-black text-accent-dark dark:text-silk-50 font-sans selection:bg-silk-200 dark:selection:bg-silk-800 transition-colors duration-300">
                 <Navigation />
                 <main className="pb-24 md:pb-0">

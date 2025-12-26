@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect, useContext, useRef } from 'react';
 import { ShoppingBag, Filter, X, Star, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
@@ -13,7 +13,12 @@ function Collection() {
     };
     const [priceRange, setPriceRange] = useState(2000);
     const [isScrolled, setIsScrolled] = useState(false);
-    const [visibleProducts, setVisibleProducts] = useState(12);
+
+    // Initialize from storage if available
+    const [visibleProducts, setVisibleProducts] = useState(() => {
+        const saved = sessionStorage.getItem('collectionVisibleProducts');
+        return saved ? parseInt(saved, 10) : 12;
+    });
 
     const handleLoadMore = () => {
         setVisibleProducts(prev => prev + 12);
@@ -23,7 +28,13 @@ function Collection() {
 
     const filteredProducts = products.filter(product => product.price <= priceRange);
 
+    const isFirstRender = useRef(true);
+
     useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
         setVisibleProducts(12);
     }, [priceRange, products]);
 
@@ -56,6 +67,7 @@ function Collection() {
 
     const saveScrollPosition = () => {
         sessionStorage.setItem('collectionScrollY', window.scrollY.toString());
+        sessionStorage.setItem('collectionVisibleProducts', visibleProducts.toString());
     };
 
     return (
