@@ -190,13 +190,7 @@ function Navigation() {
                                 />
                             )}
                             <div className="relative z-10 flex items-center gap-2 px-2">
-                                {item.isProfile && userData && userData.image ? (
-                                    <div className="w-5 h-5 rounded-full overflow-hidden border border-silk-400 dark:border-silk-500">
-                                        <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
-                                    </div>
-                                ) : (
-                                    <item.icon className="w-5 h-5" strokeWidth={2} />
-                                )}
+                                <item.icon className="w-5 h-5" strokeWidth={2} />
                                 <AnimatePresence>
                                     {isActive && (
                                         <motion.span
