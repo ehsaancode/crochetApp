@@ -287,7 +287,7 @@ const Login = () => {
                                                 </div>
                                             </div>
                                             <div className='flex gap-4 mt-6'>
-                                                <RainbowButton type='submit'>Save Changes</RainbowButton>
+                                                <button type='submit' className='bg-silk-900 dark:bg-silk-100 text-white dark:text-black text-sm h-10 px-6 rounded-xl font-medium transition-all hover:bg-silk-800 dark:hover:bg-white shadow-md hover:shadow-lg'>Save Changes</button>
                                                 <button type='button' onClick={() => setIsEditing(false)} className='px-6 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'>Cancel</button>
                                             </div>
                                         </form>

@@ -23,6 +23,35 @@ const Edit = ({ token }) => {
     const [bestseller, setBestseller] = useState(false);
     const [sizes, setSizes] = useState([]);
 
+    const categoryList = {
+        "Men": {
+            "Wearables": ["Sweaters", "Cardigans", "Vests", "Shrugs", "Scarves", "Cowls", "Hats", "Beanies", "Berets", "Gloves", "Arm Warmers", "Socks", "Slippers", "Leg Warmers"],
+            "Accessories": ["Headbands", "Ear Warmers", "Belts", "Bracelets", "Necklaces", "Mug Cozies", "Bottle Sleeves"],
+            "Bags & Utility": ["Tote Bags", "Slings", "Backpacks", "Pouches", "Coin Purses", "Market Bags"],
+            "Functional Home Utility": ["Pot Holders", "Trivets", "Dishcloths", "Washcloths"]
+        },
+        "Women": {
+            "Wearables": ["Sweaters", "Cardigans", "Vests", "Shrugs", "Shawls", "Wraps", "Ponchos", "Capes", "Scarves", "Cowls", "Hats", "Beanies", "Berets", "Mittens", "Gloves", "Arm Warmers", "Socks", "Slippers", "Leg Warmers"],
+            "Accessories": ["Headbands", "Ear Warmers", "Hair Accessories", "Brooches", "Belts", "Bracelets", "Necklaces", "Anklets", "Mug Cozies", "Bottle Sleeves"],
+            "Bags & Utility": ["Tote Bags", "Handbags", "Slings", "Backpacks", "Pouches", "Coin Purses", "Storage Baskets", "Organizers", "Market Bags"],
+            "Home Decor": ["Blankets", "Afghans", "Throws", "Bedspreads", "Cushion Covers", "Pillow Shams", "Rugs", "Floor Mats", "Wall Hangings", "Tapestries", "Table Runners", "Table Mats", "Placemats", "Coasters", "Curtains", "Door Hangings"],
+            "Decorative & Art": ["Floral Crochet", "Leaf Motifs", "Mandala Crochet", "Tapestry Crochet", "Framed Crochet", "3D Crochet Art"],
+            "Jewelry & Small Art": ["Crochet Earrings", "Crochet Rings", "Crochet Pendants", "Mini Ornaments", "Bookmark Crochet"]
+        },
+        "Kids": {
+            "Wearables": ["Baby Sweaters", "Baby Caps", "Baby Socks", "Baby Booties", "Rompers", "Slippers", "Hats", "Beanies", "Mittens"],
+            "Toys & Amigurumi": ["Animal Amigurumi", "Doll Amigurumi", "Character Figures", "Mini Amigurumi", "Keychain Amigurumi", "Plush Toys"],
+            "Baby & Kids": ["Baby Blankets", "Soft Toys", "Nursery Decor"],
+            "Accessories": ["Headbands", "Hair Accessories"],
+            "Home & Utility": ["Blankets", "Door Stoppers"]
+        },
+        "All": {
+            "Seasonal": ["Seasonal & Festive Decor"],
+            "Wall Decor": ["Wall & Hanging Decor"],
+            "Techniques": ["Crochet Techniques / Styles"]
+        }
+    };
+
     const fetchProductData = async () => {
         try {
             const response = await axios.post(backendUrl + '/api/product/single', { productId: id })
@@ -183,23 +212,45 @@ const Edit = ({ token }) => {
                 </div>
 
                 <div className='flex flex-col sm:flex-row gap-4 w-full max-w-[500px]'>
+
+
                     <div className='flex-1'>
                         <p className='mb-2 font-medium'>Category</p>
-                        <select onChange={(e) => setCategory(e.target.value)} value={category} className='w-full px-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all cursor-pointer'>
-                            <option value="Men">Men</option>
-                            <option value="Women">Women</option>
-                            <option value="Kids">Kids</option>
-                            <option value="Unisex">Unisex</option>
-                            <option value="Not applicable">Not applicable</option>
+                        <select
+                            onChange={(e) => {
+                                const newCategory = e.target.value;
+                                setCategory(newCategory);
+                                // Set first subcategory of first group
+                                if (categoryList[newCategory]) {
+                                    const firstGroup = Object.keys(categoryList[newCategory])[0];
+                                    if (firstGroup) {
+                                        setSubCategory(categoryList[newCategory][firstGroup][0]);
+                                    }
+                                }
+                            }}
+                            value={category}
+                            className='w-full px-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all cursor-pointer'
+                        >
+                            {Object.keys(categoryList).map(cat => (
+                                <option key={cat} value={cat}>{cat}</option>
+                            ))}
                         </select>
                     </div>
 
                     <div className='flex-1'>
                         <p className='mb-2 font-medium'>Sub Category</p>
-                        <select onChange={(e) => setSubCategory(e.target.value)} value={subCategory} className='w-full px-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all cursor-pointer'>
-                            <option value="Topwear">Topwear</option>
-                            <option value="Bottomwear">Bottomwear</option>
-                            <option value="Winterwear">Winterwear</option>
+                        <select
+                            onChange={(e) => setSubCategory(e.target.value)}
+                            value={subCategory}
+                            className='w-full px-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all cursor-pointer'
+                        >
+                            {categoryList[category] && Object.keys(categoryList[category]).map(group => (
+                                <optgroup key={group} label={group} className="text-silk-700 font-bold bg-silk-50/50 dark:text-silk-400 dark:bg-gray-800">
+                                    {categoryList[category][group].map(sub => (
+                                        <option key={sub} value={sub} className="text-foreground bg-white font-normal pl-4 dark:bg-black dark:text-white">{sub}</option>
+                                    ))}
+                                </optgroup>
+                            ))}
                         </select>
                     </div>
 
@@ -236,7 +287,7 @@ const Edit = ({ token }) => {
                     <label className='cursor-pointer font-medium select-none' htmlFor="bestseller">Bestseller Product</label>
                 </div>
 
-                <button type="submit" className='min-w-[120px] py-3 mt-4 bg-silk-600 text-white font-bold rounded-lg hover:bg-silk-700 transition-all shadow-md active:scale-95'>Update Product</button>
+                <button type="submit" className='px-6 py-2 mt-4 bg-emerald-100 text-emerald-800 text-sm font-medium rounded-lg hover:bg-emerald-200 transition-all shadow-sm active:scale-95'>Update Product</button>
 
             </form>
         </div>

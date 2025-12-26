@@ -330,7 +330,7 @@ const Add = ({ token }) => {
                     <label className='cursor-pointer font-medium select-none' htmlFor="bestseller">Bestseller Product</label>
                 </div>
 
-                <button type="submit" className='min-w-[120px] py-3 mt-4 bg-silk-600 text-white font-bold rounded-lg hover:bg-silk-700 transition-all shadow-md active:scale-95'>Add Product</button>
+                <button type="submit" className='px-6 py-2 mt-4 bg-emerald-100 text-emerald-800 text-sm font-medium rounded-lg hover:bg-emerald-200 transition-all shadow-sm active:scale-95'>Add Product</button>
 
             </form>
             <UploadProgressPopup

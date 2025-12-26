@@ -11,6 +11,9 @@ function Collection() {
         if (!url) return false;
         return url.match(/\.(mp4|webm|ogg|mov|avi|mkv)($|\?)/i) || url.includes('/video/upload/');
     };
+
+    const [category, setCategory] = useState([]);
+    const [subCategory, setSubCategory] = useState([]);
     const [priceRange, setPriceRange] = useState(2000);
     const [isScrolled, setIsScrolled] = useState(false);
 
@@ -20,13 +23,56 @@ function Collection() {
         return saved ? parseInt(saved, 10) : 12;
     });
 
+    const toggleCategory = (e) => {
+        if (category.includes(e.target.value)) {
+            setCategory(prev => prev.filter(item => item !== e.target.value))
+        }
+        else {
+            setCategory(prev => [...prev, e.target.value])
+        }
+    }
+
+    const toggleSubCategory = (e) => {
+        if (subCategory.includes(e.target.value)) {
+            setSubCategory(prev => prev.filter(item => item !== e.target.value))
+        }
+        else {
+            setSubCategory(prev => [...prev, e.target.value])
+        }
+    }
+
     const handleLoadMore = () => {
         setVisibleProducts(prev => prev + 12);
     };
 
     const isInWishlist = (id) => userData?.wishlist?.some(item => item.productId === id);
 
-    const filteredProducts = products.filter(product => product.price <= priceRange);
+
+    const [filterProducts, setFilterProducts] = useState([]);
+
+    const applyFilter = () => {
+        let productsCopy = products.slice();
+
+        if (category.length > 0) {
+            productsCopy = productsCopy.filter(item => category.includes(item.category));
+        }
+
+        if (subCategory.length > 0) {
+            productsCopy = productsCopy.filter(item => subCategory.includes(item.subCategory));
+        }
+
+        if (priceRange) {
+            productsCopy = productsCopy.filter(item => item.price <= priceRange);
+        }
+
+        setFilterProducts(productsCopy)
+    }
+
+    // Effect to apply filters whenever dependencies change
+    useEffect(() => {
+        applyFilter();
+    }, [category, subCategory, priceRange, products])
+
 
     const isFirstRender = useRef(true);
 
@@ -36,7 +82,12 @@ function Collection() {
             return;
         }
         setVisibleProducts(12);
-    }, [priceRange, products]);
+    }, [category, subCategory, priceRange, products]);
+
+
+    // Extract unique categories and subcategories for the UI
+    const availableCategories = [...new Set(products.map(p => p.category))].filter(c => c && c !== "Not applicable");
+    const availableSubCategories = [...new Set(products.map(p => p.subCategory))].filter(Boolean);
 
     const handleWishlistToggle = (e, product) => {
         e.preventDefault();
@@ -58,8 +109,6 @@ function Collection() {
         const savedScrollY = sessionStorage.getItem('collectionScrollY');
         if (savedScrollY) {
             window.scrollTo(0, parseInt(savedScrollY, 10));
-            // Optional: Clear it if you only want it to persist for one navigation
-            // sessionStorage.removeItem('collectionScrollY'); 
         }
 
         return () => window.removeEventListener('scroll', handleScroll);
@@ -110,14 +159,27 @@ function Collection() {
                         </div>
                     </div>
 
-                    {/* Product Type Filter */}
+                    {/* Category Filter */}
                     <div>
-                        <h4 className="font-medium mb-4 text-silk-900 dark:text-white">Product Type</h4>
+                        <h4 className="font-medium mb-4 text-silk-900 dark:text-white">Category</h4>
                         <div className="space-y-2">
-                            {['Dress', 'Top', 'Accessory', 'Set'].map((type) => (
-                                <label key={type} className="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" className="rounded border-silk-300 dark:border-silk-700 text-silk-900 focus:ring-silk-500 dark:bg-black" />
-                                    <span className="text-silk-700 dark:text-silk-300">{type}</span>
+                            {availableCategories.map((cat) => (
+                                <label key={cat} className="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" className="rounded border-silk-300 dark:border-silk-700 text-silk-900 focus:ring-silk-500 dark:bg-black" value={cat} onChange={toggleCategory} checked={category.includes(cat)} />
+                                    <span className="text-silk-700 dark:text-silk-300">{cat}</span>
+                                </label>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* SubCategory Filter */}
+                    <div>
+                        <h4 className="font-medium mb-4 text-silk-900 dark:text-white">Type</h4>
+                        <div className="space-y-2 max-h-60 overflow-y-auto scrollbar-thin scrollbar-thumb-silk-200 dark:scrollbar-thumb-gray-700">
+                            {availableSubCategories.map((sub) => (
+                                <label key={sub} className="flex items-center space-x-2 cursor-pointer">
+                                    <input type="checkbox" className="rounded border-silk-300 dark:border-silk-700 text-silk-900 focus:ring-silk-500 dark:bg-black" value={sub} onChange={toggleSubCategory} checked={subCategory.includes(sub)} />
+                                    <span className="text-silk-700 dark:text-silk-300">{sub}</span>
                                 </label>
                             ))}
                         </div>
@@ -152,11 +214,12 @@ function Collection() {
             <div className="flex-1">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="font-serif text-3xl text-silk-900 dark:text-white">All Products</h2>
-                    <span className="text-silk-500 dark:text-silk-400 text-sm">{filteredProducts.length} items</span>
+                    <span className="text-silk-500 dark:text-silk-400 text-sm">{filterProducts.length} items</span>
                 </div>
 
                 <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8">
-                    {filteredProducts.slice(0, visibleProducts).map((item) => (
+                    {filterProducts.slice(0, visibleProducts).map((item) => (
+
                         <Link to={`/product/${item._id}`} key={item._id} className="group cursor-pointer" onClick={saveScrollPosition}>
                             <div className="h-full flex flex-col rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 relative border border-silk-200 dark:border-silk-blue-border/30">
                                 {/* Default Background */}
@@ -204,7 +267,7 @@ function Collection() {
                     ))}
                 </div>
 
-                {visibleProducts < filteredProducts.length && (
+                {visibleProducts < filterProducts.length && (
                     <div className="flex justify-center mt-12">
                         <button
                             onClick={handleLoadMore}
