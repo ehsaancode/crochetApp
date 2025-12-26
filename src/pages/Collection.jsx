@@ -71,7 +71,7 @@ function Collection() {
     // Effect to apply filters whenever dependencies change
     useEffect(() => {
         applyFilter();
-    }, [category, subCategory, priceRange, products])
+    }, [products])
 
 
     const isFirstRender = useRef(true);
@@ -82,7 +82,7 @@ function Collection() {
             return;
         }
         setVisibleProducts(12);
-    }, [category, subCategory, priceRange, products]);
+    }, [products]);
 
 
     // Extract unique categories and subcategories for the UI
@@ -202,6 +202,15 @@ function Collection() {
                             ))}
                         </div>
                     </div>
+                </div>
+
+                <div className="mt-8">
+                    <button
+                        onClick={applyFilter}
+                        className="w-full px-4 py-2 bg-silk-900 dark:bg-silk-100 text-white dark:text-black font-medium rounded-lg hover:bg-silk-800 dark:hover:bg-white transition-colors shadow-sm"
+                    >
+                        Apply Filters
+                    </button>
                 </div>
             </aside>
 
