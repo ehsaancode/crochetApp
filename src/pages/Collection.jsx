@@ -134,7 +134,7 @@ function Collection() {
             </button>
 
             {/* Sidebar Filters */}
-            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-black p-6 shadow-2xl transform transition-transform duration-300 ease-out md:sticky md:top-24 md:h-fit md:translate-x-0 md:shadow-none md:bg-transparent md:w-64 md:block ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-black p-6 shadow-2xl transform transition-transform duration-300 ease-out md:sticky md:top-24 md:h-[80vh] overflow-y-auto scrollbar-thin scrollbar-thumb-silk-200 dark:scrollbar-thumb-gray-700 md:translate-x-0 md:shadow-none md:bg-transparent md:w-64 md:block ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'}`}>
                 <div className="flex justify-between items-center mb-8 md:hidden">
                     <h3 className="font-serif text-xl dark:text-white">Filters</h3>
                     <button onClick={() => setIsFilterOpen(false)} className="dark:text-white"><X className="w-6 h-6" /></button>

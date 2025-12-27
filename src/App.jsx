@@ -48,12 +48,14 @@ function Navigation() {
 
     React.useEffect(() => {
         if (userData && userData.name) {
-            if (!hasGreetedRef.current) {
+            const sessionGreeted = sessionStorage.getItem('userGreeted');
+            if (!hasGreetedRef.current && !sessionGreeted) {
                 // Trigger greeting animation
                 setBrandText(`Hi, ${userData.name.split(' ')[0]}!`);
                 setIsGreeting(true);
                 setStartDecryption(true);
                 hasGreetedRef.current = true;
+                sessionStorage.setItem('userGreeted', 'true');
 
                 // Revert back to brand name after 4 seconds
                 const timer = setTimeout(() => {
@@ -62,9 +64,6 @@ function Navigation() {
                 }, 2500);
                 return () => clearTimeout(timer);
             }
-        } else {
-            // Reset greeting flag when user logs out or no user data
-            hasGreetedRef.current = false;
         }
     }, [userData]);
 

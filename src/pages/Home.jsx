@@ -49,8 +49,8 @@ function Home() {
                 </div>
             </section>
 
-            <section id="shop" className="pt-16 px-6 max-w-7xl mx-auto">
-                <div className="w-full mb-32">
+            <section id="shop" className="pt-32 px-6 max-w-7xl mx-auto">
+                <div className="w-full mb-48">
                     <Masonry
                         items={masonryItems}
                         ease="power3.out"
@@ -79,7 +79,7 @@ function Home() {
                     <Carousel items={products.slice(0, 5).map(p => ({ ...p, img: p.image[0], id: p._id }))} />
                 </div>
 
-                <div className="text-center py-24 px-6 md:px-32 my-12">
+                <div className="text-center py-32 px-6 md:px-32 my-24 rounded-3xl bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27]">
                     <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                         <h3 className="font-serif text-3xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
                             Have a design in mind?
@@ -96,11 +96,11 @@ function Home() {
                 </div>
             </section>
 
-            <div className="mb-16 h-[80vh] w-full overflow-hidden">
+            <div className="mb-32 h-[80vh] w-full overflow-hidden bg-silk-50 dark:bg-black">
                 <GridMotion items={products.slice(0, 12).map(product => product.image[0])} />
             </div>
 
-            <section className="text-center py-32 px-8 md:px-32 bg-silk-200/30 dark:bg-[linear-gradient(135deg,#000000,#170D27)] w-full border-y border-transparent dark:border-white/5">
+            <section className="text-center py-48 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl">
                 <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                     <h3 className="font-serif text-4xl md:text-6xl mb-6 relative z-10 bg-gradient-to-r from-silk-900 to-silk-600 dark:from-white dark:to-silk-300 bg-clip-text text-transparent">
                         No machines. <br className="hidden md:block" /> No mass production.
@@ -114,7 +114,7 @@ function Home() {
 
 
 
-            <section className="py-6 px-0 md:px-6 border-t border-silk-900/20 dark:border-white/30 bg-silk-50 dark:bg-black/20 overflow-hidden">
+            <section className="py-6 px-0 md:px-6 bg-silk-50 dark:bg-black/20 overflow-hidden">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col items-center justify-center gap-3 px-4 md:px-0">
                         <div className="flex flex-row justify-center items-center gap-6 md:gap-16 w-full">
