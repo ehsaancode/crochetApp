@@ -303,7 +303,7 @@ function Collection() {
                                         {isVideo(item.image[0]) ? (
                                             <video src={item.image[0]} className="w-full h-full object-cover" muted loop autoPlay playsInline />
                                         ) : (
-                                            <img src={item.image[0]} alt={item.name} className="w-full h-full object-cover" />
+                                            <img src={item.image[0]} alt={item.name} className="w-full h-full object-cover" loading="lazy" />
                                         )}
                                     </div>
                                     <button className="absolute bottom-4 right-4 w-10 h-10 bg-white text-silk-900 rounded-full flex items-center justify-center shadow-lg translate-y-14 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 delay-100 hover:bg-silk-900 hover:text-white">

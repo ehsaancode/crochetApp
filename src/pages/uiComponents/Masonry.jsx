@@ -33,18 +33,7 @@ const useMeasure = () => {
     return [ref, size];
 };
 
-const preloadImages = async urls => {
-    await Promise.all(
-        urls.map(
-            src =>
-                new Promise(resolve => {
-                    const img = new Image();
-                    img.src = src;
-                    img.onload = img.onerror = () => resolve();
-                })
-        )
-    );
-};
+
 
 const Masonry = ({
     items,
@@ -64,7 +53,6 @@ const Masonry = ({
     );
 
     const [containerRef, { width }] = useMeasure();
-    const [imagesReady, setImagesReady] = useState(false);
 
     const getInitialPosition = item => {
         const containerRect = containerRef.current?.getBoundingClientRect();
@@ -95,9 +83,7 @@ const Masonry = ({
         }
     };
 
-    useEffect(() => {
-        preloadImages(items.map(i => i.img)).then(() => setImagesReady(true));
-    }, [items]);
+
 
     const grid = useMemo(() => {
         if (!width) return [];
@@ -183,7 +169,7 @@ const Masonry = ({
 
         hasMounted.current = true;
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [grid, imagesReady, isInView, stagger, animateFrom, blurToFocus, duration, ease]);
+    }, [grid, isInView, stagger, animateFrom, blurToFocus, duration, ease]);
 
     const handleMouseEnter = (id, element) => {
         if (scaleOnHover) {
@@ -226,9 +212,14 @@ const Masonry = ({
                     onMouseLeave={e => handleMouseLeave(item.id, e.currentTarget)}
                 >
                     <div
-                        className="relative w-full h-full bg-cover bg-center rounded-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] uppercase text-[10px] leading-[10px]"
-                        style={{ backgroundImage: `url(${item.img})` }}
+                        className="relative w-full h-full rounded-[10px] shadow-[0px_10px_50px_-10px_rgba(0,0,0,0.2)] overflow-hidden"
                     >
+                        <img
+                            src={item.img}
+                            alt=""
+                            className="w-full h-full object-cover rounded-[10px]"
+                            loading="lazy"
+                        />
                         {colorShiftOnHover && (
                             <div className="color-overlay absolute inset-0 rounded-[10px] bg-gradient-to-tr from-pink-500/50 to-sky-500/50 opacity-0 pointer-events-none" />
                         )}

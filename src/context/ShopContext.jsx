@@ -14,15 +14,22 @@ const ShopContextProvider = (props) => {
     const [showSearch, setShowSearch] = useState(false);
 
     const [cartItems, setCartItems] = useState({});
-    const [products, setProducts] = useState([]);
+    const [products, setProducts] = useState(() => {
+        const saved = localStorage.getItem('products');
+        return saved ? JSON.parse(saved) : [];
+    });
     const [token, setToken] = useState("");
-    const [userData, setUserData] = useState(null);
+    const [userData, setUserData] = useState(() => {
+        const saved = localStorage.getItem('userData');
+        return saved ? JSON.parse(saved) : null;
+    });
 
     const getProductsData = async () => {
         try {
             const response = await axios.get(backendUrl + '/api/product/list')
             if (response.data.success) {
                 setProducts(response.data.products)
+                localStorage.setItem('products', JSON.stringify(response.data.products));
             } else {
                 QToast.error(response.data.message, { position: "top-right" })
             }
@@ -43,6 +50,7 @@ const ShopContextProvider = (props) => {
             const response = await axios.get(backendUrl + '/api/user/profile', { headers: { token: t } });
             if (response.data.success) {
                 setUserData(response.data.user);
+                localStorage.setItem('userData', JSON.stringify(response.data.user));
             } else {
                 QToast.error(response.data.message, { position: "top-right" });
             }

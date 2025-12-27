@@ -92,6 +92,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                             src={items[currentIndex].img}
                             alt={items[currentIndex].name}
                             className="w-full h-full object-cover object-center pointer-events-none"
+                            loading="lazy"
                         />
                     </div>
 
