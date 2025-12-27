@@ -130,7 +130,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                                 to={`/product/${items[currentIndex].id}`}
                                 className="pointer-events-auto"
                             >
-                                <RainbowButton className="px-8 py-4 text-sm gap-2">
+                                <RainbowButton className="px-6 py-2.5 text-sm gap-2">
                                     <ShoppingBag className="w-4 h-4" />
                                     <span>Shop Now - ₹{items[currentIndex].price.toFixed(2)}</span>
                                 </RainbowButton>
