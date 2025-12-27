@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
-import { ShoppingBag, Filter, X, Star, Heart } from 'lucide-react';
+import { ShoppingBag, Filter, X, Star, Heart, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 
@@ -16,12 +16,26 @@ function Collection() {
     const [subCategory, setSubCategory] = useState([]);
     const [priceRange, setPriceRange] = useState(2000);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     // Initialize from storage if available
     const [visibleProducts, setVisibleProducts] = useState(() => {
         const saved = sessionStorage.getItem('collectionVisibleProducts');
         return saved ? parseInt(saved, 10) : 12;
     });
+
+    // Debounce Search Query
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            setDebouncedSearchQuery(searchQuery);
+        }, 500);
+
+        return () => {
+            clearTimeout(handler);
+        };
+    }, [searchQuery]);
 
     const toggleCategory = (e) => {
         if (category.includes(e.target.value)) {
@@ -65,13 +79,17 @@ function Collection() {
             productsCopy = productsCopy.filter(item => item.price <= priceRange);
         }
 
+        if (debouncedSearchQuery) {
+            productsCopy = productsCopy.filter(item => item.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
+        }
+
         setFilterProducts(productsCopy)
     }
 
     // Effect to apply filters whenever dependencies change
     useEffect(() => {
         applyFilter();
-    }, [products])
+    }, [products, debouncedSearchQuery])
 
 
     const isFirstRender = useRef(true);
@@ -122,16 +140,50 @@ function Collection() {
     return (
         <div className="pt-20 pb-12 px-4 max-w-7xl mx-auto flex flex-col md:flex-row gap-8">
             {/* Mobile Filter Toggle */}
-            <button
-                onClick={() => setIsFilterOpen(true)}
-                className={`md:hidden sticky top-24 z-40 flex items-center space-x-2 text-silk-900 dark:text-white font-medium shadow-lg mb-4 transition-all duration-700 ease-in-out overflow-hidden ${isScrolled
-                    ? 'self-start w-[140px] px-6 py-2 rounded-full bg-silk-100/50 dark:bg-black/50 backdrop-blur-md hover:bg-silk-200/50 dark:hover:bg-gray-900/50 justify-center'
-                    : 'w-full justify-center p-3 rounded-full bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-silk-200 dark:hover:bg-gray-800'
-                    }`}
-            >
-                <Filter className="w-5 h-5" />
-                <span>Filters</span>
-            </button>
+            {/* Mobile Filter & Search Toggle */}
+            <div className="md:hidden sticky top-24 z-40 flex gap-3 mb-4 transition-all duration-700 ease-in-out w-full justify-between">
+                <button
+                    onClick={() => setIsFilterOpen(true)}
+                    className={`flex items-center justify-center text-silk-900 dark:text-white font-medium shadow-lg overflow-hidden transition-all duration-700 ease-in-out ${isSearchOpen
+                        ? 'w-10 h-10 rounded-full bg-silk-100/50 dark:bg-black/50 backdrop-blur-md'
+                        : (isScrolled
+                            ? 'px-6 py-2 rounded-full bg-silk-100/50 dark:bg-black/50 backdrop-blur-md hover:bg-silk-200/50 dark:hover:bg-gray-900/50 space-x-2'
+                            : 'flex-1 justify-center p-3 rounded-full bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-silk-200 dark:hover:bg-gray-800 space-x-2')
+                        }`}
+                >
+                    <Filter className="w-5 h-5" />
+                    {!isSearchOpen && (
+                        <span className={`transition-all duration-300 ${isSearchOpen ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>Filters</span>
+                    )}
+                </button>
+
+                {isSearchOpen ? (
+                    <div className="flex-1 h-10 md:h-12 bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full shadow-lg flex items-center px-4 transition-all duration-500 origin-right">
+                        <Search className="w-4 h-4 text-silk-500 mr-2" />
+                        <input
+                            type="text"
+                            placeholder="Search..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            autoFocus
+                            className="bg-transparent border-none outline-none text-silk-900 dark:text-white w-full text-sm placeholder:text-silk-400"
+                        />
+                        <button onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }} className="ml-2 text-silk-500 hover:text-silk-900 dark:hover:text-white">
+                            <X className="w-4 h-4" />
+                        </button>
+                    </div>
+                ) : (
+                    <button
+                        onClick={() => setIsSearchOpen(true)}
+                        className={`flex items-center justify-center text-silk-900 dark:text-white shadow-lg transition-all duration-700 ease-in-out ${isScrolled
+                            ? 'w-10 h-10 rounded-full bg-silk-100/50 dark:bg-black/50 backdrop-blur-md hover:bg-silk-200/50 dark:hover:bg-gray-900/50'
+                            : 'w-12 rounded-full bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-silk-200 dark:hover:bg-gray-800'
+                            }`}
+                    >
+                        <Search className="w-5 h-5" />
+                    </button>
+                )}
+            </div>
 
             {/* Sidebar Filters */}
             <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-black p-6 shadow-2xl transform transition-transform duration-300 ease-out md:sticky md:top-24 md:h-[80vh] overflow-y-auto scrollbar-thin scrollbar-thumb-silk-200 dark:scrollbar-thumb-gray-700 md:translate-x-0 md:shadow-none md:bg-transparent md:w-64 md:block ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'}`}>

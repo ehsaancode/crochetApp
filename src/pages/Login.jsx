@@ -147,7 +147,7 @@ const Login = () => {
 
                         {/* Sidebar / Top Compact Profile */}
                         <div className='w-full lg:w-1/4 flex flex-col gap-6'>
-                            <div className='bg-silk-50 dark:bg-gray-900 rounded-2xl p-6 shadow-sm border border-silk-100 dark:border-gray-800 text-center relative overflow-hidden'>
+                            <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl p-6 shadow-sm text-center relative overflow-hidden'>
                                 <div className='absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-silk-200 to-silk-300 dark:from-gray-800 dark:to-gray-700 opacity-30'></div>
                                 <div className='relative z-10 flex flex-col items-center mt-8 space-y-3'>
                                     <div className='w-24 h-24 rounded-full bg-white dark:bg-gray-800 p-1 shadow-md'>
@@ -170,7 +170,7 @@ const Login = () => {
                             </div>
 
                             {/* Tab Navigation */}
-                            <div className='bg-white dark:bg-gray-900 rounded-xl shadow-sm border border-silk-100 dark:border-gray-800 overflow-hidden flex flex-row lg:flex-col'>
+                            <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl shadow-sm overflow-hidden flex flex-row lg:flex-col'>
                                 <button
                                     onClick={() => setActiveTab('profile')}
                                     className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-colors ${activeTab === 'profile' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white border-b-2 lg:border-b-0 lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
@@ -195,7 +195,7 @@ const Login = () => {
                         {/* Content Area */}
                         <div className='flex-1 lg:w-3/4'>
                             {activeTab === 'profile' && (
-                                <div className='bg-white dark:bg-gray-900 rounded-2xl p-6 md:p-8 shadow-sm border border-silk-100 dark:border-gray-800 animate-fade-in'>
+                                <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl p-6 md:p-8 shadow-sm animate-fade-in'>
                                     <div className='flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800'>
                                         <h3 className='text-xl font-serif text-silk-900 dark:text-white'>Profile Details</h3>
                                         <button onClick={() => setIsEditing(!isEditing)} className='flex items-center gap-2 text-silk-600 hover:text-silk-900 dark:text-silk-400 dark:hover:text-white transition-colors'>
@@ -297,7 +297,7 @@ const Login = () => {
 
                             {/* Wishlist Tab Content */}
                             {activeTab === 'wishlist' && (
-                                <div className='bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-silk-100 dark:border-gray-800 overflow-hidden min-h-[500px]'>
+                                <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl shadow-sm overflow-hidden min-h-[500px]'>
                                     {/* Hacking styles to make Wishlist fit cleaner: Using css modules often better but here we just render it. 
                                         Since Wishlist has its own container logic, it might have double padding. 
                                         Ideally we'd pass a "compact" prop, but for now let's just see. 
@@ -310,7 +310,7 @@ const Login = () => {
 
                             {/* Orders Tab Content */}
                             {activeTab === 'orders' && (
-                                <div className='bg-white dark:bg-gray-900 rounded-2xl shadow-sm border border-silk-100 dark:border-gray-800 overflow-hidden min-h-[500px]'>
+                                <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl shadow-sm overflow-hidden min-h-[500px]'>
                                     {/* Similarly for Orders */}
                                     <Orders compact={true} />
                                 </div>
