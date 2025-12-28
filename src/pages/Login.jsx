@@ -5,7 +5,7 @@ import axios from 'axios'
 import QToast from './uiComponents/QToast'
 import FadeContent from './uiComponents/FadeContent'
 import { RainbowButton } from "@/components/ui/rainbow-button"
-import { User, Heart, Package, MapPin, LogOut, Edit2 } from 'lucide-react'
+import { User, Heart, Package, MapPin, LogOut, Edit2, LocateFixed } from 'lucide-react'
 import Wishlist from './Wishlist'
 import Orders from './Orders'
 
@@ -139,6 +139,34 @@ const Login = () => {
             fetchUserProfile();
         }
     }, [token])
+
+    const handleLocation = () => {
+        if (!navigator.geolocation) {
+            QToast.error("Geolocation is not supported by your browser", { position: "top-center" });
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            try {
+                const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                if (response.data && response.data.address) {
+                    const addr = response.data.address;
+                    setStreet(addr.road || addr.pedestrian || '');
+                    setCity(addr.city || addr.town || addr.village || '');
+                    setState(addr.state || '');
+                    setZip(addr.postcode || '');
+                    setCountry(addr.country || '');
+                    QToast.success("Address filled from location", { position: "top-center" });
+                }
+            } catch (error) {
+                console.error(error);
+                QToast.error("Failed to fetch address", { position: "top-center" });
+            }
+        }, () => {
+            QToast.error("Unable to retrieve your location", { position: "top-center" });
+        });
+    }
 
     if (token && !userData) {
         return (
@@ -275,7 +303,16 @@ const Login = () => {
                                                     <input onChange={(e) => setPhone(e.target.value)} value={phone} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
                                                 </div>
                                                 <div className='md:col-span-2'>
-                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Street Address</label>
+                                                    <div className="flex justify-between items-center mb-1">
+                                                        <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>Street Address</label>
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleLocation}
+                                                            className="flex items-center gap-1.5 text-xs text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-200 transition-colors bg-silk-50 dark:bg-silk-900/50 px-2 py-1 rounded-md"
+                                                        >
+                                                            <LocateFixed className="w-3.5 h-3.5" /> Use Current Location
+                                                        </button>
+                                                    </div>
                                                     <input onChange={(e) => setStreet(e.target.value)} value={street} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
                                                 </div>
                                                 <div>
