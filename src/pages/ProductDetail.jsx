@@ -30,10 +30,8 @@ function ProductDetail() {
             QToast.error('Select Product Color', { position: "top-center" });
             return;
         }
-        // Hack: combining size and color for cart if needed, or just ignoring color for now as per minimal change
-        // Users often want distinct fields. For now, I will just validate selection.
-        addToCart(product._id, size, quantity);
-        navigate('/place-order');
+
+        navigate('/place-order', { state: { product, size, quantity, color } });
     }
 
     const fetchProductData = async () => {

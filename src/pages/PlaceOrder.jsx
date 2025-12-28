@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
 import CartTotal from '../components/CartTotal';
 import axios from 'axios';
@@ -6,7 +7,9 @@ import QToast from './uiComponents/QToast';
 import { LocateFixed } from 'lucide-react';
 
 const PlaceOrder = () => {
-    const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products, userData, fetchUserProfile, setShippingFee } = useContext(ShopContext);
+    const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products, userData, fetchUserProfile, setShippingFee, currency } = useContext(ShopContext);
+    const location = useLocation();
+    const directBuyData = location.state;
 
     // Warehouse Location (Puinan)
     const WAREHOUSE_COORDS = { lat: 22.944245420133758, lon: 88.28156250538409 };
@@ -218,23 +221,35 @@ const PlaceOrder = () => {
         try {
             let orderItems = []
 
-            for (const items in cartItems) {
-                for (const item in cartItems[items]) {
-                    if (cartItems[items][item] > 0) {
-                        const itemInfo = structuredClone(products.find(product => product._id === items))
-                        if (itemInfo) {
-                            itemInfo.size = item
-                            itemInfo.quantity = cartItems[items][item]
-                            orderItems.push(itemInfo)
+            if (directBuyData) {
+                const itemInfo = structuredClone(directBuyData.product);
+                itemInfo.size = directBuyData.size;
+                itemInfo.color = directBuyData.color;
+                itemInfo.quantity = directBuyData.quantity;
+                orderItems.push(itemInfo);
+            } else {
+                for (const items in cartItems) {
+                    for (const item in cartItems[items]) {
+                        if (cartItems[items][item] > 0) {
+                            const itemInfo = structuredClone(products.find(product => product._id === items))
+                            if (itemInfo) {
+                                itemInfo.size = item
+                                itemInfo.quantity = cartItems[items][item]
+                                orderItems.push(itemInfo)
+                            }
                         }
                     }
                 }
             }
 
+            const totalAmount = directBuyData
+                ? (directBuyData.product.price * directBuyData.quantity) + delivery_fee
+                : getCartAmount() + delivery_fee;
+
             let orderData = {
                 address: formData,
                 items: orderItems,
-                amount: getCartAmount() + delivery_fee,
+                amount: totalAmount,
             }
 
             if (method === 'cod') {
@@ -427,7 +442,29 @@ const PlaceOrder = () => {
             {/* Right Side */}
             <div className='mt-8'>
                 <div className='mt-8 min-w-80'>
-                    <CartTotal />
+                    {directBuyData ? (
+                        <div className='w-full'>
+                            <div className='text-2xl'>
+                                <h2 className='font-serif text-2xl text-silk-900 dark:text-silk-50 mb-4'>ORDER <span className='text-silk-600 font-medium'>SUMMARY</span></h2>
+                            </div>
+                            <div className='flex flex-col gap-2 mt-2 text-sm text-silk-900 dark:text-gray-200'>
+                                <div className='flex justify-between py-2 border-b dark:border-gray-700'>
+                                    <p>Product: {directBuyData.product.name} x {directBuyData.quantity}</p>
+                                    <p>{currency} {directBuyData.product.price * directBuyData.quantity}.00</p>
+                                </div>
+                                <div className='flex justify-between py-2 border-b dark:border-gray-700'>
+                                    <p>Shipping Fee</p>
+                                    <p>{currency} {delivery_fee}.00</p>
+                                </div>
+                                <div className='flex justify-between py-2 font-bold text-lg'>
+                                    <p>Total</p>
+                                    <p>{currency} {(directBuyData.product.price * directBuyData.quantity) + delivery_fee}.00</p>
+                                </div>
+                            </div>
+                        </div>
+                    ) : (
+                        <CartTotal />
+                    )}
                 </div>
                 <div className='mt-12'>
                     <div className='text-xl sm:text-2xl my-3'>
