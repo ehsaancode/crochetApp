@@ -3,6 +3,7 @@ import { ShopContext } from '../context/ShopContext'
 import CartTotal from '../components/CartTotal';
 import axios from 'axios';
 import QToast from './uiComponents/QToast';
+import { LocateFixed } from 'lucide-react';
 
 const PlaceOrder = () => {
     const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products, userData, fetchUserProfile, setShippingFee } = useContext(ShopContext);
@@ -24,6 +25,20 @@ const PlaceOrder = () => {
     }
 
     const [calculatingShipping, setCalculatingShipping] = useState(false);
+
+    const [method, setMethod] = useState('cod');
+    const [formData, setFormData] = useState({
+        firstName: '',
+        lastName: '',
+        email: '',
+        street: '',
+        city: '',
+        state: '',
+        zipcode: '',
+        country: '',
+        phone: '',
+        landmark: ''
+    })
 
     // Calculate dynamic shipping fee
     React.useEffect(() => {
@@ -67,19 +82,7 @@ const PlaceOrder = () => {
 
     }, [formData.street, formData.city, formData.zipcode, formData.country]);
 
-    const [method, setMethod] = useState('cod');
-    const [formData, setFormData] = useState({
-        firstName: '',
-        lastName: '',
-        email: '',
-        street: '',
-        city: '',
-        state: '',
-        zipcode: '',
-        country: '',
-        phone: '',
-        landmark: ''
-    })
+
 
     // Fetch profile on load to ensure we have latest data
     React.useEffect(() => {
@@ -113,6 +116,64 @@ const PlaceOrder = () => {
     const [newAddress, setNewAddress] = useState({
         firstName: '', lastName: '', phone: '', street: '', city: '', state: '', zipcode: '', country: '', landmark: ''
     });
+
+    const handleLocationForNewAddress = () => {
+        if (!navigator.geolocation) {
+            QToast.error("Geolocation is not supported by your browser", { position: "top-center" });
+            return;
+        }
+
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            try {
+                const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
+                if (response.data && response.data.address) {
+                    const addr = response.data.address;
+                    // Construct more detailed street address
+                    const parts = [
+                        addr.amenity,
+                        addr.building,
+                        addr.house_number,
+                        addr.road || addr.pedestrian || addr.residential || addr.street
+                    ].filter(Boolean);
+
+                    let streetAddr = parts.join(', ');
+
+                    // Fallback to first part of display name if street is empty
+                    if (!streetAddr && response.data.display_name) {
+                        streetAddr = response.data.display_name.split(',')[0];
+                    }
+
+                    // Construct landmark from available details
+                    const landmarkDetails = [
+                        addr.neighbourhood,
+                        addr.suburb,
+                        addr.commercial,
+                        addr.industrial,
+                        addr.city_district,
+                        addr.point_of_interest
+                    ].filter(item => item && !parts.includes(item)).join(', ');
+
+                    setNewAddress(prev => ({
+                        ...prev,
+                        street: streetAddr,
+                        landmark: landmarkDetails,
+                        city: addr.city || addr.town || addr.village || addr.county || '',
+                        state: addr.state || '',
+                        zipcode: addr.postcode || '',
+                        country: addr.country || ''
+                    }));
+
+                    QToast.success("Address details filled from location", { position: "top-center" });
+                }
+            } catch (error) {
+                console.error(error);
+                QToast.error("Failed to fetch address", { position: "top-center" });
+            }
+        }, () => {
+            QToast.error("Unable to retrieve your location", { position: "top-center" });
+        });
+    }
 
     const handleSaveAddress = async () => {
         try {
@@ -280,6 +341,15 @@ const PlaceOrder = () => {
                         </button>
                         <h3 className="text-xl font-serif mb-6 text-silk-900 dark:text-white">Add New Address</h3>
                         <div className="space-y-4">
+                            <div className="flex justify-end mb-2">
+                                <button
+                                    type="button"
+                                    onClick={handleLocationForNewAddress}
+                                    className="flex items-center gap-1.5 text-xs text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-200 transition-colors bg-silk-50 dark:bg-silk-900/50 px-2 py-1 rounded-md"
+                                >
+                                    <LocateFixed className="w-3.5 h-3.5" /> Use Current Location
+                                </button>
+                            </div>
                             <div className="flex gap-4">
                                 <input
                                     placeholder="First Name"
