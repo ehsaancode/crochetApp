@@ -24,6 +24,7 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [phone, setPhone] = useState('');
     const [street, setStreet] = useState('');
+    const [landmark, setLandmark] = useState('');
     const [city, setCity] = useState('');
     const [state, setState] = useState('');
     const [zip, setZip] = useState('');
@@ -84,6 +85,7 @@ const Login = () => {
                 setPhone(response.data.user.phone || '');
                 if (response.data.user.address) {
                     setStreet(response.data.user.address.street || '');
+                    setLandmark(response.data.user.address.landmark || '');
                     setCity(response.data.user.address.city || '');
                     setState(response.data.user.address.state || '');
                     setZip(response.data.user.address.zip || '');
@@ -106,7 +108,7 @@ const Login = () => {
             formData.append('userId', userData._id);
             formData.append('name', name);
             formData.append('phone', phone);
-            const addressObj = { street, city, state, zip, country };
+            const addressObj = { street, landmark, city, state, zip, country };
             formData.append('address', JSON.stringify(addressObj));
             if (image) {
                 formData.append('image', image);
@@ -152,12 +154,24 @@ const Login = () => {
                 const response = await axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
                 if (response.data && response.data.address) {
                     const addr = response.data.address;
-                    setStreet(addr.road || addr.pedestrian || '');
-                    setCity(addr.city || addr.town || addr.village || '');
+                    // Construct more detailed street address
+                    const streetAddr = [(addr.house_number || ''), (addr.road || addr.pedestrian || '')].filter(Boolean).join(', ');
+                    setStreet(streetAddr);
+
+                    // Construct landmark from available details
+                    const landmarkDetails = [
+                        addr.neighbourhood,
+                        addr.suburb,
+                        addr.commercial,
+                        addr.point_of_interest
+                    ].filter(Boolean).join(', ');
+                    setLandmark(landmarkDetails);
+
+                    setCity(addr.city || addr.town || addr.village || addr.county || '');
                     setState(addr.state || '');
                     setZip(addr.postcode || '');
                     setCountry(addr.country || '');
-                    QToast.success("Address filled from location", { position: "top-center" });
+                    QToast.success("Address details filled from location", { position: "top-center" });
                 }
             } catch (error) {
                 console.error(error);
@@ -265,6 +279,7 @@ const Login = () => {
                                                             {userData.address ? (
                                                                 <>
                                                                     {userData.address.street}<br />
+                                                                    {userData.address.landmark && <>{userData.address.landmark}<br /></>}
                                                                     {userData.address.city}, {userData.address.state}<br />
                                                                     {userData.address.zip}, {userData.address.country}
                                                                 </>
@@ -314,6 +329,10 @@ const Login = () => {
                                                         </button>
                                                     </div>
                                                     <input onChange={(e) => setStreet(e.target.value)} value={street} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                                </div>
+                                                <div className='md:col-span-2'>
+                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Landmark (Optional)</label>
+                                                    <input onChange={(e) => setLandmark(e.target.value)} value={landmark} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
                                                 </div>
                                                 <div>
                                                     <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>City</label>
