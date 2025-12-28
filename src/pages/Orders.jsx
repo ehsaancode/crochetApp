@@ -1,7 +1,8 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import axios from 'axios';
-import { Package, Star, X } from 'lucide-react';
+import { Package, Star, X, Download } from 'lucide-react';
+import jsPDF from 'jspdf';
 import QToast from './uiComponents/QToast';
 
 const Orders = ({ compact }) => {
@@ -56,6 +57,45 @@ const Orders = ({ compact }) => {
         loadOrderData()
     }, [token])
 
+    const downloadInvoice = (order) => {
+        const doc = new jsPDF();
+
+        // Header
+        doc.setFontSize(22);
+        doc.text("Aalaboo Invoice", 20, 20);
+
+        doc.setFontSize(12);
+        doc.text("Handmade Luxury Crochet", 20, 30);
+        doc.text(`Date: ${new Date().toLocaleDateString()}`, 150, 20);
+        doc.text(`Order ID: ${order._id ? order._id.slice(-8).toUpperCase() : 'N/A'}`, 150, 30);
+
+        // Product Details
+        doc.setLineWidth(0.5);
+        doc.line(20, 40, 190, 40);
+
+        doc.setFontSize(14);
+        doc.text("Product Details", 20, 50);
+
+        doc.setFontSize(12);
+        doc.text(`Product: ${order.name}`, 20, 60);
+        doc.text(`Quantity: ${order.quantity}`, 20, 70);
+        doc.text(`Size: ${order.size}`, 20, 80);
+        doc.text(`Price: Rs. ${order.price}`, 150, 60);
+
+        // Summary
+        doc.line(20, 90, 190, 90);
+        doc.setFontSize(14);
+        doc.text("Total", 20, 100);
+        doc.text(`Rs. ${order.price * order.quantity}`, 150, 100);
+
+        // Footer
+        doc.setFontSize(10);
+        doc.text("Thank you for shopping with Aalaboo!", 20, 130);
+        doc.text("www.aalaboo.com", 20, 135);
+
+        doc.save(`invoice_${order.name}.pdf`);
+    }
+
     return (
         <div className={compact ? 'p-6' : 'border-t pt-24 px-4 sm:px-12 md:px-24 min-h-[80vh]'}>
 
@@ -101,12 +141,20 @@ const Orders = ({ compact }) => {
                                                 <p className='text-sm md:text-base'>{item.status}</p>
                                             </div>
                                             {item.status === 'Delivered' ? (
-                                                <button
-                                                    onClick={() => openReviewModal(item._id)}
-                                                    className='border px-4 py-2 text-sm font-medium rounded-sm border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
-                                                >
-                                                    Write a Review
-                                                </button>
+                                                <div className='flex gap-2'>
+                                                    <button
+                                                        onClick={() => openReviewModal(item._id)}
+                                                        className='border px-3 py-1.5 text-xs font-medium rounded-sm border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
+                                                    >
+                                                        Review
+                                                    </button>
+                                                    <button
+                                                        onClick={() => downloadInvoice(item)}
+                                                        className='flex items-center justify-center gap-1 border px-3 py-1.5 text-xs font-medium rounded-sm border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all'
+                                                    >
+                                                        <Download className='w-3 h-3' /> Invoice
+                                                    </button>
+                                                </div>
                                             ) : (
                                                 <button onClick={loadOrderData} className='border px-4 py-2 text-sm font-medium rounded-sm border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all'>Track Order</button>
                                             )}
