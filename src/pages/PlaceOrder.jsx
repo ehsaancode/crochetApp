@@ -5,7 +5,68 @@ import axios from 'axios';
 import QToast from './uiComponents/QToast';
 
 const PlaceOrder = () => {
-    const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products, userData, fetchUserProfile } = useContext(ShopContext);
+    const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products, userData, fetchUserProfile, setShippingFee } = useContext(ShopContext);
+
+    // Warehouse Location (Puinan)
+    const WAREHOUSE_COORDS = { lat: 22.944245420133758, lon: 88.28156250538409 };
+
+    const calculateDistance = (lat1, lon1, lat2, lon2) => {
+        const R = 6371; // Radius of the earth in km
+        const dLat = (lat2 - lat1) * Math.PI / 180;
+        const dLon = (lon2 - lon1) * Math.PI / 180;
+        const a =
+            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+            Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+            Math.sin(dLon / 2) * Math.sin(dLon / 2);
+        const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        const d = R * c; // Distance in km
+        return d;
+    }
+
+    const [calculatingShipping, setCalculatingShipping] = useState(false);
+
+    // Calculate dynamic shipping fee
+    React.useEffect(() => {
+        const calculateShipping = async () => {
+            if (!formData.street || !formData.city || !formData.zipcode) return;
+
+            setCalculatingShipping(true);
+            try {
+                const query = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipcode}, ${formData.country}`;
+                const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+
+                if (response.data && response.data.length > 0) {
+                    const { lat, lon } = response.data[0];
+                    const distance = calculateDistance(WAREHOUSE_COORDS.lat, WAREHOUSE_COORDS.lon, parseFloat(lat), parseFloat(lon));
+
+                    if (distance > 150) {
+                        setShippingFee(150);
+                        QToast.info(`Distance: ${distance.toFixed(1)}km. Shipping: ₹150`, { position: 'bottom' });
+                    } else if (distance > 40) {
+                        setShippingFee(100);
+                        QToast.info(`Distance: ${distance.toFixed(1)}km. Shipping: ₹100`, { position: 'bottom' });
+                    } else {
+                        setShippingFee(0);
+                        QToast.success(`Distance: ${distance.toFixed(1)}km. Free Shipping!`, { position: 'bottom' });
+                    }
+                }
+            } catch (error) {
+                console.error("Shipping calc error:", error);
+            } finally {
+                setCalculatingShipping(false);
+            }
+        };
+
+        const timeoutId = setTimeout(() => {
+            if (formData.street && formData.zipcode) {
+                calculateShipping();
+            }
+        }, 1500);
+
+        return () => clearTimeout(timeoutId);
+
+    }, [formData.street, formData.city, formData.zipcode, formData.country]);
+
     const [method, setMethod] = useState('cod');
     const [formData, setFormData] = useState({
         firstName: '',
@@ -317,7 +378,9 @@ const PlaceOrder = () => {
                     </div>
 
                     <div className='w-full text-end mt-8'>
-                        <button type='submit' className='bg-silk-900 dark:bg-white text-white dark:text-silk-900 px-16 py-3 text-sm rounded hover:bg-black dark:hover:bg-gray-200'>PLACE ORDER</button>
+                        <button type='submit' disabled={calculatingShipping} className='bg-silk-900 dark:bg-white text-white dark:text-silk-900 px-16 py-3 text-sm rounded hover:bg-black dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed'>
+                            {calculatingShipping ? 'Calculating...' : 'PLACE ORDER'}
+                        </button>
                     </div>
                 </div>
             </div>
