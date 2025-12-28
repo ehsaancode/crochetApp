@@ -14,6 +14,7 @@ function Collection() {
 
     const [category, setCategory] = useState([]);
     const [subCategory, setSubCategory] = useState([]);
+    const [reviews, setReviews] = useState([]);
     const [priceRange, setPriceRange] = useState(2000);
     const [isScrolled, setIsScrolled] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -55,6 +56,14 @@ function Collection() {
         }
     }
 
+    const toggleReview = (rating) => {
+        if (reviews.includes(rating)) {
+            setReviews(prev => prev.filter(item => item !== rating));
+        } else {
+            setReviews(prev => [...prev, rating]);
+        }
+    }
+
     const handleLoadMore = () => {
         setVisibleProducts(prev => prev + 12);
     };
@@ -81,6 +90,11 @@ function Collection() {
 
         if (debouncedSearchQuery) {
             productsCopy = productsCopy.filter(item => item.name.toLowerCase().includes(debouncedSearchQuery.toLowerCase()));
+        }
+
+        if (reviews.length > 0) {
+            const minRating = Math.min(...reviews);
+            productsCopy = productsCopy.filter(item => (item.rating || 0) >= minRating);
         }
 
         setFilterProducts(productsCopy)
@@ -243,7 +257,12 @@ function Collection() {
                         <div className="space-y-2">
                             {[5, 4, 3, 2, 1].map((star) => (
                                 <label key={star} className="flex items-center space-x-2 cursor-pointer">
-                                    <input type="checkbox" className="rounded border-silk-300 dark:border-silk-700 text-silk-900 focus:ring-silk-500 dark:bg-black" />
+                                    <input
+                                        type="checkbox"
+                                        className="rounded border-silk-300 dark:border-silk-700 text-silk-900 focus:ring-silk-500 dark:bg-black"
+                                        checked={reviews.includes(star)}
+                                        onChange={() => toggleReview(star)}
+                                    />
                                     <div className="flex text-silk-500 dark:text-silk-400">
                                         {[...Array(5)].map((_, i) => (
                                             <Star key={i} className={`w-4 h-4 ${i < star ? 'fill-current text-silk-500 dark:text-silk-400' : 'text-silk-200 dark:text-silk-800'}`} />
