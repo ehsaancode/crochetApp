@@ -166,7 +166,7 @@ function Collection() {
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             autoFocus
-                            className="bg-transparent border-none outline-none text-silk-900 dark:text-white w-full text-sm placeholder:text-silk-400"
+                            className="bg-transparent border-none outline-none text-silk-900 dark:text-white w-full text-base placeholder:text-silk-400"
                         />
                         <button onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }} className="ml-2 text-silk-500 hover:text-silk-900 dark:hover:text-white">
                             <X className="w-4 h-4" />
