@@ -131,17 +131,19 @@ const PlaceOrder = () => {
                     const addr = response.data.address;
                     // Construct more detailed street address
                     const parts = [
-                        addr.amenity,
+                        addr.amenity || addr.name,
                         addr.building,
                         addr.house_number,
-                        addr.road || addr.pedestrian || addr.residential || addr.street
+                        addr.road || addr.pedestrian || addr.residential || addr.street || addr.highway || addr.path || addr.cycleway
                     ].filter(Boolean);
 
                     let streetAddr = parts.join(', ');
 
                     // Fallback to first part of display name if street is empty
                     if (!streetAddr && response.data.display_name) {
-                        streetAddr = response.data.display_name.split(',')[0];
+                        streetAddr = response.data.display_name.split(',')[0].trim();
+                        // Add to parts to prevent duplication in landmark if we use display name part
+                        parts.push(streetAddr);
                     }
 
                     // Construct landmark from available details
