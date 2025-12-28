@@ -226,7 +226,15 @@ function ProductDetail() {
                             <p className="text-sm font-medium text-silk-900 dark:text-silk-50">Select Size</p>
                             <div className="flex gap-2">
                                 {product.sizes.map((item, index) => (
-                                    <button onClick={() => setSize(item)} className={`border py-2 px-4 bg-gray-100 dark:bg-slate-800 dark:text-gray-300 dark:border-slate-700 ${item === size ? 'border-silk-500 dark:border-silk-500' : ''}`} key={index}>{item}</button>
+                                    <button
+                                        onClick={() => setSize(item)}
+                                        className={`border py-2 px-4 ${item === size
+                                            ? 'bg-silk-50 border-silk-500 dark:bg-white dark:text-black dark:border-white'
+                                            : 'bg-gray-100 border-transparent dark:bg-slate-800 dark:text-gray-300 dark:border-slate-700 hover:border-silk-300'}`}
+                                        key={index}
+                                    >
+                                        {item}
+                                    </button>
                                 ))}
                             </div>
                         </div>

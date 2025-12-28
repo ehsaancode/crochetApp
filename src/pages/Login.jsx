@@ -5,7 +5,7 @@ import axios from 'axios'
 import QToast from './uiComponents/QToast'
 import FadeContent from './uiComponents/FadeContent'
 import { RainbowButton } from "@/components/ui/rainbow-button"
-import { User, Heart, Package, MapPin, LogOut, Edit2, LocateFixed } from 'lucide-react'
+import { User, Heart, Package, MapPin, LogOut, Edit2, LocateFixed, Info, Phone } from 'lucide-react'
 import Wishlist from './Wishlist'
 import Orders from './Orders'
 
@@ -197,7 +197,10 @@ const Login = () => {
                     <div className='flex flex-col lg:flex-row gap-8'>
 
                         {/* Sidebar / Top Compact Profile */}
-                        <div className='w-full lg:w-1/4 flex flex-col gap-6'>
+                        {/* Sidebar / Top Compact Profile */}
+                        <div className='w-full lg:w-1/4 flex flex-col gap-6 relative'>
+
+
                             <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl p-6 shadow-sm text-center relative overflow-hidden'>
                                 <div className='absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-silk-200 to-silk-300 dark:from-gray-800 dark:to-gray-700 opacity-30'></div>
                                 <div className='relative z-10 flex flex-col items-center mt-8 space-y-3'>
@@ -214,6 +217,9 @@ const Login = () => {
                                         <h2 className='text-xl font-bold text-silk-900 dark:text-white'>{userData.name}</h2>
                                         <p className='text-sm text-silk-500 dark:text-silk-400'>{userData.email}</p>
                                     </div>
+
+
+
                                     <button onClick={logout} className='flex items-center gap-2 text-sm text-red-500 hover:text-red-700 font-medium px-4 py-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors mt-2'>
                                         <LogOut className='w-4 h-4' /> Sign Out
                                     </button>
@@ -221,26 +227,22 @@ const Login = () => {
                             </div>
 
                             {/* Tab Navigation */}
-                            <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl shadow-sm overflow-hidden flex flex-row lg:flex-col'>
+                            <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl shadow-sm overflow-hidden flex flex-row lg:flex-col p-1 lg:p-0 gap-1 lg:gap-0'>
                                 <button
                                     onClick={() => setActiveTab('profile')}
-                                    className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-colors ${activeTab === 'profile' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white border-b-2 lg:border-b-0 lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+                                    className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-all rounded-2xl lg:rounded-none ${activeTab === 'profile' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white shadow-sm lg:shadow-none lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-white/50 dark:hover:bg-gray-800/50'}`}
                                 >
-                                    <User className='w-5 h-5' /> <span className='hidden sm:inline'>Profile</span>
+                                    <User className='w-5 h-5' /> <span className='inline'>Profile</span>
                                 </button>
                                 <button
                                     onClick={() => setActiveTab('wishlist')}
-                                    className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-colors ${activeTab === 'wishlist' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white border-b-2 lg:border-b-0 lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
+                                    className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-all rounded-2xl lg:rounded-none ${activeTab === 'wishlist' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white shadow-sm lg:shadow-none lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-white/50 dark:hover:bg-gray-800/50'}`}
                                 >
-                                    <Heart className='w-5 h-5' /> <span className='hidden sm:inline'>Wishlist</span>
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('orders')}
-                                    className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-colors ${activeTab === 'orders' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white border-b-2 lg:border-b-0 lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-gray-50 dark:hover:bg-gray-800/50'}`}
-                                >
-                                    <Package className='w-5 h-5' /> <span className='hidden sm:inline'>Orders</span>
+                                    <Heart className='w-5 h-5' /> <span className='inline'>Wishlist</span>
                                 </button>
                             </div>
+
+
                         </div>
 
                         {/* Content Area */}
@@ -374,13 +376,21 @@ const Login = () => {
                             )}
 
                             {/* Orders Tab Content */}
-                            {activeTab === 'orders' && (
-                                <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl shadow-sm overflow-hidden min-h-[500px]'>
-                                    {/* Similarly for Orders */}
-                                    <Orders compact={true} />
-                                </div>
-                            )}
+
                         </div>
+                    </div>
+
+                    {/* Mobile Footer Links - Bottom Center */}
+                    <div className='lg:hidden flex justify-center items-center gap-6 mt-12 pb-8 opacity-70'>
+                        <Link to='/about' className='flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-silk-900 dark:text-gray-400 dark:hover:text-white transition-colors'>
+                            <Info className="w-3.5 h-3.5" />
+                            About us
+                        </Link>
+                        <span className='text-gray-300 dark:text-gray-700'>|</span>
+                        <Link to='/contact' className='flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-silk-900 dark:text-gray-400 dark:hover:text-white transition-colors'>
+                            <Phone className="w-3.5 h-3.5" />
+                            Contact
+                        </Link>
                     </div>
                 </FadeContent>
             </div>
