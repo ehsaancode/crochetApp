@@ -5,8 +5,11 @@ import CartTotal from '../components/CartTotal';
 import axios from 'axios';
 import QToast from './uiComponents/QToast';
 import { LocateFixed } from 'lucide-react';
+import Lottie from 'lottie-react';
+import processingAnimation from './uiComponents/lottie/Processing animation with a checkmark.json';
 
 const PlaceOrder = () => {
+    const [showSuccess, setShowSuccess] = useState(false);
     const { navigate, backendUrl, token, cartItems, setCartItems, getCartAmount, delivery_fee, products, userData, fetchUserProfile, setShippingFee, currency } = useContext(ShopContext);
     const location = useLocation();
     const directBuyData = location.state;
@@ -256,8 +259,11 @@ const PlaceOrder = () => {
                 const response = await axios.post(backendUrl + '/api/order/place', orderData, { headers: { token } });
                 if (response.data.success) {
                     setCartItems({})
-                    navigate('/orders')
-                    QToast.success('Order Placed Successfully', { position: 'top-center' });
+                    setShowSuccess(true);
+                    // Toast removed per request
+                    setTimeout(() => {
+                        navigate('/orders', { state: { newOrder: true } });
+                    }, 3500); // Wait for animation
                 } else {
                     QToast.error(response.data.message, { position: 'top-right' })
                 }
@@ -267,6 +273,16 @@ const PlaceOrder = () => {
             console.log(error)
             QToast.error(error.message, { position: 'top-right' })
         }
+    }
+
+    if (showSuccess) {
+        return (
+            <div className="min-h-[80vh] flex flex-col items-center justify-center pt-32 px-4 sm:px-12 md:px-24 bg-white dark:bg-black animate-fade-in">
+                <div className="w-80 h-80 sm:w-96 sm:h-96">
+                    <Lottie animationData={processingAnimation} loop={false} />
+                </div>
+            </div>
+        );
     }
 
     return (

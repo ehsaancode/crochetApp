@@ -4,13 +4,30 @@ import axios from 'axios';
 import { Package, Star, X, Download } from 'lucide-react';
 import jsPDF from 'jspdf';
 import QToast from './uiComponents/QToast';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import girlStichingAnimation from './uiComponents/lottie/Girl stitching YT.lottie';
+import confettiAnimation from './uiComponents/lottie/Confetti.lottie';
+import { useLocation } from 'react-router-dom';
 
 const Orders = ({ compact }) => {
 
+    const location = useLocation();
+    const [showConfetti, setShowConfetti] = useState(false);
     const { backendUrl, token, currency, getProductsData } = useContext(ShopContext);
     const [orderData, setOrderData] = useState([])
     const [customOrders, setCustomOrders] = useState([])
     const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        if (location.state?.newOrder) {
+            setShowConfetti(true);
+            const timer = setTimeout(() => {
+                setShowConfetti(false);
+            }, 5000);
+            window.history.replaceState({}, document.title);
+            return () => clearTimeout(timer);
+        }
+    }, [location]);
 
     // Review Modal State
     const [isReviewOpen, setIsReviewOpen] = useState(false);
@@ -117,6 +134,13 @@ const Orders = ({ compact }) => {
                         <div className='flex flex-col gap-4'>
                             {orderData.length === 0 ? (
                                 <div className={`flex flex-col items-center justify-center text-center animate-fade-in ${compact ? 'py-4' : 'py-10'}`}>
+                                    <div className="w-80 sm:w-96 mb-4">
+                                        <DotLottieReact
+                                            src={girlStichingAnimation}
+                                            loop
+                                            autoplay
+                                        />
+                                    </div>
                                     <p className="text-silk-500 text-sm">No standard orders yet.</p>
                                 </div>
                             ) : (
@@ -172,6 +196,13 @@ const Orders = ({ compact }) => {
                             <div className='flex flex-col gap-4'>
                                 {customOrders.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center text-center animate-fade-in py-10">
+                                        <div className="w-80 sm:w-96 mb-4">
+                                            <DotLottieReact
+                                                src={girlStichingAnimation}
+                                                loop
+                                                autoplay
+                                            />
+                                        </div>
                                         <p className="text-silk-500 text-sm">No custom requests yet.</p>
                                     </div>
                                 ) : (
@@ -243,6 +274,15 @@ const Orders = ({ compact }) => {
                             </button>
                         </div>
                     </div>
+                </div>
+            )}
+
+            {showConfetti && (
+                <div className="fixed inset-0 pointer-events-none z-[100] w-full h-full">
+                    <DotLottieReact
+                        src={confettiAnimation}
+                        autoplay
+                    />
                 </div>
             )}
         </div>

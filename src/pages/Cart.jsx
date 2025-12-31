@@ -5,12 +5,45 @@ import { useNavigate, Link } from 'react-router-dom';
 import CartTotal from '../components/CartTotal';
 import { RainbowButton } from "../components/ui/rainbow-button";
 import QToast from './uiComponents/QToast';
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import whiteCatAnimation from './uiComponents/lottie/White Cat Peeping.lottie';
+import blackCatAnimation from './uiComponents/lottie/blackCatPeek.lottie';
+import { useTheme } from '../context/ThemeContext';
 
 const Cart = () => {
 
     const { products, currency, cartItems, updateQuantity, navigate, token } = useContext(ShopContext);
+    const { theme } = useTheme();
     const [cartData, setCartData] = useState([]);
+    const [dotLottie, setDotLottie] = useState(null);
+    const playCountRef = React.useRef(0);
+    const timeoutRef = React.useRef(null);
     const routerNavigate = useNavigate();
+
+    useEffect(() => {
+        if (dotLottie) {
+            // Reset counters when lottie instance changes (e.g. theme switch)
+            playCountRef.current = 0;
+
+            const onComplete = () => {
+                if (playCountRef.current === 0) {
+                    playCountRef.current = 1;
+                    dotLottie.play(); // Play 2nd time immediately
+                } else {
+                    playCountRef.current = 0;
+                    // Wait 10s then restart the cycle
+                    timeoutRef.current = setTimeout(() => {
+                        dotLottie.play();
+                    }, 15000);
+                }
+            };
+            dotLottie.addEventListener('complete', onComplete);
+            return () => {
+                dotLottie.removeEventListener('complete', onComplete);
+                if (timeoutRef.current) clearTimeout(timeoutRef.current);
+            };
+        }
+    }, [dotLottie]);
 
     useEffect(() => {
 
@@ -35,7 +68,7 @@ const Cart = () => {
     }, [cartItems, products])
 
     return (
-        <div className='border-t pt-32 px-4 sm:px-12 md:px-24 min-h-[80vh]'>
+        <div className='border-t pt-32 px-4 sm:px-12 md:px-24 min-h-[80vh] relative overflow-hidden'>
 
             {cartData.length > 0 && (
                 <div className='text-2xl mb-3'>
@@ -44,15 +77,25 @@ const Cart = () => {
             )}
 
             {cartData.length === 0 ? (
-                <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in">
+                <div className="flex flex-col items-center justify-center py-20 text-center animate-fade-in h-full">
                     <h2 className="text-xl font-serif text-silk-900 dark:text-silk-50 mb-4">Your cart is empty</h2>
                     <p className="text-silk-600 dark:text-silk-400 text-sm mb-8">Looks like you haven't added anything to your cart yet.</p>
-                    <button
-                        onClick={() => routerNavigate('/collection')}
-                        className="bg-silk-900 dark:bg-silk-50 text-white dark:text-silk-900 px-8 py-3 hover:bg-black dark:hover:bg-white/90 transition-colors"
-                    >
-                        BROWSE COLLECTIONS
-                    </button>
+                    <div className="relative mt-8">
+                        <div className="absolute bottom-full left-1/2 -translate-x-1/2 w-60 pointer-events-none">
+                            <DotLottieReact
+                                src={theme === 'dark' ? whiteCatAnimation : blackCatAnimation}
+                                autoplay
+                                dotLottieRefCallback={setDotLottie}
+                            />
+                        </div>
+                        <button
+                            onClick={() => routerNavigate('/collection')}
+                            className="relative bg-silk-900 dark:bg-silk-50 text-white dark:text-silk-900 px-8 py-3 hover:bg-black dark:hover:bg-white/90 transition-colors z-10 rounded-full"
+                        >
+                            BROWSE COLLECTIONS
+                        </button>
+                    </div>
+                    <div className="fixed bottom-12 md:bottom-0 left-1/2 -translate-x-1/2 w-80 h-80 pointer-events-none z-50 hidden"></div>
                 </div>
             ) : (
                 <div className='space-y-4'>

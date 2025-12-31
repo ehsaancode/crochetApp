@@ -1,5 +1,4 @@
 import React, { useState, useContext } from 'react';
-import DecryptedText from './pages/uiComponents/DecryptedText';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
 import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User, Package } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,61 +21,11 @@ import QToast from './pages/uiComponents/QToast';
 import ScrollToTop from './components/ScrollToTop';
 
 
-// Global state to track animation status across navigation (resets on full reload)
-let brandAnimationCompleted = false;
-
-const phrases = ["Aalaboo"];
-
 function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
 
     const { getCartCount, userData } = useContext(ShopContext);
-
-    const [currentPhraseIndex, setCurrentPhraseIndex] = useState(brandAnimationCompleted ? phrases.length - 1 : 0);
-    const [brandText, setBrandText] = useState(brandAnimationCompleted ? phrases[phrases.length - 1] : phrases[0]);
-    const [startDecryption, setStartDecryption] = useState(false);
-    const [isGreeting, setIsGreeting] = useState(false);
-
-    React.useEffect(() => {
-        const timer = setTimeout(() => setStartDecryption(true), 5000);
-        return () => clearTimeout(timer);
-    }, []);
-
-    // Track if we have already greeted the user in this session
-    const hasGreetedRef = React.useRef(false);
-
-    React.useEffect(() => {
-        if (userData && userData.name) {
-            const sessionGreeted = sessionStorage.getItem('userGreeted');
-            if (!hasGreetedRef.current && !sessionGreeted) {
-                // Trigger greeting animation
-                setBrandText(`Hi, ${userData.name.split(' ')[0]}!`);
-                setIsGreeting(true);
-                setStartDecryption(true);
-                hasGreetedRef.current = true;
-                sessionStorage.setItem('userGreeted', 'true');
-
-                // Revert back to brand name after 4 seconds
-                const timer = setTimeout(() => {
-                    setBrandText(phrases[0]);
-                    setIsGreeting(false);
-                }, 2500);
-                return () => clearTimeout(timer);
-            }
-        }
-    }, [userData]);
-
-    const handleDecryptionComplete = React.useCallback(() => {
-        if (!isGreeting && currentPhraseIndex < phrases.length - 1) {
-            setTimeout(() => {
-                setCurrentPhraseIndex(prev => prev + 1);
-                setBrandText(phrases[currentPhraseIndex + 1]);
-            }, 1000);
-        } else if (!isGreeting) {
-            brandAnimationCompleted = true;
-        }
-    }, [currentPhraseIndex, isGreeting]);
 
     return (
         <>
@@ -120,31 +69,7 @@ function Navigation() {
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
                     <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900 dark:text-white absolute left-1/2 -translate-x-1/2 group flex items-center justify-center gap-2">
-                        <DecryptedText
-                            text={brandText}
-                            speed={100}
-                            maxIterations={15}
-                            characters="ILOVEYOU"
-                            className="revealed"
-                            parentClassName="font-serif text-2xl tracking-tight text-silk-900 dark:text-white whitespace-nowrap"
-                            encryptedClassName="text-silk-900 dark:text-white"
-                            animateOn={isGreeting ? "view" : (startDecryption ? (brandAnimationCompleted ? "hover" : "view") : "none")}
-                            revealDirection="start"
-                            onDecryptionComplete={handleDecryptionComplete}
-                        />
-                        <AnimatePresence>
-                            {isGreeting && (
-                                <motion.div
-                                    initial={{ opacity: 0, scale: 0.5, rotate: -20 }}
-                                    animate={{ opacity: 1, scale: 1, rotate: [0, 20, -10, 20, 0] }}
-                                    exit={{ opacity: 0, scale: 0 }}
-                                    transition={{ duration: 0.6, ease: "easeOut" }}
-                                    className="text-3xl pb-1.5"
-                                >
-                                    👋
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+                        Aalaboo
                     </Link>
                     <nav className="flex items-center space-x-2 ml-auto">
                         <ThemeToggle />
