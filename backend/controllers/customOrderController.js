@@ -5,52 +5,53 @@ const jwt = require('jsonwebtoken');
 // Create a new Custom Order
 const createCustomOrder = async (req, res) => {
     try {
+        console.log("--- createCustomOrder START ---");
         const { size, colorPreference, customColor, yarnType, description } = req.body;
         let userId = req.userId || req.body.userId;
+
+        console.log("Initial - req.body:", req.body);
+        console.log("Initial - req.files:", req.files);
+        console.log("Initial - userId from Auth Middleware:", req.userId);
 
         // Fallback: Manually decode token if middleware didn't pass userId correctly through multer
         if (!userId && req.headers.token) {
             try {
                 const decoded = jwt.verify(req.headers.token, process.env.JWT_SECRET);
                 userId = decoded.id;
+                console.log("UserId recovered from manual token decode:", userId);
             } catch (e) {
                 console.log("Token decode failed in controller fallback:", e.message);
             }
         }
 
-        console.log("Custom Order Request - Final UserId:", userId);
+        console.log("Final UserId:", userId);
 
         if (!userId) {
+            console.log("ERROR: User authentication failed - No UserId");
             return res.json({ success: false, message: "User authentication failed. Please login again." });
         }
 
-        console.log("Custom Order Request:");
-        console.log("Body:", req.body);
-        console.log("File:", req.file);
+        let imageUrls = [];
 
-        let imageUrl = '';
-
-        if (req.file) {
-            // Helper to get image URL
-            const getFileUrl = (file) => {
+        if (req.files && req.files.length > 0) {
+            imageUrls = req.files.map(file => {
                 if (file.path && (file.path.startsWith('http:') || file.path.startsWith('https:'))) {
                     return file.path;
                 }
                 // Local fallback
                 let protocol = req.protocol;
-                if (req.get('host').includes('onrender.com')) {
-                    protocol = 'https';
-                }
+                if (req.get('host').includes('onrender.com')) protocol = 'https';
                 return `${protocol}://${req.get('host')}/uploads/${file.filename}`;
-            }
-            imageUrl = getFileUrl(req.file);
+            });
+            console.log("Generated Image URLs:", imageUrls);
         } else {
-            return res.json({ success: false, message: "Image is required" });
+            console.log("ERROR: No files uploaded");
+            return res.json({ success: false, message: "At least one image is required" });
         }
 
         const customOrder = new CustomOrder({
             userId,
-            image: imageUrl,
+            image: imageUrls,
             size,
             colorPreference,
             customColor,
@@ -58,6 +59,8 @@ const createCustomOrder = async (req, res) => {
             description,
             date: Date.now()
         });
+
+        console.log("CustomOrder Instance created:", customOrder);
 
         // Update User Address if provided (Address snapshot logic)
         const { street, city, state, zip, country, phone, landmark } = req.body;

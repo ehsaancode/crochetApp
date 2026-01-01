@@ -13,6 +13,7 @@ const CustomOrders = ({ token }) => {
         try {
             const response = await axios.get(backendUrl + '/api/custom-order/list', { headers: { token } })
             if (response.data.success) {
+                console.log("Admin CustomOrders fetched:", response.data.orders);
                 setOrders(response.data.orders)
             } else {
                 QToast.error(response.data.message, { position: "top-right" })
@@ -46,10 +47,19 @@ const CustomOrders = ({ token }) => {
                     <div className='grid grid-cols-1 sm:grid-cols-[0.5fr_2fr_1fr] lg:grid-cols-[0.5fr_2fr_1fr_1fr_1fr] gap-4 items-start border border-border bg-card shadow-sm rounded-xl p-6 text-xs sm:text-sm text-muted-foreground' key={index}>
 
                         {/* Image Preview */}
-                        <div className="flex justify-center sm:justify-start">
-                            <a href={order.image} target="_blank" rel="noopener noreferrer">
-                                <img src={order.image} alt="Reference" className="w-20 h-20 object-cover rounded-lg border border-border hover:scale-105 transition-transform" />
-                            </a>
+                        {/* Image Preview */}
+                        <div className="flex flex-wrap gap-2 justify-center sm:justify-start max-w-[200px]">
+                            {order.image && (Array.isArray(order.image) ? (
+                                order.image.map((img, idx) => (
+                                    <a key={idx} href={img} target="_blank" rel="noopener noreferrer">
+                                        <img src={img} alt={`Reference ${idx + 1}`} className="w-16 h-16 object-cover rounded-lg border border-border hover:scale-105 transition-transform" />
+                                    </a>
+                                ))
+                            ) : (
+                                <a href={order.image} target="_blank" rel="noopener noreferrer">
+                                    <img src={order.image} alt="Reference" className="w-20 h-20 object-cover rounded-lg border border-border hover:scale-105 transition-transform" />
+                                </a>
+                            ))}
                         </div>
 
                         {/* Request Details */}

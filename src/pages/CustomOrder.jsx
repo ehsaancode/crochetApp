@@ -1,5 +1,5 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
-import { Upload, X, Info } from 'lucide-react';
+import { Upload, X, Info, MapPin, Plus, CheckCircle2, Pencil, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShopContext } from '../context/ShopContext';
 import { useNavigate } from 'react-router-dom';
@@ -12,34 +12,170 @@ function CustomOrder() {
     // Force local backend for testing if needed, or user needs to update env.
     // console.log("Using Backend URL:", backendUrl);
     const navigate = useNavigate();
-    const [image, setImage] = useState(null);
-    const [previewUrl, setPreviewUrl] = useState(null);
+    const [images, setImages] = useState([]);
+    const [previewUrls, setPreviewUrls] = useState([]);
+    const [showProgress, setShowProgress] = useState(false);
+    const [progress, setProgress] = useState(0);
     const [description, setDescription] = useState('');
     const [size, setSize] = useState('Medium');
     const [colorOption, setColorOption] = useState('original'); // 'original' or 'custom'
     const [customColor, setCustomColor] = useState('');
     const [yarnType, setYarnType] = useState('');
+    const [addressMode, setAddressMode] = useState('new'); // 'saved' or 'new'
+    const [isSavingAddress, setIsSavingAddress] = useState(false);
+    const [showSaveSuccess, setShowSaveSuccess] = useState(false);
 
     const [addressData, setAddressData] = useState({
-        street: '', city: '', state: '', zip: '', country: '', phone: '', landmark: ''
+        firstName: '', lastName: '', street: '', city: '', state: '', zip: '', country: '', phone: '', landmark: ''
     });
+
+    // New state to hold the currently selected "Saved Address" (Primary or from List)
+    // This allows the Saved Card to show data even when addressMode is 'new' (which clears addressData)
+    const [selectedSavedAddress, setSelectedSavedAddress] = useState(null);
+    const [selectedAddressIndex, setSelectedAddressIndex] = useState(-1); // -1 for Primary, 0+ for Secondary
 
     const isAddressMissing = !userData?.address?.street || !userData?.address?.city || !userData?.address?.state || !userData?.address?.zip || !userData?.address?.country || !userData?.phone;
 
-    useEffect(() => {
-        if (userData) {
-            setAddressData({
-                street: userData.address?.street || '',
-                city: userData.address?.city || '',
-                state: userData.address?.state || '',
-                zip: userData.address?.zip || '',
-                landmark: userData.address?.landmark || '',
-                country: userData.address?.country || '',
-                phone: userData.phone || '',
+    // Helper to normalize address object
+    const normalizeAddress = (addr, phone) => ({
+        firstName: addr?.firstName || '',
+        lastName: addr?.lastName || '',
+        street: addr?.street || '',
+        city: addr?.city || '',
+        state: addr?.state || '',
+        zip: addr?.zip || '',
+        landmark: addr?.landmark || '',
+        country: addr?.country || '',
+        phone: addr?.phone || phone || '',
+    });
 
-            });
+    useEffect(() => {
+        if (userData && userData.address && userData.address.street) {
+            const primary = normalizeAddress(userData.address, userData.phone);
+            setSelectedSavedAddress(primary);
+            setSelectedAddressIndex(-1);
+            setAddressData(primary);
+            setAddressMode('saved');
+        } else {
+            setAddressMode('new');
         }
     }, [userData]);
+
+    const switchToNewAddress = () => {
+        setAddressMode('new');
+        setAddressData({ firstName: '', lastName: '', street: '', city: '', state: '', zip: '', country: '', phone: '', landmark: '' });
+    };
+
+    const switchToSavedAddress = () => {
+        if (selectedSavedAddress) {
+            setAddressData(selectedSavedAddress);
+            setAddressMode('saved');
+        } else if (userData && userData.address) {
+            // Fallback if selectedSavedAddress not ready
+            const primary = normalizeAddress(userData.address, userData.phone);
+            setSelectedSavedAddress(primary);
+            setAddressData(primary);
+            setAddressMode('saved');
+        }
+    };
+
+    const switchToEditAddress = (e) => {
+        e.stopPropagation();
+        // Edit the currently selected address (Primary or Secondary)
+        const targetAddress = selectedSavedAddress || userData?.address;
+
+        if (targetAddress) {
+            setAddressData(normalizeAddress(targetAddress, userData?.phone));
+            setAddressMode('edit');
+        }
+    };
+
+    const handleSaveAddress = async (e) => {
+        e.stopPropagation();
+        if (!addressData.street || !addressData.city || !addressData.zip || !addressData.country || !addressData.phone) {
+            toast.error("Please fill all required address fields");
+            return;
+        }
+
+        setIsSavingAddress(true);
+
+        try {
+            let response;
+            if (addressMode === 'new') {
+                response = await axios.post(backendUrl + '/api/user/add-address',
+                    { address: addressData },
+                    { headers: { token } }
+                );
+            } else if (selectedAddressIndex === -1) {
+                // Update Primary
+                response = await axios.post(backendUrl + '/api/user/update-profile',
+                    {
+                        address: addressData,
+                        phone: addressData.phone,
+                        name: userData?.name
+                    },
+                    { headers: { token } }
+                );
+            } else {
+                // Update Secondary
+                response = await axios.post(backendUrl + '/api/user/update-address',
+                    {
+                        index: selectedAddressIndex,
+                        address: addressData
+                    },
+                    { headers: { token } }
+                );
+            }
+
+            if (response.data.success) {
+                setShowSaveSuccess(true);
+                if (fetchUserProfile) fetchUserProfile();
+
+                // Show success animation for a moment before closing
+                setTimeout(() => {
+                    setShowSaveSuccess(false);
+                    setAddressMode('saved');
+                    toast.success("Address saved to profile");
+                }, 1500);
+            } else {
+                toast.error(response.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            toast.error(error.message);
+        } finally {
+            setIsSavingAddress(false);
+        }
+    };
+
+    const handleDeleteAddress = async (index, type = 'secondary', e) => {
+        e.stopPropagation();
+        if (window.confirm("Are you sure you want to delete this address?")) {
+            try {
+                const response = await axios.post(backendUrl + '/api/user/delete-address', { index, type }, { headers: { token } });
+                if (response.data.success) {
+                    toast.success("Address deleted");
+                    fetchUserProfile(token);
+                    // If deleted address was selected, reset to primary
+                    // For legacy, index matching is tricky since we use -2. Just reset if mode was 'new' and data matched?
+                    // Simpler to just reset if we were editing SOMETHING.
+                    // Or precise check:
+                    if ((type === 'secondary' && selectedAddressIndex === index) || (type === 'legacy' && addressMode === 'new')) {
+                        const primary = normalizeAddress(userData.address, userData.phone);
+                        setSelectedSavedAddress(primary);
+                        setSelectedAddressIndex(-1);
+                        setAddressData(primary);
+                        setAddressMode('saved');
+                    }
+                } else {
+                    toast.error(response.data.message);
+                }
+            } catch (error) {
+                console.error(error);
+                toast.error(error.message);
+            }
+        }
+    };
 
     const handleAddressChange = (e) => {
         const { name, value } = e.target;
@@ -51,35 +187,54 @@ function CustomOrder() {
 
 
     const handleImageChange = (e) => {
-        const file = e.target.files[0];
-        if (file) handleFileSelect(file);
+        if (e.target.files && e.target.files.length > 0) {
+            handleFileSelect(Array.from(e.target.files));
+        }
     };
 
-    const handleFileSelect = (file) => {
-        if (!file.type.startsWith('image/')) {
-            toast.error('Please upload an image file');
+    const handleFileSelect = (files) => {
+        if (images.length + files.length > 6) {
+            toast.error('Maximum 6 images allowed');
             return;
         }
-        if (file.size > 5 * 1024 * 1024) {
-            toast.error('Image size should be less than 5MB');
-            return;
+
+        const validFiles = [];
+        const newPreviews = [];
+
+        files.forEach(file => {
+            if (!file.type.startsWith('image/')) {
+                toast.error(`Scanning ${file.name}: Not an image`);
+                return;
+            }
+            if (file.size > 5 * 1024 * 1024) {
+                toast.error(`${file.name} is too large (>5MB)`);
+                return;
+            }
+            validFiles.push(file);
+            newPreviews.push(URL.createObjectURL(file));
+        });
+
+        if (validFiles.length > 0) {
+            setImages(prev => [...prev, ...validFiles]);
+            setPreviewUrls(prev => [...prev, ...newPreviews]);
         }
-        setImage(file);
-        const reader = new FileReader();
-        reader.onloadend = () => setPreviewUrl(reader.result);
-        reader.readAsDataURL(file);
     };
 
     const handleDragOver = (e) => { e.preventDefault(); e.stopPropagation(); };
     const handleDrop = (e) => {
         e.preventDefault(); e.stopPropagation();
-        const file = e.dataTransfer.files[0];
-        if (file) handleFileSelect(file);
+        if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            handleFileSelect(Array.from(e.dataTransfer.files));
+        }
     };
 
-    const removeImage = () => {
-        setImage(null);
-        setPreviewUrl(null);
+    const removeImage = (index) => {
+        setImages(prev => prev.filter((_, i) => i !== index));
+        setPreviewUrls(prev => {
+            // Revoke url to free memory
+            URL.revokeObjectURL(prev[index]);
+            return prev.filter((_, i) => i !== index);
+        });
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
@@ -94,32 +249,33 @@ function CustomOrder() {
             return;
         }
 
-        if (!image) {
-            toast.error('Please upload a design image');
+        if (images.length === 0) {
+            toast.error('Please upload at least one design image');
             return;
         }
 
-        if (isAddressMissing) {
-            if (!addressData.street || !addressData.city || !addressData.state || !addressData.zip || !addressData.country || !addressData.phone) {
-                toast.error("Please complete your shipping details");
-                return;
-            }
+        if (!addressData.street || !addressData.city || !addressData.state || !addressData.zip || !addressData.country || !addressData.phone) {
+            toast.error("Please complete your shipping details");
+            return;
         }
 
-        // Use a toast ID to update it later
-        const toastId = toast.loading("Submitting your request...");
         setLoading(true);
+        setShowProgress(true);
+        setProgress(0);
 
         try {
             const formData = new FormData();
-            formData.append('image', image);
+            images.forEach((img) => {
+                formData.append('image', img);
+            });
             formData.append('size', size);
             formData.append('colorPreference', colorOption);
             formData.append('customColor', customColor);
             formData.append('yarnType', yarnType);
             formData.append('description', description);
 
-            if (isAddressMissing) {
+            // Always send address data if available to ensure latest details are used
+            if (addressData.street) {
                 formData.append('street', addressData.street);
                 formData.append('city', addressData.city);
                 formData.append('state', addressData.state);
@@ -129,28 +285,38 @@ function CustomOrder() {
                 if (addressData.landmark) formData.append('landmark', addressData.landmark);
             }
 
-            console.log("Sending Custom Order Request...", { size, colorOption, description });
-
             const response = await axios.post(backendUrl + '/api/custom-order/create', formData, {
-                headers: { token }
+                headers: { token: String(token), 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    setProgress(percentCompleted);
+                }
             });
 
-            console.log("Response:", response.data);
-
             if (response.data.success) {
-                toast.update(toastId, { render: "Request sent successfully!", type: "success", isLoading: false, autoClose: 3000 });
-                // Clear form
-                setDescription('');
-                setCustomColor('');
-                setYarnType('');
-                removeImage();
+                setTimeout(() => {
+                    setShowProgress(false);
+                    toast.success("Request sent successfully!");
+                    // Clear form
+                    setDescription('');
+                    setCustomColor('');
+                    setYarnType('');
+                    setImages([]);
+                    setPreviewUrls([]);
+                }, 1000);
             } else {
                 console.error("Server Error:", response.data.message);
-                toast.update(toastId, { render: response.data.message || 'Failed to submit request', type: "error", isLoading: false, autoClose: 3000 });
+                setShowProgress(false);
+                toast.error(response.data.message || 'Failed to submit request');
             }
         } catch (error) {
             console.error("Submission Error:", error);
-            toast.update(toastId, { render: error.message || 'Something went wrong', type: "error", isLoading: false, autoClose: 3000 });
+            setShowProgress(false);
+            if (error.response && error.response.data && error.response.data.message) {
+                toast.error(`Server Error: ${error.response.data.message}`);
+            } else {
+                toast.error(error.message || 'Something went wrong');
+            }
         } finally {
             setLoading(false);
         }
@@ -173,38 +339,43 @@ function CustomOrder() {
                         <form onSubmit={handleSubmit} className="flex flex-col md:flex-row gap-10">
 
                             {/* Image Upload Column */}
+                            {/* Image Upload Column - Updated for Multiple Images */}
                             <div className="w-full md:w-4/12 flex flex-col gap-4">
-                                <div
-                                    className={`relative w-full aspect-[4/5] rounded-2xl border border-dashed transition-all duration-300 overflow-hidden cursor-pointer group 
-                                        ${previewUrl ? 'border-transparent' : 'border-silk-200 dark:border-silk-800 hover:border-silk-400 dark:hover:border-silk-600 bg-silk-50/50 dark:bg-black/20'}`}
-                                    onClick={() => !previewUrl && fileInputRef.current?.click()}
-                                    onDragOver={handleDragOver}
-                                    onDrop={handleDrop}
-                                >
-                                    <AnimatePresence mode="wait">
-                                        {previewUrl ? (
+                                <div className={previewUrls.length === 0 ? "flex justify-center" : "grid grid-cols-2 gap-2"}>
+                                    <AnimatePresence>
+                                        {previewUrls.map((url, idx) => (
                                             <motion.div
-                                                initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-                                                className="relative w-full h-full"
+                                                key={`preview-${idx}`}
+                                                initial={{ opacity: 0, scale: 0.8 }}
+                                                animate={{ opacity: 1, scale: 1 }}
+                                                exit={{ opacity: 0, scale: 0.5 }}
+                                                className="relative aspect-square rounded-xl overflow-hidden border border-silk-200 dark:border-silk-800"
                                             >
-                                                <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+                                                <img src={url} alt={`Preview ${idx}`} className="w-full h-full object-cover" />
                                                 <button
                                                     type="button"
-                                                    onClick={(e) => { e.stopPropagation(); removeImage(); }}
-                                                    className="absolute top-3 right-3 bg-black/60 text-white p-2 rounded-full hover:bg-black/80 transition-colors backdrop-blur-md"
+                                                    onClick={(e) => { e.stopPropagation(); removeImage(idx); }}
+                                                    className="absolute top-1 right-1 bg-black/60 text-white p-1 rounded-full hover:bg-red-500 transition-colors backdrop-blur-md"
                                                 >
-                                                    <X className="w-4 h-4" />
+                                                    <X className="w-3 h-3" />
                                                 </button>
                                             </motion.div>
-                                        ) : (
-                                            <div className="absolute inset-0 flex flex-col items-center justify-center text-silk-400 dark:text-silk-600 p-6 text-center group-hover:text-silk-600 dark:group-hover:text-silk-400 transition-colors">
-                                                <Upload className="w-8 h-8 mb-4 opacity-70" strokeWidth={1.5} />
-                                                <span className="text-xs uppercase tracking-[0.2em] font-medium">Upload Image</span>
-                                            </div>
-                                        )}
+                                        ))}
                                     </AnimatePresence>
+
+                                    {/* Upload Button */}
+                                    <div
+                                        className={`relative ${previewUrls.length === 0 ? 'w-full aspect-[4/3] max-w-xs' : 'aspect-square'} rounded-2xl border border-dashed transition-all duration-300 overflow-hidden cursor-pointer group flex flex-col items-center justify-center text-silk-400 dark:text-silk-600 hover:text-silk-600 dark:hover:text-silk-400 hover:border-silk-400 dark:hover:border-silk-600 bg-silk-50/50 dark:bg-black/20 border-silk-200 dark:border-silk-800`}
+                                        onClick={() => fileInputRef.current?.click()}
+                                        onDragOver={handleDragOver}
+                                        onDrop={handleDrop}
+                                    >
+                                        <Upload className="w-8 h-8 mb-2 opacity-70" strokeWidth={1.5} />
+                                        <span className="text-[10px] uppercase tracking-widest font-medium">Upload images</span>
+                                    </div>
                                 </div>
-                                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" onChange={handleImageChange} />
+                                <input type="file" ref={fileInputRef} className="hidden" accept="image/*" multiple onChange={handleImageChange} />
+                                <p className="text-[10px] text-center text-silk-400 dark:text-silk-600">Max 5MB per image. Multiple images supported.</p>
                             </div>
 
                             {/* Form Fields Column */}
@@ -301,36 +472,351 @@ function CustomOrder() {
                                     ></textarea>
                                 </div>
 
-                                {/* Address Form (Conditional) */}
-                                {isAddressMissing && (
-                                    <div className="border-t border-silk-200 dark:border-silk-800 pt-6 mt-2 animate-fade-in">
-                                        <h4 className="font-medium text-silk-900 dark:text-silk-100 mb-4 flex items-center gap-2">
-                                            <Info className="w-4 h-4" /> Shipping Details Required
-                                        </h4>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                            <input name="street" value={addressData.street} onChange={handleAddressChange} placeholder="Street Address" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
-                                            <input name="city" value={addressData.city} onChange={handleAddressChange} placeholder="City" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
-                                            <input name="zip" value={addressData.zip} onChange={handleAddressChange} placeholder="Zip Code" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
-                                            <input name="landmark" value={addressData.landmark} onChange={handleAddressChange} placeholder="Landmark (Optional)" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" />
-                                            <input name="state" value={addressData.state} onChange={handleAddressChange} placeholder="State" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
-                                            <input name="country" value={addressData.country} onChange={handleAddressChange} placeholder="Country" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
-                                            <input name="phone" value={addressData.phone} onChange={handleAddressChange} placeholder="Phone Number" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                {/* Address Selection */}
+                                <div className="border-t border-silk-200 dark:border-silk-800 pt-6 mt-2 animate-fade-in">
+                                    <h4 className="font-medium text-silk-900 dark:text-silk-100 mb-4 flex items-center gap-2">
+                                        <Info className="w-4 h-4" /> Shipping Details
+                                    </h4>
+
+                                    {/* Selection Boxes Grid */}
+                                    <div className="grid grid-cols-1 gap-4 mb-6">
+
+                                        {/* Primary Address Card */}
+                                        {(() => {
+                                            const primaryAddr = normalizeAddress(userData?.address, userData?.phone);
+                                            const isSelected = selectedAddressIndex === -1 && addressMode !== 'new';
+                                            const displayAddr = (isSelected && addressMode === 'edit') ? addressData : primaryAddr;
+
+                                            return (
+                                                <div
+                                                    onClick={() => {
+                                                        setSelectedAddressIndex(-1);
+                                                        setSelectedSavedAddress(primaryAddr);
+                                                        setAddressData(primaryAddr);
+                                                        setAddressMode('saved');
+                                                    }}
+                                                    className={`relative p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col gap-3 ${isSelected
+                                                        ? 'border-silk-900 bg-silk-50 dark:border-silk-100 dark:bg-white/5'
+                                                        : 'border-silk-100 dark:border-silk-800 bg-transparent hover:border-silk-300 dark:hover:border-silk-600'
+                                                        }`}
+                                                >
+                                                    {isSelected && (
+                                                        <div className="absolute top-3 right-3 text-silk-900 dark:text-green-500">
+                                                            <CheckCircle2 className="w-5 h-5 fill-current" />
+                                                        </div>
+                                                    )}
+
+                                                    <button
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            setSelectedAddressIndex(-1);
+                                                            setSelectedSavedAddress(primaryAddr);
+                                                            setAddressData(primaryAddr);
+                                                            setAddressMode('edit');
+                                                        }}
+                                                        className="absolute bottom-3 right-3 p-1.5 hover:bg-silk-200 dark:hover:bg-white/20 rounded-full transition-colors z-10"
+                                                        title="Edit Address"
+                                                    >
+                                                        <Pencil className="w-3.5 h-3.5 text-silk-600 dark:text-silk-300" />
+                                                    </button>
+
+                                                    <div className="w-10 h-10 rounded-full bg-silk-100 dark:bg-silk-900 flex items-center justify-center text-silk-900 dark:text-silk-100">
+                                                        <MapPin className="w-5 h-5" />
+                                                    </div>
+
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="font-bold text-sm text-silk-900 dark:text-silk-50 mb-1">
+                                                            {(isSelected && addressMode === 'edit')
+                                                                ? 'Editing Primary...'
+                                                                : (displayAddr.firstName ? `${displayAddr.firstName} ${displayAddr.lastName}` : 'Primary Address')}
+                                                        </p>
+                                                        {displayAddr.street ? (
+                                                            <div className="flex flex-col text-[11px] leading-tight text-silk-600 dark:text-silk-400">
+                                                                <p className="truncate font-medium text-silk-800 dark:text-silk-300">{displayAddr.street}</p>
+                                                                {displayAddr.landmark && <p className="truncate">{displayAddr.landmark}</p>}
+                                                                <p className="truncate">{displayAddr.city}, {displayAddr.state} {displayAddr.zip}</p>
+                                                                <p className="truncate">{displayAddr.country}</p>
+                                                                {displayAddr.phone && <p className="mt-1 opacity-80">{displayAddr.phone}</p>}
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-xs text-silk-400 italic">No address set</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })()}
+
+                                        {/* Other Addresses Cards */}
+                                        {userData?.address?.otherAddresses?.map((addr, i) => {
+                                            const thisAddr = normalizeAddress(addr, userData?.phone);
+                                            const isSelected = selectedAddressIndex === i && addressMode !== 'new';
+                                            const displayAddr = (isSelected && addressMode === 'edit') ? addressData : thisAddr;
+
+                                            return (
+                                                <div
+                                                    key={`other-${i}`}
+                                                    onClick={() => {
+                                                        setSelectedAddressIndex(i);
+                                                        setSelectedSavedAddress(thisAddr);
+                                                        setAddressData(thisAddr);
+                                                        setAddressMode('saved');
+                                                    }}
+                                                    className={`relative p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col gap-3 ${isSelected
+                                                        ? 'border-silk-900 bg-silk-50 dark:border-silk-100 dark:bg-white/5'
+                                                        : 'border-silk-100 dark:border-silk-800 bg-transparent hover:border-silk-300 dark:hover:border-silk-600'
+                                                        }`}
+                                                >
+                                                    {isSelected && (
+                                                        <div className="absolute top-3 right-3 text-silk-900 dark:text-green-500">
+                                                            <CheckCircle2 className="w-5 h-5 fill-current" />
+                                                        </div>
+                                                    )}
+
+                                                    <div className="absolute bottom-3 right-3 flex gap-2 z-10">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setSelectedAddressIndex(i);
+                                                                setSelectedSavedAddress(thisAddr);
+                                                                setAddressData(thisAddr);
+                                                                setAddressMode('edit');
+                                                            }}
+                                                            className="p-1.5 hover:bg-silk-200 dark:hover:bg-white/20 rounded-full transition-colors"
+                                                            title="Edit Address"
+                                                        >
+                                                            <Pencil className="w-3.5 h-3.5 text-silk-600 dark:text-silk-300" />
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => handleDeleteAddress(i, 'secondary', e)}
+                                                            className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-colors group"
+                                                            title="Delete Address"
+                                                        >
+                                                            <Trash2 className="w-3.5 h-3.5 text-silk-400 group-hover:text-red-500 transition-colors" />
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="w-10 h-10 rounded-full bg-silk-100 dark:bg-silk-900 flex items-center justify-center text-silk-900 dark:text-silk-100">
+                                                        <MapPin className="w-5 h-5" />
+                                                    </div>
+
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="font-bold text-sm text-silk-900 dark:text-silk-50 mb-1">
+                                                            {(isSelected && addressMode === 'edit')
+                                                                ? 'Editing Address...'
+                                                                : (displayAddr.firstName ? `${displayAddr.firstName} ${displayAddr.lastName}` : `Saved Address ${i + 1}`)}
+                                                        </p>
+                                                        {displayAddr.street ? (
+                                                            <div className="flex flex-col text-[11px] leading-tight text-silk-600 dark:text-silk-400">
+                                                                <p className="truncate font-medium text-silk-800 dark:text-silk-300">{displayAddr.street}</p>
+                                                                {displayAddr.landmark && <p className="truncate">{displayAddr.landmark}</p>}
+                                                                <p className="truncate">{displayAddr.city}, {displayAddr.state} {displayAddr.zip}</p>
+                                                                <p className="truncate">{displayAddr.country}</p>
+                                                                {displayAddr.phone && <p className="mt-1 opacity-80">{displayAddr.phone}</p>}
+                                                            </div>
+                                                        ) : (
+                                                            <p className="text-xs text-silk-400 italic">Empty saved address</p>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+
+                                        {/* Legacy Addresses (Backward Compatibility) */}
+                                        {userData?.addresses?.map((addr, i) => {
+                                            const thisAddr = normalizeAddress(addr, userData?.phone);
+                                            // Legacy addresses are treated as 'new' inputs initially to encourage saving to new schema
+                                            // Or we can just just populate the form. We won't mark them as 'Saved' mode because they aren't in the new list index.
+                                            // Let's mark them visually but keep addressMode as 'new' so saving creates a NEW entry in the proper place.
+                                            const isSelected = JSON.stringify(addressData.street) === JSON.stringify(thisAddr.street) && addressMode === 'new';
+
+                                            return (
+                                                <div
+                                                    key={`legacy-${i}`}
+                                                    onClick={() => {
+                                                        setSelectedAddressIndex(-2); // Special index for unindexed/legacy
+                                                        setSelectedSavedAddress(thisAddr);
+                                                        setAddressData(thisAddr);
+                                                        setAddressMode('new'); // Treat as new so it saves to new schema
+                                                    }}
+                                                    className={`relative p-5 rounded-2xl border-2 transition-all cursor-pointer flex flex-col gap-3 ${isSelected
+                                                        ? 'border-silk-900 bg-silk-50 dark:border-silk-100 dark:bg-white/5'
+                                                        : 'border-silk-100 dark:border-silk-800 bg-transparent hover:border-silk-300 dark:hover:border-silk-600'
+                                                        }`}
+                                                >
+                                                    <div className="absolute bottom-3 right-3 flex gap-2 z-10">
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation();
+                                                                setSelectedAddressIndex(-2);
+                                                                setSelectedSavedAddress(thisAddr);
+                                                                setAddressData(thisAddr);
+                                                                setAddressMode('new');
+                                                            }}
+                                                            className="p-1.5 hover:bg-silk-200 dark:hover:bg-white/20 rounded-full transition-colors"
+                                                            title="Edit/Copy Address"
+                                                        >
+                                                            <Pencil className="w-3.5 h-3.5 text-silk-600 dark:text-silk-300" />
+                                                        </button>
+                                                        <button
+                                                            onClick={(e) => handleDeleteAddress(i, 'legacy', e)}
+                                                            className="p-1.5 hover:bg-red-100 dark:hover:bg-red-900/30 rounded-full transition-colors group"
+                                                            title="Delete Address"
+                                                        >
+                                                            <Trash2 className="w-3.5 h-3.5 text-silk-400 group-hover:text-red-500 transition-colors" />
+                                                        </button>
+                                                    </div>
+
+                                                    <div className="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center text-gray-500 dark:text-gray-400">
+                                                        <MapPin className="w-5 h-5" />
+                                                    </div>
+
+                                                    <div className="flex-1 min-w-0">
+                                                        <p className="font-bold text-sm text-silk-900 dark:text-silk-50 mb-1">
+                                                            Legacy Address
+                                                        </p>
+                                                        <div className="flex flex-col text-[11px] leading-tight text-silk-600 dark:text-silk-400">
+                                                            <p className="truncate font-medium text-silk-800 dark:text-silk-300">{thisAddr.street}</p>
+                                                            <p className="truncate">{thisAddr.city}, {thisAddr.state} {thisAddr.zip}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+
+                                        {/* New Address Button Card */}
+                                        <div
+                                            onClick={switchToNewAddress}
+                                            className="relative p-5 rounded-2xl border-2 border-silk-100 dark:border-silk-800 bg-transparent hover:border-silk-300 dark:hover:border-silk-600 transition-all cursor-pointer flex flex-col gap-3"
+                                        >
+
+                                            <div className="w-10 h-10 rounded-full bg-silk-100 dark:bg-silk-900 flex items-center justify-center text-silk-900 dark:text-silk-100">
+                                                <Plus className="w-5 h-5" />
+                                            </div>
+                                            <div>
+                                                <p className="font-bold text-sm text-silk-900 dark:text-silk-50 mb-1">Add New Address</p>
+                                                <p className="text-xs text-silk-600 dark:text-silk-400">Ship to a different location</p>
+                                            </div>
                                         </div>
                                     </div>
-                                )}
 
-                                <button
+                                    {/* Form Fields - Show if adding new or editing */}
+                                    <AnimatePresence>
+                                        {(addressMode === 'new' || addressMode === 'edit') && (
+                                            <motion.div
+                                                initial={{ height: 0, opacity: 0 }}
+                                                animate={{ height: 'auto', opacity: 1 }}
+                                                exit={{ height: 0, opacity: 0 }}
+                                                className="grid grid-cols-1 md:grid-cols-2 gap-4 overflow-hidden"
+                                            >
+                                                <input
+                                                    name="firstName"
+                                                    value={addressData.firstName}
+                                                    onChange={handleAddressChange}
+                                                    placeholder="First Name"
+                                                    className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white dark:placeholder-silk-700"
+                                                    required
+                                                />
+                                                <input
+                                                    name="lastName"
+                                                    value={addressData.lastName}
+                                                    onChange={handleAddressChange}
+                                                    placeholder="Last Name"
+                                                    className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white dark:placeholder-silk-700"
+                                                    required
+                                                />
+
+                                                <input
+                                                    name="street"
+                                                    value={addressData.street}
+                                                    onChange={handleAddressChange}
+                                                    placeholder="Street Address"
+                                                    className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white dark:placeholder-silk-700"
+                                                    required
+                                                />
+                                                <input name="city" value={addressData.city} onChange={handleAddressChange} placeholder="City" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                                <input name="zip" value={addressData.zip} onChange={handleAddressChange} placeholder="Zip Code" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                                <input name="landmark" value={addressData.landmark} onChange={handleAddressChange} placeholder="Landmark (Optional)" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" />
+                                                <input name="state" value={addressData.state} onChange={handleAddressChange} placeholder="State" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                                <input name="country" value={addressData.country} onChange={handleAddressChange} placeholder="Country" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+                                                <input name="phone" value={addressData.phone} onChange={handleAddressChange} placeholder="Phone Number" className="w-full bg-transparent border-b border-silk-200 dark:border-silk-800 py-2 text-sm focus:outline-none focus:border-silk-900 dark:text-white placeholder-silk-300 dark:placeholder-silk-700" required />
+
+                                                {(addressMode === 'edit' || addressMode === 'new') && (
+                                                    <div className="col-span-1 md:col-span-2 pt-2 flex justify-end">
+                                                        <button
+                                                            type="button"
+                                                            onClick={handleSaveAddress}
+                                                            disabled={isSavingAddress || showSaveSuccess}
+                                                            className={`px-4 py-2 rounded-lg text-xs uppercase tracking-widest transition-all flex items-center gap-2 ${showSaveSuccess
+                                                                ? 'bg-green-500 text-white'
+                                                                : 'bg-silk-900 dark:bg-silk-100 text-white dark:text-black hover:bg-silk-800 dark:hover:bg-white'
+                                                                }`}
+                                                        >
+                                                            {isSavingAddress ? (
+                                                                <span className="flex items-center gap-2">
+                                                                    <div className="w-3 h-3 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                                                    Saving...
+                                                                </span>
+                                                            ) : showSaveSuccess ? (
+                                                                <span className="flex items-center gap-2">
+                                                                    <CheckCircle2 className="w-4 h-4" />
+                                                                    Saved!
+                                                                </span>
+                                                            ) : (
+                                                                addressMode === 'new' ? 'Save New Address' : 'Save Changes'
+                                                            )}
+                                                        </button>
+                                                    </div>
+                                                )}
+                                            </motion.div>
+                                        )}
+                                    </AnimatePresence>
+                                </div>
+
+                                <motion.button
                                     type="submit"
                                     disabled={loading}
-                                    className={`w-full bg-silk-900 dark:bg-silk-100 text-white dark:text-black py-4 rounded-xl text-xs uppercase tracking-[0.15em] font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform active:scale-[0.99] ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-silk-800 dark:hover:bg-white'}`}
+                                    whileHover={{ scale: 1.01 }}
+                                    whileTap={{ scale: 0.95 }}
+                                    className={`w-full bg-silk-900 dark:bg-silk-100 text-white dark:text-black py-4 rounded-xl text-xs uppercase tracking-[0.15em] font-medium transition-all duration-300 shadow-lg hover:shadow-xl ${loading ? 'opacity-70 cursor-not-allowed' : 'hover:bg-silk-800 dark:hover:bg-white'}`}
                                 >
                                     {loading ? 'Processing...' : (token ? 'Request Quote' : 'Login to Request')}
-                                </button>
+                                </motion.button>
                             </div>
                         </form>
                     </div>
                 </FadeContent>
             </div>
+
+            {/* Progress Popup */}
+            <AnimatePresence>
+                {showProgress && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.9 }}
+                            className="bg-white dark:bg-[#1a1a1a] p-8 rounded-2xl w-full max-w-sm shadow-2xl text-center"
+                        >
+                            <h3 className="font-serif text-2xl mb-2 text-silk-900 dark:text-silk-50">
+                                {progress === 100 ? 'Success!' : 'Submitting Request'}
+                            </h3>
+                            <p className="text-silk-600 dark:text-silk-400 text-sm mb-6">
+                                {progress === 100 ? 'Your custom order request has been received.' : 'Please wait while we upload your details.'}
+                            </p>
+
+                            <div className="w-full h-2 bg-gray-100 dark:bg-gray-800 rounded-full overflow-hidden mb-2">
+                                <motion.div
+                                    className="h-full bg-silk-900 dark:bg-white"
+                                    initial={{ width: 0 }}
+                                    animate={{ width: `${progress}%` }}
+                                    transition={{ duration: 0.3 }}
+                                />
+                            </div>
+                            <span className="text-xs font-mono text-silk-400">{progress}%</span>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </div>
     );
 }

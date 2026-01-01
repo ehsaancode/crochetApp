@@ -292,51 +292,88 @@ const PlaceOrder = () => {
 
                 <div className='text-xl sm:text-2xl my-3 font-serif text-silk-900 dark:text-silk-50'>DELIVERY INFORMATION</div>
 
-                {/* Saved Addresses */}
-                {userData && (userData.addresses?.length > 0 || userData.address) && (
+                {/* Saved Addresses Vertical List */}
+                {userData && (
                     <div className='mb-6'>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Saved Addresses</label>
-                        <div className="flex gap-4 overflow-x-auto pb-4">
-                            {/* Render stored array addresses */}
-                            {userData.addresses && userData.addresses.map((addr, idx) => (
-                                <div
-                                    key={`saved-${idx}`}
-                                    onClick={() => setFormData(prev => ({ ...prev, ...addr, firstName: userData.name.split(' ')[0], lastName: userData.name.split(' ').slice(1).join(' ') }))}
-                                    className={`min-w-[200px] p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${JSON.stringify(formData.street) === JSON.stringify(addr.street) ? 'border-silk-600 bg-silk-50 dark:bg-silk-900' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-black'}`}
-                                >
-                                    <p className="font-semibold text-sm truncate dark:text-white">{addr.street}</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{addr.city}, {addr.state}</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400">{addr.zipcode}</p>
-                                </div>
-                            ))}
-                            {/* Render main profile address if distinct or if array is empty but this exists */}
-                            {userData.address && (!userData.addresses || userData.addresses.length === 0) && (
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Saved Addresses</label>
+                        <div className="flex flex-col gap-3">
+
+                            {/* Primary Address */}
+                            {userData.address && (
                                 <div
                                     onClick={() => setFormData(prev => ({
                                         ...prev,
-                                        street: userData.address.street,
-                                        city: userData.address.city,
-                                        state: userData.address.state,
-                                        zipcode: userData.address.zip,
-                                        country: userData.address.country
+                                        street: userData.address.street || '',
+                                        city: userData.address.city || '',
+                                        state: userData.address.state || '',
+                                        zipcode: userData.address.zip || '',
+                                        country: userData.address.country || '',
+                                        phone: userData.phone || '',
+                                        firstName: userData.name ? userData.name.split(' ')[0] : '',
+                                        lastName: userData.name && userData.name.split(' ').length > 1 ? userData.name.split(' ').slice(1).join(' ') : ''
                                     }))}
-                                    className={`min-w-[200px] p-4 border rounded-lg cursor-pointer transition-all hover:shadow-md ${formData.street === userData.address.street ? 'border-silk-600 bg-silk-50 dark:bg-silk-900' : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-black'}`}
+                                    className={`relative p-4 border rounded-xl cursor-pointer transition-all hover:shadow-md flex items-center gap-3 ${formData.street === userData.address.street
+                                            ? 'border-silk-900 bg-silk-50 dark:border-silk-400 dark:bg-silk-900/20'
+                                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-black/50'
+                                        }`}
                                 >
-                                    <p className="font-semibold text-sm truncate dark:text-white">{userData.address.street}</p>
-                                    <p className="text-xs text-gray-500 dark:text-gray-400 truncate">{userData.address.city}, {userData.address.state}</p>
+                                    <div className="p-2 rounded-full bg-silk-100 dark:bg-gray-800 text-silk-900 dark:text-gray-200">
+                                        <LocateFixed className="w-5 h-5" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <p className="font-semibold text-sm text-silk-900 dark:text-white">Primary Address</p>
+                                            {formData.street === userData.address.street && (
+                                                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Selected</span>
+                                            )}
+                                        </div>
+                                        <p className="text-sm text-gray-600 dark:text-gray-300 truncate">{userData.address.street}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">{userData.address.city}, {userData.address.state} {userData.address.zip}</p>
+                                    </div>
                                 </div>
                             )}
+
+                            {/* Secondary Addresses */}
+                            {userData.address?.otherAddresses?.map((addr, idx) => (
+                                <div
+                                    key={`saved-${idx}`}
+                                    onClick={() => setFormData(prev => ({
+                                        ...prev,
+                                        ...addr,
+                                        firstName: userData.name.split(' ')[0],
+                                        lastName: userData.name.split(' ').slice(1).join(' ')
+                                    }))}
+                                    className={`relative p-4 border rounded-xl cursor-pointer transition-all hover:shadow-md flex items-center gap-3 ${formData.street === addr.street && formData.zipcode === addr.zipcode
+                                            ? 'border-silk-900 bg-silk-50 dark:border-silk-400 dark:bg-silk-900/20'
+                                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-black/50'
+                                        }`}
+                                >
+                                    <div className="p-2 rounded-full bg-silk-100 dark:bg-gray-800 text-silk-900 dark:text-gray-200">
+                                        <LocateFixed className="w-5 h-5" />
+                                    </div>
+                                    <div className="flex-1">
+                                        <div className="flex justify-between items-center mb-1">
+                                            <p className="font-semibold text-sm text-silk-900 dark:text-white">Saved Address {idx + 1}</p>
+                                            {formData.street === addr.street && formData.zipcode === addr.zipcode && (
+                                                <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full">Selected</span>
+                                            )}
+                                        </div>
+                                        <p className="text-sm text-gray-600 dark:text-gray-300 truncate">{addr.street}</p>
+                                        <p className="text-xs text-gray-500 dark:text-gray-400">{addr.city}, {addr.state} {addr.zipcode}</p>
+                                    </div>
+                                </div>
+                            ))}
 
                             {/* Add New Button */}
                             <button
                                 type="button"
                                 onClick={() => setShowAddressModal(true)}
-                                className="min-w-[100px] flex flex-col items-center justify-center p-4 border border-dashed border-gray-300 rounded-lg hover:border-silk-500 hover:bg-silk-50 dark:hover:bg-gray-800 transition-colors"
+                                className="w-full p-4 border border-dashed border-gray-300 rounded-xl hover:border-silk-500 hover:bg-silk-50 dark:hover:bg-gray-800 transition-colors flex items-center justify-center gap-2 group"
                             >
-                                <div className="w-8 h-8 rounded-full bg-silk-100 dark:bg-gray-800 flex items-center justify-center mb-1">
-                                    <span className="text-xl text-silk-600 dark:text-silk-400">+</span>
+                                <div className="w-6 h-6 rounded-full bg-silk-100 dark:bg-gray-800 flex items-center justify-center group-hover:bg-silk-200">
+                                    <span className="text-lg text-silk-600 dark:text-silk-400">+</span>
                                 </div>
-                                <span className="text-xs font-medium text-silk-600 dark:text-silk-400">Add New</span>
+                                <span className="text-sm font-medium text-silk-600 dark:text-silk-400">Add New Address</span>
                             </button>
                         </div>
                     </div>

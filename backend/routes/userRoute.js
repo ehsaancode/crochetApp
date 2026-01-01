@@ -1,5 +1,5 @@
 const express = require('express');
-const { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest, addAddress } = require('../controllers/userController');
+const { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest, addAddress, updateSecondaryAddress, deleteAddress } = require('../controllers/userController');
 const authMiddleware = require('../middleware/auth');
 const upload = require('../middleware/multer');
 const userRouter = express.Router();
@@ -16,5 +16,7 @@ userRouter.post('/request', authMiddleware, requestProduct);
 userRouter.get('/admin/requests', authMiddleware, getAllRequests);
 userRouter.post('/admin/request-handle', authMiddleware, handleRequest);
 userRouter.post('/add-address', authMiddleware, addAddress);
+userRouter.post('/update-address', authMiddleware, updateSecondaryAddress);
+userRouter.post('/delete-address', authMiddleware, deleteAddress);
 
 module.exports = userRouter;

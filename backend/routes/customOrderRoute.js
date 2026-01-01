@@ -5,7 +5,7 @@ const authMiddleware = require('../middleware/auth');
 
 const customOrderRouter = express.Router();
 
-customOrderRouter.post('/create', upload.single('image'), authMiddleware, createCustomOrder);
+customOrderRouter.post('/create', authMiddleware, upload.array('image', 6), createCustomOrder);
 customOrderRouter.post('/list', listCustomOrders); // Using POST to match general pattern if any (or GET) - sticking to GET for List usually but product is GET.
 // However, admin panel might use a generic fetcher. I will use GET for list.
 customOrderRouter.get('/list', listCustomOrders);

@@ -76,7 +76,7 @@ const registerUser = async (req, res) => {
             email,
             password: hashedPassword,
             phone,
-            address: address || { street: '', city: '', state: '', zip: '', country: '' },
+            address: address || { street: '', city: '', state: '', zip: '', country: '', otherAddresses: [] },
             image: imageUrl
         });
 
@@ -173,11 +173,78 @@ const addAddress = async (req, res) => {
         }
 
         const user = await userModel.findById(userId);
-        let addresses = user.addresses || [];
-        addresses.push(address);
+        if (!user.address) user.address = { otherAddresses: [] };
+        if (!user.address.otherAddresses) user.address.otherAddresses = [];
 
-        await userModel.findByIdAndUpdate(userId, { addresses });
-        res.json({ success: true, message: "Address added successfully", addresses });
+        user.address.otherAddresses.push(address);
+        user.markModified('address');
+
+        await user.save();
+        res.json({ success: true, message: "Address added successfully", addresses: user.address.otherAddresses });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Update existing address
+const updateSecondaryAddress = async (req, res) => {
+    try {
+        const userId = req.userId || req.body.userId;
+        const { index } = req.body;
+        let { address } = req.body;
+
+        if (typeof address === 'string') {
+            try {
+                address = JSON.parse(address);
+            } catch (e) {
+                return res.json({ success: false, message: "Invalid address format" });
+            }
+        }
+
+        const user = await userModel.findById(userId);
+        if (!user.address || !user.address.otherAddresses || !user.address.otherAddresses[index]) {
+            return res.json({ success: false, message: "Address not found" });
+        }
+
+        user.address.otherAddresses[index] = address;
+        user.markModified('address');
+        await user.save();
+
+        res.json({ success: true, message: "Address updated successfully" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Delete secondary address
+const deleteAddress = async (req, res) => {
+    try {
+        const userId = req.userId || req.body.userId;
+        const { index, type } = req.body;
+
+        const user = await userModel.findById(userId);
+
+        if (type === 'legacy') {
+            if (!user.addresses || !user.addresses[index]) {
+                return res.json({ success: false, message: "Address not found" });
+            }
+            user.addresses.splice(index, 1);
+        } else {
+            if (!user.address || !user.address.otherAddresses || !user.address.otherAddresses[index]) {
+                return res.json({ success: false, message: "Address not found" });
+            }
+            user.address.otherAddresses.splice(index, 1);
+        }
+
+        user.markModified('address');
+        user.markModified('addresses'); // Mark legacy array modified too if touched
+        await user.save();
+
+        res.json({ success: true, message: "Address deleted successfully" });
 
     } catch (error) {
         console.log(error);
@@ -370,4 +437,4 @@ const handleRequest = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest, addAddress };
+module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest, addAddress, updateSecondaryAddress, deleteAddress };

@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const customOrderSchema = new mongoose.Schema({
     userId: { type: mongoose.Schema.Types.ObjectId, ref: 'user', required: true },
-    image: { type: String, required: true },
+    image: { type: mongoose.Schema.Types.Mixed }, // Removed required to test saving
     size: { type: String, required: true },
     colorPreference: { type: String, required: true },
     customColor: { type: String },

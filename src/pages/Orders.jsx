@@ -209,7 +209,17 @@ const Orders = ({ compact }) => {
                                     customOrders.map((item, index) => (
                                         <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
                                             <div className='flex items-start gap-6 text-sm'>
-                                                <img className='w-16 sm:w-20 rounded-md object-cover' src={item.image} alt="Custom Request" />
+                                                <div className="flex flex-col gap-2">
+                                                    {Array.isArray(item.image) ? (
+                                                        <div className="flex gap-2">
+                                                            {item.image.slice(0, 3).map((img, idx) => (
+                                                                <img key={idx} className='w-16 sm:w-20 rounded-md object-cover aspect-square' src={img} alt="Custom Request" />
+                                                            ))}
+                                                        </div>
+                                                    ) : (
+                                                        <img className='w-16 sm:w-20 rounded-md object-cover' src={item.image} alt="Custom Request" />
+                                                    )}
+                                                </div>
                                                 <div>
                                                     <p className='sm:text-base font-medium'>Custom Request ({item.size})</p>
                                                     <div className='space-y-1 mt-1 text-sm text-gray-600 dark:text-gray-400'>

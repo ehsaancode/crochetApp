@@ -6,8 +6,18 @@ const userSchema = new mongoose.Schema({
     password: { type: String, required: true },
     phone: { type: String, default: "" },
     image: { type: String, default: "" },
-    address: { type: Object, default: { street: '', city: '', state: '', zip: '', country: '' } },
-    addresses: { type: Array, default: [] },
+    address: {
+        type: Object,
+        default: {
+            street: '',
+            city: '',
+            state: '',
+            zip: '',
+            country: '',
+            otherAddresses: []
+        }
+    },
+    addresses: { type: Array, default: [] }, // Kept for backward compatibility
     cartData: { type: Object, default: {} },
     wishlist: { type: Array, default: [] },
     role: { type: String, default: 'user' }
