@@ -8,7 +8,8 @@ export const ShopContext = createContext();
 const ShopContextProvider = (props) => {
 
     const currency = '₹';
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"
+    // Use production URL as fallback so the deployed app works on other devices
+    const backendUrl = import.meta.env.VITE_BACKEND_URL || "https://aalaboo-backend.onrender.com"
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
 
@@ -51,7 +52,15 @@ const ShopContextProvider = (props) => {
                 setUserData(response.data.user);
                 localStorage.setItem('userData', JSON.stringify(response.data.user));
             } else {
-                QToast.error(response.data.message, { position: "top-right" });
+                if (response.data.message.includes('invalid signature') || response.data.message.includes('jwt') || response.data.message.includes('Not Authorized')) {
+                    setToken('');
+                    localStorage.removeItem('token');
+                    setUserData(null);
+                    localStorage.removeItem('userData');
+                    QToast.error("Session expired. Please login again.", { position: "top-center" });
+                } else {
+                    QToast.error(response.data.message, { position: "top-right" });
+                }
             }
         } catch (error) {
             console.log(error);
