@@ -14,6 +14,15 @@ const PlaceOrder = () => {
     const location = useLocation();
     const directBuyData = location.state;
 
+    const getDirectBuyPrice = () => {
+        if (!directBuyData) return 0;
+        const { product, size } = directBuyData;
+        if (size && product.sizePrices && product.sizePrices[size]) {
+            return Number(product.sizePrices[size]);
+        }
+        return product.price;
+    }
+
     // Warehouse Location (Puinan)
     const WAREHOUSE_COORDS = { lat: 22.944245420133758, lon: 88.28156250538409 };
 
@@ -229,6 +238,9 @@ const PlaceOrder = () => {
                 itemInfo.size = directBuyData.size;
                 itemInfo.color = directBuyData.color;
                 itemInfo.quantity = directBuyData.quantity;
+                if (itemInfo.size && itemInfo.sizePrices && itemInfo.sizePrices[itemInfo.size]) {
+                    itemInfo.price = Number(itemInfo.sizePrices[itemInfo.size]);
+                }
                 orderItems.push(itemInfo);
             } else {
                 for (const items in cartItems) {
@@ -238,6 +250,9 @@ const PlaceOrder = () => {
                             if (itemInfo) {
                                 itemInfo.size = item
                                 itemInfo.quantity = cartItems[items][item]
+                                if (itemInfo.sizePrices && itemInfo.sizePrices[item]) {
+                                    itemInfo.price = Number(itemInfo.sizePrices[item]);
+                                }
                                 orderItems.push(itemInfo)
                             }
                         }
@@ -246,7 +261,7 @@ const PlaceOrder = () => {
             }
 
             const totalAmount = directBuyData
-                ? (directBuyData.product.price * directBuyData.quantity) + delivery_fee
+                ? (getDirectBuyPrice() * directBuyData.quantity) + delivery_fee
                 : getCartAmount() + delivery_fee;
 
             let orderData = {
@@ -313,8 +328,8 @@ const PlaceOrder = () => {
                                         lastName: userData.name && userData.name.split(' ').length > 1 ? userData.name.split(' ').slice(1).join(' ') : ''
                                     }))}
                                     className={`relative p-4 border rounded-xl cursor-pointer transition-all hover:shadow-md flex items-center gap-3 ${formData.street === userData.address.street
-                                            ? 'border-silk-900 bg-silk-50 dark:border-silk-400 dark:bg-silk-900/20'
-                                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-black/50'
+                                        ? 'border-silk-900 bg-silk-50 dark:border-silk-400 dark:bg-silk-900/20'
+                                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-black/50'
                                         }`}
                                 >
                                     <div className="p-2 rounded-full bg-silk-100 dark:bg-gray-800 text-silk-900 dark:text-gray-200">
@@ -344,8 +359,8 @@ const PlaceOrder = () => {
                                         lastName: userData.name.split(' ').slice(1).join(' ')
                                     }))}
                                     className={`relative p-4 border rounded-xl cursor-pointer transition-all hover:shadow-md flex items-center gap-3 ${formData.street === addr.street && formData.zipcode === addr.zipcode
-                                            ? 'border-silk-900 bg-silk-50 dark:border-silk-400 dark:bg-silk-900/20'
-                                            : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-black/50'
+                                        ? 'border-silk-900 bg-silk-50 dark:border-silk-400 dark:bg-silk-900/20'
+                                        : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-black/50'
                                         }`}
                                 >
                                     <div className="p-2 rounded-full bg-silk-100 dark:bg-gray-800 text-silk-900 dark:text-gray-200">
@@ -503,7 +518,7 @@ const PlaceOrder = () => {
                             <div className='flex flex-col gap-2 mt-2 text-sm text-silk-900 dark:text-gray-200'>
                                 <div className='flex justify-between py-2 border-b dark:border-gray-700'>
                                     <p>Product: {directBuyData.product.name} x {directBuyData.quantity}</p>
-                                    <p>{currency} {directBuyData.product.price * directBuyData.quantity}.00</p>
+                                    <p>{currency} {getDirectBuyPrice() * directBuyData.quantity}.00</p>
                                 </div>
                                 <div className='flex justify-between py-2 border-b dark:border-gray-700'>
                                     <p>Shipping Fee</p>
@@ -511,7 +526,7 @@ const PlaceOrder = () => {
                                 </div>
                                 <div className='flex justify-between py-2 font-bold text-lg'>
                                     <p>Total</p>
-                                    <p>{currency} {(directBuyData.product.price * directBuyData.quantity) + delivery_fee}.00</p>
+                                    <p>{currency} {(getDirectBuyPrice() * directBuyData.quantity) + delivery_fee}.00</p>
                                 </div>
                             </div>
                         </div>

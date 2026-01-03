@@ -39,6 +39,9 @@ function ProductDetail() {
             if (item._id === id) {
                 setProduct(item)
                 setActiveImage(0);
+                if (item.defaultSize && item.sizes.includes(item.defaultSize)) {
+                    setSize(item.defaultSize);
+                }
                 return null;
             }
         })
@@ -213,7 +216,12 @@ function ProductDetail() {
                         <span className="text-silk-600 text-sm">{product.numReviews || 0} Reviews</span>
                     </div>
 
-                    <p className="text-2xl font-light text-silk-900 dark:text-silk-200 mb-8">₹{product.price.toFixed(2)}</p>
+                    <p className="text-2xl font-light text-silk-900 dark:text-silk-200 mb-8">
+                        ₹{(size && product.sizePrices && product.sizePrices[size]
+                            ? Number(product.sizePrices[size])
+                            : (product.sizePrices && Object.values(product.sizePrices).length > 0 ? Number(Object.values(product.sizePrices)[0]) : 0)
+                        ).toFixed(2)}
+                    </p>
 
                     <div className="prose prose-silk dark:prose-invert text-silk-700 dark:text-silk-300 mb-10 leading-relaxed">
                         <p>{product.description}</p>

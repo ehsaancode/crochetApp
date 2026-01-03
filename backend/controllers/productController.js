@@ -3,7 +3,7 @@ const productModel = require("../models/Product");
 // Function for add product
 const addProduct = async (req, res) => {
     try {
-        const { name, description, price, category, subCategory, sizes, colors, bestseller, shippingFee, productId } = req.body;
+        const { name, description, category, subCategory, sizes, sizePrices, defaultSize, colors, bestseller, shippingFee, productId } = req.body;
 
         const image1 = req.files.image1 && req.files.image1[0];
         const image2 = req.files.image2 && req.files.image2[0];
@@ -36,10 +36,9 @@ const addProduct = async (req, res) => {
             name,
             description,
             category,
-            price: Number(price),
-            subCategory,
-            bestseller: bestseller === "true" ? true : false,
             sizes: JSON.parse(sizes),
+            sizePrices: sizePrices ? JSON.parse(sizePrices) : {},
+            defaultSize: defaultSize || '',
             colors: colors ? JSON.parse(colors) : [],
             image: imagesUrl,
             date: Date.now(),
@@ -51,7 +50,22 @@ const addProduct = async (req, res) => {
         }
 
         const product = new productModel(productData);
+
+        // Explicitly handle sizePrices for Mixed type reliability
+        console.log("Backend Debug - STARTING SAVE");
+        console.log("Backend Debug - Raw sizePrices from Body:", sizePrices);
+        if (sizePrices) {
+            const parsedSizePrices = JSON.parse(sizePrices);
+            console.log("Backend Debug - Parsed sizePrices:", parsedSizePrices);
+            product.sizePrices = parsedSizePrices;
+            product.markModified('sizePrices');
+        } else {
+            console.log("Backend Debug - sizePrices is MISSING or UNDEFINED");
+        }
+
         await product.save();
+
+        console.log("VERSION: PRICE REMOVED - SAVED PRODUCT:", product);
 
         res.json({ success: true, message: "Product Added" });
 
@@ -74,7 +88,7 @@ const addProduct = async (req, res) => {
 
 const listProducts = async (req, res) => {
     try {
-        const products = await productModel.find({}).sort({ date: -1 });
+        const products = await productModel.find({}).sort({ date: -1 }).lean();
         res.json({ success: true, products });
     } catch (error) {
         console.log(error);
@@ -98,7 +112,7 @@ const removeProduct = async (req, res) => {
 const singleProduct = async (req, res) => {
     try {
         const { productId } = req.body;
-        const product = await productModel.findById(productId);
+        const product = await productModel.findById(productId).lean();
         res.json({ success: true, product });
     } catch (error) {
         console.log(error);
@@ -110,7 +124,7 @@ const singleProduct = async (req, res) => {
 const listNewArrivals = async (req, res) => {
     try {
         // Fetch last 10 products sorted by date
-        const products = await productModel.find({}).sort({ date: -1 }).limit(10);
+        const products = await productModel.find({}).sort({ date: -1 }).limit(10).lean();
         res.json({ success: true, products });
     } catch (error) {
         console.log(error);
@@ -121,7 +135,7 @@ const listNewArrivals = async (req, res) => {
 // Function for updating product
 const updateProduct = async (req, res) => {
     try {
-        const { productId, name, description, price, category, subCategory, sizes, colors, bestseller, shippingFee } = req.body;
+        const { productId, name, description, category, subCategory, sizes, sizePrices, defaultSize, colors, bestseller, shippingFee } = req.body;
 
         const product = await productModel.findById(productId);
         if (!product) {
@@ -141,7 +155,6 @@ const updateProduct = async (req, res) => {
             return `${protocol}://${req.get('host')}/uploads/${file.filename}`;
         }
 
-        // Handle deleted images
         if (req.body.deletedIndices) {
             const deleted = JSON.parse(req.body.deletedIndices);
             deleted.forEach(index => {
@@ -151,7 +164,6 @@ const updateProduct = async (req, res) => {
             });
         }
 
-        // Handle image updates by index
         if (req.files.image1) updatedImages[0] = getUrl(req.files.image1[0]);
         if (req.files.image2) updatedImages[1] = getUrl(req.files.image2[0]);
         if (req.files.image3) updatedImages[2] = getUrl(req.files.image3[0]);
@@ -159,29 +171,31 @@ const updateProduct = async (req, res) => {
         if (req.files.image5) updatedImages[4] = getUrl(req.files.image5[0]);
         if (req.files.image6) updatedImages[5] = getUrl(req.files.image6[0]);
 
-        // Filter out any potential gaps if the original array was shorter and we added to a later index, 
-        // though typically we want to preserve order. 
-        // If we strictly map 1->0, 2->1, 3->2, 4->3, gaps might appear if 3 is missing but 4 added.
-        // Let's filter undefined/nulls to be safe, assuming we want a compact list.
         updatedImages = updatedImages.filter(item => item);
 
-        const updateData = {
-            name,
-            description,
-            price: Number(price),
-            category,
-            subCategory,
-            bestseller: bestseller === "true" ? true : false,
-            sizes: JSON.parse(sizes),
-            colors: colors ? JSON.parse(colors) : undefined, // Only update if provided
-            image: updatedImages,
-            shippingFee: shippingFee ? Number(shippingFee) : 100
-        };
+        // Update fields
+        product.name = name;
+        product.description = description;
+        product.category = category;
+        product.subCategory = subCategory;
+        product.bestseller = bestseller === "true" ? true : false;
+        product.sizes = JSON.parse(sizes);
 
-        // Clean undefined (optional but cleaner)
-        if (updateData.colors === undefined) delete updateData.colors;
+        // Debug and Update sizePrices
+        // console.log("Backend Debug - Incoming sizePrices (raw):", sizePrices);
+        if (sizePrices) {
+            const parsedSizePrices = JSON.parse(sizePrices);
+            // console.log("Backend Debug - Parsed sizePrices:", parsedSizePrices);
+            product.sizePrices = parsedSizePrices;
+            product.markModified('sizePrices');
+        }
 
-        await productModel.findByIdAndUpdate(productId, updateData);
+        product.defaultSize = defaultSize || '';
+        if (colors) product.colors = JSON.parse(colors);
+        product.image = updatedImages;
+        product.shippingFee = shippingFee ? Number(shippingFee) : 100;
+
+        await product.save();
         res.json({ success: true, message: "Product Updated" });
 
     } catch (error) {
@@ -193,7 +207,7 @@ const updateProduct = async (req, res) => {
 // Function for best sellers
 const listBestSellers = async (req, res) => {
     try {
-        const products = await productModel.find({ bestseller: true });
+        const products = await productModel.find({ bestseller: true }).lean();
         res.json({ success: true, products });
     } catch (error) {
         console.log(error);

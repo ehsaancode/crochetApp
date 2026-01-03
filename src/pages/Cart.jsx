@@ -114,7 +114,7 @@ const Cart = () => {
                                             <p className='text-xs sm:text-lg font-medium dark:text-gray-200 hover:text-silk-600 dark:hover:text-silk-400 transition-colors'>{productData.name}</p>
                                         </Link>
                                         <div className='flex items-center gap-5 mt-2'>
-                                            <p className='dark:text-gray-300'>{currency}{productData.price}</p>
+                                            <p className='dark:text-gray-300'>{currency}{productData.sizePrices && productData.sizePrices[item.size] ? Number(productData.sizePrices[item.size]) : productData.price}</p>
                                             <p className='px-2 sm:px-3 sm:py-1 border bg-slate-50 dark:bg-slate-800 dark:border-slate-700 dark:text-gray-300'>{item.size}</p>
                                         </div>
                                     </div>

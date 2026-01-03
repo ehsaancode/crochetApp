@@ -22,6 +22,10 @@ const Edit = ({ token }) => {
     const [subCategory, setSubCategory] = useState("Topwear");
     const [bestseller, setBestseller] = useState(false);
     const [sizes, setSizes] = useState([]);
+    const [sizePrices, setSizePrices] = useState({});
+    const [defaultSize, setDefaultSize] = useState("");
+    const [colors, setColors] = useState([]); // Adding colors for completeness, though not in original Edit.jsx? It should be.
+
 
     const categoryList = {
         "Men": {
@@ -58,13 +62,16 @@ const Edit = ({ token }) => {
             if (response.data.success) {
                 const product = response.data.product;
                 setName(product.name);
-                setDescription(product.description);
+                setDescription(product.description || ""); // Fallback for safety
                 setPrice(product.price);
                 setShippingFee(product.shippingFee || 100);
                 setCategory(product.category);
                 setSubCategory(product.subCategory);
                 setBestseller(product.bestseller);
                 setSizes(product.sizes);
+                setSizePrices(product.sizePrices || {});
+                setDefaultSize(product.defaultSize || "");
+                if (product.colors) setColors(product.colors);
                 setOldImages(product.image); // Array of URLs
             } else {
                 QToast.error(response.data.message, { position: "top-right" })
@@ -88,13 +95,36 @@ const Edit = ({ token }) => {
             formData.append("productId", id)
             formData.append("name", name)
             formData.append("description", description)
-            formData.append("price", price)
+
+            // Clean sizePrices to remove empty values AND ensure only selected sizes are included
+            console.log("Edit Product Debug - Raw sizePrices:", sizePrices);
+            const cleanSizePrices = {};
+            sizes.forEach(size => {
+                const val = sizePrices[size];
+                if (val !== undefined && val !== "" && val !== null && !isNaN(Number(val))) {
+                    cleanSizePrices[size] = Number(val);
+                }
+            });
+            console.log("Edit Product Debug - Cleaned:", cleanSizePrices);
+
+            // Calculate base price from default size
+            const basePrice = (cleanSizePrices[defaultSize] && !isNaN(cleanSizePrices[defaultSize])) ? Number(cleanSizePrices[defaultSize]) : (price || 0);
+
+            formData.append("price", basePrice)
             formData.append("shippingFee", shippingFee)
             formData.append("category", category)
             formData.append("subCategory", subCategory)
             formData.append("bestseller", bestseller)
             formData.append("sizes", JSON.stringify(sizes))
+            formData.append("sizePrices", JSON.stringify(cleanSizePrices))
+            formData.append("defaultSize", defaultSize)
             formData.append("deletedIndices", JSON.stringify(deletedIndices))
+            if (colors) formData.append("colors", JSON.stringify(colors))
+
+            // Debug entries
+            for (var pair of formData.entries()) {
+                if (pair[0] === 'sizePrices' || pair[0] === 'sizes') console.log('FormData Debug:', pair[0] + ', ' + pair[1]);
+            }
 
             images.forEach((image, index) => {
                 if (image) {
@@ -118,7 +148,33 @@ const Edit = ({ token }) => {
     }
 
     const toggleSize = (s) => {
-        setSizes(prev => prev.includes(s) ? prev.filter(item => item !== s) : [...prev, s])
+        setSizes(prev => {
+            let newSizes;
+            if (s === "Free Size") {
+                if (prev.includes("Free Size")) {
+                    newSizes = [];
+                } else {
+                    newSizes = ["Free Size"];
+                }
+            } else {
+                if (prev.includes(s)) {
+                    newSizes = prev.filter(item => item !== s);
+                } else {
+                    newSizes = [...prev.filter(item => item !== "Free Size"), s];
+                }
+            }
+
+            // Auto-set default size logic
+            if (newSizes.length === 1) {
+                setDefaultSize(newSizes[0]);
+            } else if (!newSizes.includes(defaultSize) && newSizes.length > 0) {
+                setDefaultSize(newSizes[0]);
+            } else if (newSizes.length === 0) {
+                setDefaultSize("");
+            }
+
+            return newSizes;
+        });
     }
 
     return (
@@ -254,13 +310,7 @@ const Edit = ({ token }) => {
                         </select>
                     </div>
 
-                    <div className='flex-1'>
-                        <p className='mb-2 font-medium'>Price</p>
-                        <div className="relative">
-                            <span className="absolute left-3 top-2.5 text-muted-foreground">₹</span>
-                            <input onChange={(e) => setPrice(e.target.value)} value={price} className='w-full pl-8 pr-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all' type="number" placeholder='2500' />
-                        </div>
-                    </div>
+                    {/* Price Input Removed - Handled by Size Prices */}
 
                     <div className='flex-1'>
                         <p className='mb-2 font-medium'>Shipping Fee</p>
@@ -281,6 +331,52 @@ const Edit = ({ token }) => {
                         ))}
                     </div>
                 </div>
+
+                {/* Default Size Selector */}
+                {sizes.length > 0 && (
+                    <div className="w-full">
+                        <p className="mb-2 font-medium text-sm">Default Size (Shown on load)</p>
+                        <div className="flex gap-2 flex-wrap">
+                            {sizes.map((s) => (
+                                <button
+                                    key={s}
+                                    type="button"
+                                    onClick={() => setDefaultSize(s)}
+                                    className={`px-3 py-1.5 text-xs rounded border transition-all ${defaultSize === s
+                                        ? "bg-silk-600 text-white border-silk-600 shadow-sm"
+                                        : "bg-background border-border text-muted-foreground hover:bg-muted"
+                                        }`}
+                                >
+                                    {s}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+                )}
+
+                {/* Size Prices Input */}
+                {sizes.length > 0 && (
+                    <div className="w-full p-4 bg-muted/30 rounded-lg border border-border">
+                        <p className="font-medium mb-3 text-sm">Price per Size (Optional override)</p>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            {sizes.map(s => (
+                                <div key={s} className="flex flex-col gap-1">
+                                    <label className="text-xs text-muted-foreground">{s}</label>
+                                    <div className="relative">
+                                        <span className="absolute left-2 top-1.5 text-xs text-muted-foreground">₹</span>
+                                        <input
+                                            type="number"
+                                            placeholder={price || "Base"}
+                                            value={sizePrices[s] || ''}
+                                            onChange={(e) => setSizePrices(prev => ({ ...prev, [s]: e.target.value }))}
+                                            className="w-full pl-5 pr-2 py-1.5 text-sm rounded border border-border bg-background focus:ring-1 focus:ring-silk-400 focus:outline-none"
+                                        />
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                )}
 
                 <div className='flex items-center gap-2 mt-2 p-3 bg-muted/30 rounded-lg border border-border cursor-pointer w-full max-w-[200px]' onClick={() => setBestseller(prev => !prev)}>
                     <input readOnly checked={bestseller} type="checkbox" id="bestseller" className='w-4 h-4 accent-silk-600' />

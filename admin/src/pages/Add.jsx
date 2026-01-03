@@ -66,6 +66,8 @@ const Add = ({ token }) => {
     const [subCategory, setSubCategory] = useState("Sweaters");
     const [bestseller, setBestseller] = useState(false);
     const [sizes, setSizes] = useState(["Free Size"]);
+    const [sizePrices, setSizePrices] = useState({});
+    const [defaultSize, setDefaultSize] = useState("Free Size");
     const [colors, setColors] = useState([]);
     const [currentColor, setCurrentColor] = useState("Red");
     const [isColorListOpen, setIsColorListOpen] = useState(false);
@@ -92,12 +94,28 @@ const Add = ({ token }) => {
 
             formData.append("name", name)
             formData.append("description", description)
-            formData.append("price", price)
+
+            // Clean sizePrices to remove empty values AND ensure only selected sizes are included
+            console.log("Add Product Debug - Raw sizePrices:", sizePrices);
+            const cleanSizePrices = {};
+            sizes.forEach(size => {
+                const val = sizePrices[size];
+                if (val !== undefined && val !== "" && val !== null && !isNaN(Number(val))) {
+                    cleanSizePrices[size] = Number(val);
+                }
+            });
+            console.log("Add Product Debug - Cleaned:", cleanSizePrices);
+
+            // Calculate base price from default size
+            const basePrice = (cleanSizePrices[defaultSize] && !isNaN(cleanSizePrices[defaultSize])) ? Number(cleanSizePrices[defaultSize]) : 0;
+            formData.append("price", basePrice)
             formData.append("shippingFee", shippingFee)
             formData.append("category", category)
             formData.append("subCategory", subCategory)
             formData.append("bestseller", bestseller)
             formData.append("sizes", JSON.stringify(sizes))
+            formData.append("sizePrices", JSON.stringify(cleanSizePrices))
+            formData.append("defaultSize", defaultSize)
             formData.append("colors", JSON.stringify(colors))
             formData.append("productId", productId)
 
@@ -133,7 +151,10 @@ const Add = ({ token }) => {
                     setProductId('')
                     setCategory('Men')
                     setSubCategory('Sweaters')
+                    setSubCategory('Sweaters')
                     setSizes(["Free Size"])
+                    setSizePrices({})
+                    setDefaultSize("Free Size")
                     setColors([])
                 }, 2000);
             } else {
@@ -149,7 +170,39 @@ const Add = ({ token }) => {
     }
 
     const toggleSize = (s) => {
-        setSizes(prev => prev.includes(s) ? prev.filter(item => item !== s) : [...prev, s])
+        setSizes(prev => {
+            let newSizes;
+            if (s === "Free Size") {
+                // If "Free Size" is clicked.
+                if (prev.includes("Free Size")) {
+                    // If already selected, remove it (empty array)
+                    newSizes = [];
+                } else {
+                    // Start fresh with ONLY Free Size, removing others
+                    newSizes = ["Free Size"];
+                }
+            } else {
+                // If a normal size (S, M, etc.) is clicked
+                if (prev.includes(s)) {
+                    // Remove it
+                    newSizes = prev.filter(item => item !== s);
+                } else {
+                    // Add it, but ensure Free Size is NOT there
+                    newSizes = [...prev.filter(item => item !== "Free Size"), s];
+                }
+            }
+
+            // Auto-set default size logic
+            if (newSizes.length === 1) {
+                setDefaultSize(newSizes[0]);
+            } else if (!newSizes.includes(defaultSize) && newSizes.length > 0) {
+                setDefaultSize(newSizes[0]);
+            } else if (newSizes.length === 0) {
+                setDefaultSize("");
+            }
+
+            return newSizes;
+        });
     }
 
     return (
@@ -243,13 +296,7 @@ const Add = ({ token }) => {
                         </select>
                     </div>
 
-                    <div className='flex-1'>
-                        <p className='mb-2 font-medium'>Price</p>
-                        <div className="relative">
-                            <span className="absolute left-3 top-2.5 text-muted-foreground">₹</span>
-                            <input onChange={(e) => setPrice(e.target.value)} value={price} className='w-full pl-8 pr-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all' type="number" placeholder='2500' />
-                        </div>
-                    </div>
+                    {/* Price Input Removed - Handled by Size Prices */}
 
                     <div className='flex-1'>
                         <p className='mb-2 font-medium'>Shipping Fee</p>
@@ -270,6 +317,52 @@ const Add = ({ token }) => {
                             </div>
                         ))}
                     </div>
+
+                    {/* Default Size Selector */}
+                    {sizes.length > 0 && (
+                        <div className="mt-4">
+                            <p className="mb-2 font-medium text-sm">Default Size (Shown on load)</p>
+                            <div className="flex gap-2 flex-wrap">
+                                {sizes.map((s) => (
+                                    <button
+                                        key={s}
+                                        type="button"
+                                        onClick={() => setDefaultSize(s)}
+                                        className={`px-3 py-1.5 text-xs rounded border transition-all ${defaultSize === s
+                                            ? "bg-silk-600 text-white border-silk-600 shadow-sm"
+                                            : "bg-background border-border text-muted-foreground hover:bg-muted"
+                                            }`}
+                                    >
+                                        {s}
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Size Prices Input */}
+                    {sizes.length > 0 && (
+                        <div className="mt-4 p-4 bg-muted/30 rounded-lg border border-border">
+                            <p className="font-medium mb-3 text-sm">Price per Size (Optional override)</p>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                                {sizes.map(s => (
+                                    <div key={s} className="flex flex-col gap-1">
+                                        <label className="text-xs text-muted-foreground">{s}</label>
+                                        <div className="relative">
+                                            <span className="absolute left-2 top-1.5 text-xs text-muted-foreground">₹</span>
+                                            <input
+                                                type="number"
+                                                placeholder={price || "Base"}
+                                                value={sizePrices[s] || ''}
+                                                onChange={(e) => setSizePrices(prev => ({ ...prev, [s]: e.target.value }))}
+                                                className="w-full pl-5 pr-2 py-1.5 text-sm rounded border border-border bg-background focus:ring-1 focus:ring-silk-400 focus:outline-none"
+                                            />
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 <div>

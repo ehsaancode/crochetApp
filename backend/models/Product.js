@@ -35,12 +35,6 @@ const productSchema = new mongoose.Schema(
             required: true
         },
 
-        price: {
-            type: Number,
-            required: true,
-            index: true
-        },
-
         image: {
             type: [String],
             required: true
@@ -60,6 +54,16 @@ const productSchema = new mongoose.Schema(
         sizes: {
             type: [String],
             required: true
+        },
+
+        sizePrices: {
+            type: mongoose.Schema.Types.Mixed,
+            default: {}
+        },
+
+        defaultSize: {
+            type: String,
+            default: ''
         },
 
         colors: {
