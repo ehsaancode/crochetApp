@@ -226,7 +226,7 @@ function ProductDetail() {
                                 {product.sizes.map((item, index) => (
                                     <button
                                         onClick={() => setSize(item)}
-                                        className={`border py-2 px-4 ${item === size
+                                        className={`h-8 w-8 rounded-full flex items-center justify-center text-xs border transition-all ${item === size
                                             ? 'bg-silk-50 border-silk-500 dark:bg-white dark:text-black dark:border-white'
                                             : 'bg-gray-100 border-transparent dark:bg-slate-800 dark:text-gray-300 dark:border-slate-700 hover:border-silk-300'}`}
                                         key={index}
