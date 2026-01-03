@@ -68,7 +68,41 @@ const Orders = ({ compact }) => {
         }
     }
 
-    // ... handleReviewSubmit ...
+    const openReviewModal = (productId) => {
+        setReviewData({ productId, rating: 0, comment: '' });
+        setIsReviewOpen(true);
+    };
+
+    const handleReviewSubmit = async () => {
+        try {
+            if (reviewData.rating === 0) {
+                QToast.error('Please give a rating');
+                return;
+            }
+            if (!reviewData.comment.trim()) {
+                QToast.error('Please write a comment');
+                return;
+            }
+
+            const response = await axios.post(
+                backendUrl + '/api/product/review',
+                reviewData,
+                { headers: { token } }
+            );
+
+            if (response.data.success) {
+                QToast.success('Review added successfully');
+                setIsReviewOpen(false);
+                // Refresh data to potentially show updated status if logic required it, though usually not strictly needed for this view
+                loadOrderData();
+            } else {
+                QToast.error(response.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            QToast.error(error.message);
+        }
+    };
 
     useEffect(() => {
         loadOrderData()
