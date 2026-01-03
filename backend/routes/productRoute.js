@@ -1,5 +1,5 @@
 const express = require('express');
-const { listProducts, addProduct, removeProduct, singleProduct, listNewArrivals, updateProduct, listBestSellers, addProductReview } = require('../controllers/productController');
+const { listProducts, addProduct, removeProduct, singleProduct, listNewArrivals, updateProduct, listBestSellers, addProductReview, getUserReviews } = require('../controllers/productController');
 const upload = require('../middleware/multer');
 const authMiddleware = require('../middleware/auth');
 
@@ -13,5 +13,6 @@ productRouter.get('/list', listProducts);
 productRouter.get('/new-arrivals', listNewArrivals);
 productRouter.get('/bestsellers', listBestSellers);
 productRouter.post('/review', authMiddleware, addProductReview);
+productRouter.get('/user-reviews', authMiddleware, getUserReviews);
 
 module.exports = productRouter;

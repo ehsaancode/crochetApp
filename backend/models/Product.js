@@ -86,6 +86,8 @@ const productSchema = new mongoose.Schema(
         reviews: [
             {
                 userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+                orderId: { type: String },
+                purchaseDate: { type: Number },
                 userName: String,
                 rating: Number,
                 comment: String,

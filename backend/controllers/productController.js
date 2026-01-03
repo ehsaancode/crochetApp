@@ -204,10 +204,10 @@ const listBestSellers = async (req, res) => {
 // Add Product Review
 const addProductReview = async (req, res) => {
     try {
-        const { rating, comment, productId } = req.body;
+        const { rating, comment, productId, orderId, purchaseDate } = req.body;
         // User is attached to req by auth middleware
-        const userId = req.body.userId; // Middleware adds this to body in some setups, or req.userId 
-        const userModel = require('../models/User'); // Lazy load or move to top if prefer
+        const userId = req.body.userId;
+        const userModel = require('../models/User');
         const user = await userModel.findById(userId);
 
         if (!user) {
@@ -222,26 +222,31 @@ const addProductReview = async (req, res) => {
 
         const review = {
             userId: userId,
+            orderId: orderId,
+            purchaseDate: purchaseDate,
             userName: user.name,
             rating: Number(rating),
             comment: comment,
             date: Date.now()
         };
 
-        // Check if user already reviewed
-        const alreadyReviewed = product.reviews.find(
-            (r) => r.userId.toString() === userId.toString()
+        // Check if user already reviewed THIS order
+        // Uniquely identify by orderId (which implies distinct time/transaction)
+        const alreadyReviewedIndex = product.reviews.findIndex(
+            (r) => r.userId.toString() === userId.toString() && (r.orderId === orderId || (!r.orderId && !orderId))
         );
 
-        if (alreadyReviewed) {
-            // Update existing review
-            product.reviews.forEach((review) => {
-                if (review.userId.toString() === userId.toString()) {
-                    review.comment = comment;
-                    review.rating = Number(rating);
-                    review.date = Date.now();
-                }
-            });
+        if (alreadyReviewedIndex !== -1) {
+            // Update existing review for this order
+            product.reviews[alreadyReviewedIndex].rating = Number(rating);
+            product.reviews[alreadyReviewedIndex].comment = comment;
+            product.reviews[alreadyReviewedIndex].date = Date.now();
+            product.reviews[alreadyReviewedIndex].purchaseDate = purchaseDate;
+
+            // Fix missing orderId if updating
+            if (!product.reviews[alreadyReviewedIndex].orderId && orderId) {
+                product.reviews[alreadyReviewedIndex].orderId = orderId;
+            }
         } else {
             // Add new review
             product.reviews.push(review);
@@ -262,4 +267,44 @@ const addProductReview = async (req, res) => {
     }
 }
 
-module.exports = { listProducts, addProduct, removeProduct, singleProduct, listNewArrivals, updateProduct, listBestSellers, addProductReview };
+const mongoose = require('mongoose');
+
+const getUserReviews = async (req, res) => {
+    try {
+        const userId = req.userId || req.body.userId;
+
+        if (!mongoose.Types.ObjectId.isValid(userId)) {
+            return res.json({ success: false, reviews: [] });
+        }
+
+        const userObjectId = new mongoose.Types.ObjectId(userId);
+
+        const products = await productModel.find({ "reviews.userId": userObjectId });
+
+        let userReviews = [];
+        products.forEach(product => {
+            product.reviews.forEach(review => {
+                if (review.userId.toString() === userId.toString()) {
+                    userReviews.push({
+                        productId: product._id.toString(),
+                        orderId: review.orderId ? review.orderId.toString() : "",
+                        purchaseDate: review.purchaseDate,
+                        rating: review.rating,
+                        comment: review.comment,
+                        date: review.date,
+                        productName: product.name,
+                        productImage: product.image && product.image.length > 0 ? product.image[0] : ""
+                    });
+                }
+            })
+        });
+
+        res.json({ success: true, reviews: userReviews });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+module.exports = { listProducts, addProduct, removeProduct, singleProduct, listNewArrivals, updateProduct, listBestSellers, addProductReview, getUserReviews };

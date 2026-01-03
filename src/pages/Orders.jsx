@@ -31,7 +31,35 @@ const Orders = ({ compact }) => {
 
     // Review Modal State
     const [isReviewOpen, setIsReviewOpen] = useState(false);
-    const [reviewData, setReviewData] = useState({ productId: '', rating: 0, comment: '' });
+    const [reviewData, setReviewData] = useState({ productId: '', rating: 0, comment: '', orderId: '', purchaseDate: null });
+    const [userReviews, setUserReviews] = useState([]);
+    const [isViewMode, setIsViewMode] = useState(false);
+    const [submissionStatus, setSubmissionStatus] = useState('idle'); // idle, submitting, success
+    const [activeTrackOrder, setActiveTrackOrder] = useState(null); // ID of the order currently being tracked
+    const [refreshingOrderId, setRefreshingOrderId] = useState(null); // ID of the order currently updating status
+    const [lastFetchTime, setLastFetchTime] = useState(0); // Timestamp of last successful order fetch
+
+    const orderSteps = ['Order Placed', 'Packing', 'Shipped', 'Out for delivery', 'Delivered'];
+
+    const getStepStatus = (currentStatus, stepName) => {
+        const currentIndex = orderSteps.indexOf(currentStatus);
+        const stepIndex = orderSteps.indexOf(stepName);
+        if (stepIndex < currentIndex) return 'completed';
+        if (stepIndex === currentIndex) return 'current';
+        return 'upcoming';
+    };
+
+    const fetchUserReviews = async () => {
+        try {
+            if (!token) return;
+            const response = await axios.get(backendUrl + '/api/product/user-reviews', { headers: { token } });
+            if (response.data.success) {
+                setUserReviews(response.data.reviews);
+            }
+        } catch (error) {
+            console.error(error);
+        }
+    }
 
     const loadOrderData = async () => {
         try {
@@ -49,10 +77,12 @@ const Orders = ({ compact }) => {
                         item['payment'] = order.payment
                         item['paymentMethod'] = order.paymentMethod
                         item['date'] = order.date
+                        item['orderId'] = order._id
                         allOrdersItem.push(item)
                     })
                 })
                 setOrderData(allOrdersItem.reverse())
+                setLastFetchTime(Date.now());
             }
 
             // Fetch Custom Orders
@@ -61,6 +91,8 @@ const Orders = ({ compact }) => {
                 setCustomOrders(customResponse.data.orders)
             }
 
+            fetchUserReviews();
+
         } catch (error) {
             console.log(error);
         } finally {
@@ -68,8 +100,22 @@ const Orders = ({ compact }) => {
         }
     }
 
-    const openReviewModal = (productId) => {
-        setReviewData({ productId, rating: 0, comment: '' });
+    const openReviewModal = (productId, orderId, purchaseDate) => {
+        const existingReview = userReviews.find(r => String(r.orderId) === String(orderId) && String(r.productId) === String(productId));
+        if (existingReview) {
+            setReviewData({
+                productId,
+                orderId,
+                purchaseDate,
+                rating: existingReview.rating,
+                comment: existingReview.comment
+            });
+            setIsViewMode(true);
+        } else {
+            setReviewData({ productId, orderId, purchaseDate, rating: 0, comment: '' });
+            setIsViewMode(false);
+        }
+        setSubmissionStatus('idle');
         setIsReviewOpen(true);
     };
 
@@ -84,6 +130,8 @@ const Orders = ({ compact }) => {
                 return;
             }
 
+            setSubmissionStatus('submitting');
+
             const response = await axios.post(
                 backendUrl + '/api/product/review',
                 reviewData,
@@ -91,12 +139,17 @@ const Orders = ({ compact }) => {
             );
 
             if (response.data.success) {
-                QToast.success('Review added successfully');
-                setIsReviewOpen(false);
-                // Refresh data to potentially show updated status if logic required it, though usually not strictly needed for this view
-                loadOrderData();
+                setSubmissionStatus('success');
+                // Refresh reviews and order data to update UI
+                await fetchUserReviews();
+                loadOrderData(); // Reload orders to ensure IDs are fresh if needed
+                setTimeout(() => {
+                    setIsReviewOpen(false);
+                    setSubmissionStatus('idle');
+                }, 1500);
             } else {
                 QToast.error(response.data.message);
+                setSubmissionStatus('idle');
             }
         } catch (error) {
             console.error(error);
@@ -193,29 +246,95 @@ const Orders = ({ compact }) => {
                                                 <p className='mt-1'>Payment: <span className='text-gray-400'>{item.paymentMethod}</span></p>
                                             </div>
                                         </div>
-                                        <div className='md:w-1/2 flex justify-between'>
-                                            <div className='flex items-center gap-2'>
-                                                <p className={`min-w-2 h-2 rounded-full ${item.status === 'Delivered' ? 'bg-green-500' : 'bg-green-500'}`}></p>
-                                                <p className='text-sm md:text-base'>{item.status}</p>
-                                            </div>
+                                        <div className='md:w-1/2 flex flex-col items-end gap-2'>
+
+                                            {/* Delivered State */}
                                             {item.status === 'Delivered' ? (
-                                                <div className='flex gap-2'>
-                                                    <button
-                                                        onClick={() => openReviewModal(item._id)}
-                                                        className='border px-3 py-1.5 text-xs font-medium rounded-sm border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
-                                                    >
-                                                        Review
-                                                    </button>
-                                                    <button
-                                                        onClick={() => downloadInvoice(item)}
-                                                        className='flex items-center justify-center gap-1 border px-3 py-1.5 text-xs font-medium rounded-sm border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all'
-                                                    >
-                                                        <Download className='w-3 h-3' /> Invoice
-                                                    </button>
+                                                <div className="flex items-center gap-2 text-green-600 font-medium">
+                                                    <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                        <div className="w-2.5 h-2.5 bg-green-600 rounded-full" />
+                                                    </div>
+                                                    <span>Delivered</span>
                                                 </div>
                                             ) : (
-                                                <button onClick={loadOrderData} className='border px-4 py-2 text-sm font-medium rounded-sm border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all'>Track Order</button>
+                                                /* Track Order Button & Logic */
+                                                <div className="flex items-center gap-3">
+                                                    <p className='text-sm font-medium text-silk-700 dark:text-silk-300'>{item.status}</p>
+                                                    <button
+                                                        disabled={refreshingOrderId === item.orderId}
+                                                        onClick={async () => {
+                                                            if (activeTrackOrder === item.orderId) {
+                                                                setActiveTrackOrder(null);
+                                                            } else {
+                                                                const oneHour = 60 * 60 * 1000;
+                                                                // Only fetch if data is older than 1 hour or never fetched
+                                                                if (Date.now() - lastFetchTime > oneHour) {
+                                                                    setRefreshingOrderId(item.orderId);
+                                                                    await loadOrderData();
+                                                                    setRefreshingOrderId(null);
+                                                                }
+                                                                setActiveTrackOrder(item.orderId);
+                                                            }
+                                                        }}
+                                                        className='border px-4 py-2 text-sm font-medium rounded-sm border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-wait'
+                                                    >
+                                                        {refreshingOrderId === item.orderId ? 'Fetching...' :
+                                                            activeTrackOrder === item.orderId ? 'Collapse' : 'Track Order'}
+                                                    </button>
+                                                </div>
                                             )}
+
+                                            {/* Tracker Timeline (Visible on click) */}
+                                            {activeTrackOrder === item.orderId && item.status !== 'Delivered' && (
+                                                <div className="w-full mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg animate-fade-in">
+                                                    <div className="flex flex-col gap-4">
+                                                        {orderSteps.map((step, stepIdx) => {
+                                                            const status = getStepStatus(item.status, step);
+                                                            const isCompleted = status === 'completed' || status === 'current';
+                                                            const isCurrent = status === 'current';
+
+                                                            return (
+                                                                <div key={step} className="flex items-center gap-3">
+                                                                    <div className="relative flex flex-col items-center">
+                                                                        <div
+                                                                            className={`w-4 h-4 rounded-full border-2 transition-colors duration-300 z-10 ${isCompleted ? 'bg-green-500 border-green-500' : 'bg-white border-gray-300'
+                                                                                }`}
+                                                                        ></div>
+                                                                        {stepIdx !== orderSteps.length - 1 && (
+                                                                            <div className={`absolute top-4 w-0.5 h-6 ${isCompleted && status !== 'current' ? 'bg-green-500' : 'bg-gray-200'
+                                                                                }`}></div>
+                                                                        )}
+                                                                    </div>
+                                                                    <p className={`text-sm font-medium ${isCurrent ? 'text-green-600' : isCompleted ? 'text-gray-500' : 'text-gray-400'
+                                                                        }`}>
+                                                                        {step}
+                                                                    </p>
+                                                                </div>
+                                                            )
+                                                        })}
+                                                    </div>
+                                                </div>
+                                            )}
+
+                                            {/* Action Buttons (Review / Invoice) */}
+                                            <div className='flex gap-2 mt-2'>
+                                                {item.status === 'Delivered' && (
+                                                    <>
+                                                        <button
+                                                            onClick={() => openReviewModal(item._id, item.orderId, item.date)}
+                                                            className='border px-3 py-1.5 text-xs font-medium rounded-sm border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
+                                                        >
+                                                            {userReviews.some(r => String(r.orderId) === String(item.orderId) && String(r.productId) === String(item._id)) ? 'View Your Review' : 'Review'}
+                                                        </button>
+                                                        <button
+                                                            onClick={() => downloadInvoice(item)}
+                                                            className='flex items-center justify-center gap-1 border px-3 py-1.5 text-xs font-medium rounded-sm border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all'
+                                                        >
+                                                            <Download className='w-3 h-3' /> Invoice
+                                                        </button>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
                                     </div>
                                 ))
@@ -289,7 +408,7 @@ const Orders = ({ compact }) => {
                         >
                             <X className="w-5 h-5" />
                         </button>
-                        <h3 className="text-xl font-serif mb-4 text-silk-900 dark:text-white">Write a Review</h3>
+                        <h3 className="text-xl font-serif mb-4 text-silk-900 dark:text-white">{isViewMode ? 'Your Review' : 'Write a Review'}</h3>
 
                         <div className="flex flex-col gap-4">
                             {/* Star Rating */}
@@ -297,8 +416,9 @@ const Orders = ({ compact }) => {
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <Star
                                         key={star}
-                                        className={`w-8 h-8 cursor-pointer transition-colors ${reviewData.rating >= star ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'}`}
-                                        onClick={() => setReviewData({ ...reviewData, rating: star })}
+                                        className={`w-8 h-8 transition-colors ${reviewData.rating >= star ? 'fill-yellow-400 text-yellow-400' : 'text-gray-300'
+                                            } ${!isViewMode ? 'cursor-pointer' : ''}`}
+                                        onClick={() => !isViewMode && setReviewData({ ...reviewData, rating: star })}
                                     />
                                 ))}
                             </div>
@@ -307,14 +427,21 @@ const Orders = ({ compact }) => {
                                 className="w-full p-3 border rounded-lg h-32 resize-none focus:outline-none focus:border-silk-500 dark:bg-black dark:border-gray-700 dark:text-white"
                                 placeholder="Share your thoughts about the product..."
                                 value={reviewData.comment}
+                                readOnly={isViewMode}
                                 onChange={(e) => setReviewData({ ...reviewData, comment: e.target.value })}
                             />
 
                             <button
                                 onClick={handleReviewSubmit}
-                                className="w-full bg-silk-900 text-white py-3 rounded-lg hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200 transition-colors"
+                                disabled={submissionStatus !== 'idle' || isViewMode}
+                                className={`w-full py-3 rounded-lg transition-colors ${submissionStatus === 'success'
+                                    ? 'bg-green-600 text-white'
+                                    : 'bg-silk-900 text-white hover:bg-black dark:bg-white dark:text-black dark:hover:bg-gray-200'
+                                    } ${isViewMode ? 'opacity-50 cursor-not-allowed' : ''}`}
                             >
-                                Submit Review
+                                {submissionStatus === 'submitting' ? 'Submitting...' :
+                                    submissionStatus === 'success' ? 'Submitted Successfully!' :
+                                        isViewMode ? 'Review Submitted' : 'Submit Review'}
                             </button>
                         </div>
                     </div>
