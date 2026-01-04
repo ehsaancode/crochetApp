@@ -75,12 +75,13 @@ const Orders = ({ token }) => {
                             <p><span className="font-medium">Date :</span> {new Date(order.date).toLocaleDateString()}</p>
                         </div>
                         <p className='text-sm sm:text-base font-bold text-silk-600 dark:text-silk-400'>{currency}{order.amount}</p>
-                        <select onChange={(event) => statusHandler(event, order._id)} value={order.status} className='p-2.5 font-semibold bg-input border border-border rounded-lg outline-none text-foreground focus:ring-2 focus:ring-silk-500 w-full'>
+                        <select onChange={(event) => statusHandler(event, order._id)} value={order.status} className={`p-2.5 font-semibold bg-input border border-border rounded-lg outline-none focus:ring-2 focus:ring-silk-500 w-full ${order.status === 'Cancelled' ? 'text-red-500' : 'text-foreground'}`}>
                             <option value="Order Placed">Order Placed</option>
                             <option value="Packing">Packing</option>
                             <option value="Shipped">Shipped</option>
                             <option value="Out for delivery">Out for delivery</option>
                             <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
                         </select>
                     </div>
                 ))}

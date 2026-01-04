@@ -162,6 +162,23 @@ const Orders = ({ compact }) => {
         loadOrderData()
     }, [token])
 
+    const handleCancelOrder = async (orderId) => {
+        if (!window.confirm("Are you sure you want to cancel this order?")) return;
+
+        try {
+            const response = await axios.post(backendUrl + '/api/order/cancel', { orderId }, { headers: { token } });
+            if (response.data.success) {
+                QToast.success("Order cancelled successfully");
+                loadOrderData(); // Refresh list to show 'Cancelled' status
+            } else {
+                QToast.error(response.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            QToast.error("Failed to cancel order");
+        }
+    }
+
     const downloadInvoice = (order) => {
         const doc = new jsPDF();
 
@@ -254,30 +271,40 @@ const Orders = ({ compact }) => {
                                                 /* Track Order Button & Logic */
                                                 <div className="flex items-center justify-between md:justify-end gap-3 w-full">
                                                     <div className="flex flex-col items-start">
-                                                        <p className='text-sm font-medium text-silk-700 dark:text-silk-300'>{item.status}</p>
+                                                        <p className={`text-sm font-medium ${item.status === 'Cancelled' ? 'text-red-500' : 'text-silk-700 dark:text-silk-300'}`}>{item.status}</p>
                                                         <p className='text-xs text-gray-500 dark:text-gray-400'>{new Date(item.statusDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                                                     </div>
-                                                    <button
-                                                        disabled={refreshingOrderId === item.orderId}
-                                                        onClick={async () => {
-                                                            if (activeTrackOrder === item.orderId) {
-                                                                setActiveTrackOrder(null);
-                                                            } else {
-                                                                const oneHour = 60 * 60 * 1000;
-                                                                // Only fetch if data is older than 1 hour or never fetched
-                                                                if (Date.now() - lastFetchTime > oneHour) {
-                                                                    setRefreshingOrderId(item.orderId);
-                                                                    await loadOrderData();
-                                                                    setRefreshingOrderId(null);
+                                                    <div className="flex gap-2">
+                                                        {item.status === 'Order Placed' && (Date.now() - new Date(item.date).getTime()) < (5 * 60 * 60 * 1000) && (
+                                                            <button
+                                                                onClick={() => handleCancelOrder(item.orderId)}
+                                                                className='border px-4 py-2 text-sm font-medium rounded-sm border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all'
+                                                            >
+                                                                Cancel
+                                                            </button>
+                                                        )}
+                                                        <button
+                                                            disabled={refreshingOrderId === item.orderId}
+                                                            onClick={async () => {
+                                                                if (activeTrackOrder === item.orderId) {
+                                                                    setActiveTrackOrder(null);
+                                                                } else {
+                                                                    const oneHour = 60 * 60 * 1000;
+                                                                    // Only fetch if data is older than 1 hour or never fetched
+                                                                    if (Date.now() - lastFetchTime > oneHour) {
+                                                                        setRefreshingOrderId(item.orderId);
+                                                                        await loadOrderData();
+                                                                        setRefreshingOrderId(null);
+                                                                    }
+                                                                    setActiveTrackOrder(item.orderId);
                                                                 }
-                                                                setActiveTrackOrder(item.orderId);
-                                                            }
-                                                        }}
-                                                        className='border px-4 py-2 text-sm font-medium rounded-sm border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-wait'
-                                                    >
-                                                        {refreshingOrderId === item.orderId ? 'Fetching...' :
-                                                            activeTrackOrder === item.orderId ? 'Collapse' : 'Order Status'}
-                                                    </button>
+                                                            }}
+                                                            className='border px-4 py-2 text-sm font-medium rounded-sm border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-wait'
+                                                        >
+                                                            {refreshingOrderId === item.orderId ? 'Fetching...' :
+                                                                activeTrackOrder === item.orderId ? 'Collapse' : 'Order Status'}
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             )}
 

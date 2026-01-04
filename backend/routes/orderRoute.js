@@ -13,5 +13,6 @@ orderRouter.post('/place', authMiddleware, placeOrder);
 
 // User Features
 orderRouter.post('/userorders', authMiddleware, userOrders);
+orderRouter.post('/cancel', authMiddleware, require('../controllers/orderController').cancelOrder);
 
 module.exports = orderRouter;
