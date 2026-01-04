@@ -202,7 +202,7 @@ const Orders = ({ compact }) => {
     }
 
     return (
-        <div className={compact ? 'p-6' : 'border-t pt-24 px-4 sm:px-12 md:px-24 min-h-[80vh]'}>
+        <div className={compact ? 'p-6' : 'border-t pt-24 px-8 sm:px-12 md:px-24 min-h-[80vh]'}>
 
             {!compact && (
                 <div className='text-2xl mb-8'>

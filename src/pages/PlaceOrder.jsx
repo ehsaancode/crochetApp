@@ -292,8 +292,8 @@ const PlaceOrder = () => {
 
     if (showSuccess) {
         return (
-            <div className="min-h-[80vh] flex flex-col items-center justify-center pt-32 px-4 sm:px-12 md:px-24 bg-white dark:bg-black animate-fade-in">
-                <div className="w-80 h-80 sm:w-96 sm:h-96">
+            <div className="min-h-[80vh] flex flex-col items-center justify-center pt-32 px-4 sm:px-12 md:px-24 animate-fade-in">
+                <div className="w-80 h-80 sm:w-96 sm:h-96 mix-blend-multiply dark:mix-blend-normal">
                     <Lottie animationData={processingAnimation} loop={false} />
                 </div>
             </div>
