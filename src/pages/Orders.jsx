@@ -282,7 +282,7 @@ const Orders = ({ compact }) => {
                                                         {item.status === 'Order Placed' && (Date.now() - new Date(item.date).getTime()) < (5 * 60 * 60 * 1000) && (
                                                             <button
                                                                 onClick={() => handleCancelOrder(item.orderId)}
-                                                                className='border px-4 py-2 text-sm font-medium rounded-sm border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all'
+                                                                className='border px-3 py-1.5 text-xs font-medium rounded-full border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all'
                                                             >
                                                                 Cancel
                                                             </button>
@@ -303,7 +303,7 @@ const Orders = ({ compact }) => {
                                                                     setActiveTrackOrder(item.orderId);
                                                                 }
                                                             }}
-                                                            className='border px-4 py-2 text-sm font-medium rounded-sm border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-wait'
+                                                            className='border px-3 py-1.5 text-xs font-medium rounded-full border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-wait'
                                                         >
                                                             {refreshingOrderId === item.orderId ? 'Fetching...' :
                                                                 activeTrackOrder === item.orderId ? 'Collapse' : 'Order Status'}
