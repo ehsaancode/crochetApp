@@ -78,6 +78,7 @@ const Orders = ({ compact }) => {
                         item['paymentMethod'] = order.paymentMethod
                         item['date'] = order.date
                         item['statusDate'] = order.statusDate || order.date // Fallback to order date if statusDate missing (legacy orders)
+                        item['cancelledBy'] = order.cancelledBy
                         item['orderId'] = order._id
                         allOrdersItem.push(item)
                     })

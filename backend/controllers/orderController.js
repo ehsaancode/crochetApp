@@ -84,7 +84,7 @@ const cancelOrder = async (req, res) => {
             return res.json({ success: false, message: "Cancellation period (5 hours) has expired" });
         }
 
-        await orderModel.findByIdAndUpdate(orderId, { status: 'Cancelled', statusDate: Date.now() });
+        await orderModel.findByIdAndUpdate(orderId, { status: 'Cancelled', statusDate: Date.now(), cancelledBy: 'User' });
         res.json({ success: true, message: "Order Cancelled" });
 
     } catch (error) {
