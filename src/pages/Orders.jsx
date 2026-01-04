@@ -77,6 +77,7 @@ const Orders = ({ compact }) => {
                         item['payment'] = order.payment
                         item['paymentMethod'] = order.paymentMethod
                         item['date'] = order.date
+                        item['statusDate'] = order.statusDate || order.date // Fallback to order date if statusDate missing (legacy orders)
                         item['orderId'] = order._id
                         allOrdersItem.push(item)
                     })
@@ -249,17 +250,13 @@ const Orders = ({ compact }) => {
                                         <div className='md:w-1/2 flex flex-col items-end gap-2'>
 
                                             {/* Delivered State */}
-                                            {item.status === 'Delivered' ? (
-                                                <div className="flex items-center gap-2 text-green-600 font-medium">
-                                                    <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
-                                                        <div className="w-2.5 h-2.5 bg-green-600 rounded-full" />
-                                                    </div>
-                                                    <span>Delivered</span>
-                                                </div>
-                                            ) : (
+                                            {item.status !== 'Delivered' && (
                                                 /* Track Order Button & Logic */
                                                 <div className="flex items-center gap-3">
-                                                    <p className='text-sm font-medium text-silk-700 dark:text-silk-300'>{item.status}</p>
+                                                    <div className="flex flex-col items-end">
+                                                        <p className='text-sm font-medium text-silk-700 dark:text-silk-300'>{item.status}</p>
+                                                        <p className='text-xs text-gray-500 dark:text-gray-400'>{new Date(item.statusDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                                    </div>
                                                     <button
                                                         disabled={refreshingOrderId === item.orderId}
                                                         onClick={async () => {
@@ -279,7 +276,7 @@ const Orders = ({ compact }) => {
                                                         className='border px-4 py-2 text-sm font-medium rounded-sm border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-wait'
                                                     >
                                                         {refreshingOrderId === item.orderId ? 'Fetching...' :
-                                                            activeTrackOrder === item.orderId ? 'Collapse' : 'Track Order'}
+                                                            activeTrackOrder === item.orderId ? 'Collapse' : 'Order Status'}
                                                     </button>
                                                 </div>
                                             )}
@@ -317,9 +314,15 @@ const Orders = ({ compact }) => {
                                             )}
 
                                             {/* Action Buttons (Review / Invoice) */}
-                                            <div className='flex gap-2 mt-2'>
+                                            <div className='flex gap-2 mt-2 items-center'>
                                                 {item.status === 'Delivered' && (
                                                     <>
+                                                        <div className="flex items-center gap-2 text-green-600 font-medium mr-4">
+                                                            <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                                                <div className="w-2.5 h-2.5 bg-green-600 rounded-full" />
+                                                            </div>
+                                                            <span className="text-sm">Delivered on {new Date(item.statusDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                                                        </div>
                                                         <button
                                                             onClick={() => openReviewModal(item._id, item.orderId, item.date)}
                                                             className='border px-3 py-1.5 text-xs font-medium rounded-sm border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'

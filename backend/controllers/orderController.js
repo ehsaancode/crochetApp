@@ -55,7 +55,7 @@ const userOrders = async (req, res) => {
 // Update Order Status from Admin Panel
 const updateStatus = async (req, res) => {
     try {
-        await orderModel.findByIdAndUpdate(req.body.orderId, { status: req.body.status });
+        await orderModel.findByIdAndUpdate(req.body.orderId, { status: req.body.status, statusDate: Date.now() });
         res.json({ success: true, message: "Status Updated" });
     } catch (error) {
         console.log(error);
