@@ -234,7 +234,7 @@ const Orders = ({ compact }) => {
                             ) : (
                                 orderData.map((item, index) => (
                                     <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
-                                        <Link to={`/product/${item._id}`} className='flex items-start gap-6 text-sm group'>
+                                        <Link to={`/product/${item._id}`} className='flex items-start gap-4 sm:gap-6 text-sm group'>
                                             <img className='w-16 sm:w-20 rounded-sm object-cover transition-transform group-hover:scale-105 duration-300' src={item.image[0]} alt="" />
                                             <div>
                                                 <p className='sm:text-base font-medium group-hover:text-silk-600 transition-colors'>{item.name}</p>
@@ -247,13 +247,13 @@ const Orders = ({ compact }) => {
                                                 <p className='mt-1'>Payment: <span className='text-gray-400'>{item.paymentMethod}</span></p>
                                             </div>
                                         </Link>
-                                        <div className='md:w-1/2 flex flex-col items-end gap-2'>
+                                        <div className='md:w-1/2 flex flex-col gap-2 w-full'>
 
                                             {/* Delivered State */}
                                             {item.status !== 'Delivered' && (
                                                 /* Track Order Button & Logic */
-                                                <div className="flex items-center gap-3">
-                                                    <div className="flex flex-col items-end">
+                                                <div className="flex items-center justify-between md:justify-end gap-3 w-full">
+                                                    <div className="flex flex-col items-start">
                                                         <p className='text-sm font-medium text-silk-700 dark:text-silk-300'>{item.status}</p>
                                                         <p className='text-xs text-gray-500 dark:text-gray-400'>{new Date(item.statusDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                                                     </div>
@@ -314,15 +314,18 @@ const Orders = ({ compact }) => {
                                             )}
 
                                             {/* Action Buttons (Review / Invoice) */}
-                                            <div className='flex gap-2 mt-2 items-center'>
-                                                {item.status === 'Delivered' && (
-                                                    <>
-                                                        <div className="flex items-center gap-2 text-green-600 font-medium mr-4">
-                                                            <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
-                                                                <div className="w-2.5 h-2.5 bg-green-600 rounded-full" />
-                                                            </div>
-                                                            <span className="text-sm">Delivered on {new Date(item.statusDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                                            {item.status === 'Delivered' && (
+                                                <div className='flex items-center justify-between md:justify-end gap-2 mt-2 w-full'>
+                                                    <div className="flex items-start gap-2">
+                                                        <div className="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center mt-0.5">
+                                                            <div className="w-2.5 h-2.5 bg-green-600 rounded-full" />
                                                         </div>
+                                                        <div className="flex flex-col">
+                                                            <span className="text-sm font-medium text-green-600">Delivered</span>
+                                                            <span className="text-xs text-gray-500">{new Date(item.statusDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                                                        </div>
+                                                    </div>
+                                                    <div className="flex gap-2">
                                                         <button
                                                             onClick={() => openReviewModal(item._id, item.orderId, item.date)}
                                                             className='border px-3 py-1.5 text-xs font-medium rounded-sm border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
@@ -335,9 +338,9 @@ const Orders = ({ compact }) => {
                                                         >
                                                             <Download className='w-3 h-3' /> Invoice
                                                         </button>
-                                                    </>
-                                                )}
-                                            </div>
+                                                    </div>
+                                                </div>
+                                            )}
                                         </div>
                                     </div>
                                 ))
