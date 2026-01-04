@@ -7,7 +7,7 @@ import QToast from './uiComponents/QToast';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import girlStichingAnimation from './uiComponents/lottie/Girl stitching YT.lottie';
 import confettiAnimation from './uiComponents/lottie/Confetti.lottie';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 const Orders = ({ compact }) => {
 
@@ -233,10 +233,10 @@ const Orders = ({ compact }) => {
                             ) : (
                                 orderData.map((item, index) => (
                                     <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
-                                        <div className='flex items-start gap-6 text-sm'>
-                                            <img className='w-16 sm:w-20' src={item.image[0]} alt="" />
+                                        <Link to={`/product/${item._id}`} className='flex items-start gap-6 text-sm group'>
+                                            <img className='w-16 sm:w-20 rounded-sm object-cover transition-transform group-hover:scale-105 duration-300' src={item.image[0]} alt="" />
                                             <div>
-                                                <p className='sm:text-base font-medium'>{item.name}</p>
+                                                <p className='sm:text-base font-medium group-hover:text-silk-600 transition-colors'>{item.name}</p>
                                                 <div className='flex items-center gap-3 mt-1 text-base text-gray-700 dark:text-gray-300'>
                                                     <p>{currency}{item.price}</p>
                                                     <p>Quantity: {item.quantity}</p>
@@ -245,7 +245,7 @@ const Orders = ({ compact }) => {
                                                 <p className='mt-1'>Date: <span className='text-gray-400'>{new Date(item.date).toDateString()}</span></p>
                                                 <p className='mt-1'>Payment: <span className='text-gray-400'>{item.paymentMethod}</span></p>
                                             </div>
-                                        </div>
+                                        </Link>
                                         <div className='md:w-1/2 flex flex-col items-end gap-2'>
 
                                             {/* Delivered State */}
