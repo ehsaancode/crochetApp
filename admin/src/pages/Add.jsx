@@ -4,8 +4,12 @@ import axios from 'axios'
 import { backendUrl } from '../config'
 import QToast from '../components/QToast'
 import UploadProgressPopup from '../components/UploadProgressPopup'
+import { useParams, useNavigate } from 'react-router-dom'
 
 const Add = ({ token }) => {
+
+    const { id } = useParams();
+    const navigate = useNavigate();
 
     const [image1, setImage1] = useState(false)
     const [image2, setImage2] = useState(false)
@@ -13,6 +17,9 @@ const Add = ({ token }) => {
     const [image4, setImage4] = useState(false)
     const [image5, setImage5] = useState(false)
     const [image6, setImage6] = useState(false)
+
+    const [oldImages, setOldImages] = useState([]);
+    const [deletedIndices, setDeletedIndices] = useState([]);
 
     const handleImageChange = (e, startIndex) => {
         const files = Array.from(e.target.files);
@@ -69,8 +76,7 @@ const Add = ({ token }) => {
     const [sizePrices, setSizePrices] = useState({});
     const [defaultSize, setDefaultSize] = useState("Free Size");
     const [colors, setColors] = useState([]);
-    const [currentColor, setCurrentColor] = useState("Red");
-    const [isColorListOpen, setIsColorListOpen] = useState(false);
+    const [currentColor, setCurrentColor] = useState("#000000");
     const [productId, setProductId] = useState("");
 
     const addColor = () => {
@@ -82,6 +88,40 @@ const Add = ({ token }) => {
     const removeColor = (colorToRemove) => {
         setColors(prev => prev.filter(c => c !== colorToRemove));
     }
+
+    const fetchProductData = async () => {
+        if (!id) return;
+        try {
+            const response = await axios.post(backendUrl + '/api/product/single', { productId: id })
+            if (response.data.success) {
+                const product = response.data.product;
+                setName(product.name);
+                setDescription(product.description || "");
+                // setPrice(product.price); // Price handled via sizePrices mainly or hidden
+                setShippingFee(product.shippingFee || 100);
+                setCategory(product.category);
+                setSubCategory(product.subCategory);
+                setBestseller(product.bestseller);
+                setSizes(product.sizes);
+                setSizePrices(product.sizePrices || {});
+                setDefaultSize(product.defaultSize || "");
+                if (product.colors) setColors(product.colors);
+                setOldImages(product.image); // Array of URLs
+                setProductId(product._id); // Show ID
+            } else {
+                QToast.error(response.data.message, { position: "top-right" })
+            }
+        } catch (error) {
+            console.log(error)
+            QToast.error(error.message, { position: "top-right" })
+        }
+    }
+
+    React.useEffect(() => {
+        if (id) {
+            fetchProductData();
+        }
+    }, [id])
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
@@ -126,41 +166,53 @@ const Add = ({ token }) => {
             image5 && formData.append("image5", image5)
             image6 && formData.append("image6", image6)
 
-            const response = await axios.post(backendUrl + "/api/product/add", formData, { headers: { token } })
-
-            if (response.data.success) {
-                // Show success state in popup
-                setIsUploadSuccess(true);
-
-                // Hide popup after delay and reset form
-                setTimeout(() => {
-                    setIsUploadPopupOpen(false);
-                    setIsUploadSuccess(false);
-                    QToast.success(response.data.message, { position: "top-right" })
-
-                    setName('')
-                    setDescription('')
-                    setImage1(false)
-                    setImage2(false)
-                    setImage3(false)
-                    setImage4(false)
-                    setImage5(false)
-                    setImage6(false)
-                    setPrice('')
-                    setShippingFee('')
-                    setProductId('')
-                    setCategory('Men')
-                    setSubCategory('Sweaters')
-                    setSubCategory('Sweaters')
-                    setSizes(["Free Size"])
-                    setSizePrices({})
-                    setDefaultSize("Free Size")
-                    setColors([])
-                }, 2000);
+            if (id) {
+                formData.append("deletedIndices", JSON.stringify(deletedIndices));
+                const response = await axios.post(backendUrl + "/api/product/update", formData, { headers: { token } })
+                if (response.data.success) {
+                    QToast.success("Product Updated", { position: "top-right" })
+                    navigate('/list');
+                } else {
+                    QToast.error(response.data.message, { position: "top-right" })
+                }
+                setIsUploadPopupOpen(false); // Close popup
             } else {
-                setIsUploadPopupOpen(false); // Close popup on error
-                QToast.error(response.data.message, { position: "top-right" })
+                const response = await axios.post(backendUrl + "/api/product/add", formData, { headers: { token } })
+
+                if (response.data.success) {
+                    setIsUploadSuccess(true);
+                    setTimeout(() => {
+                        setIsUploadPopupOpen(false);
+                        setIsUploadSuccess(false);
+                        QToast.success(response.data.message, { position: "top-right" })
+                        // Reset form
+                        setName('')
+                        setDescription('')
+                        setImage1(false)
+                        setImage2(false)
+                        setImage3(false)
+                        setImage4(false)
+                        setImage5(false)
+                        setImage6(false)
+                        setPrice('')
+                        setShippingFee('')
+                        setProductId('')
+                        setCategory('Men')
+                        setSubCategory('Sweaters')
+                        setSizes(["Free Size"])
+                        setSizePrices({})
+                        setDefaultSize("Free Size")
+                        setColors([])
+                        setOldImages([])
+                        setDeletedIndices([])
+                    }, 2000);
+                } else {
+                    setIsUploadPopupOpen(false);
+                    QToast.error(response.data.message, { position: "top-right" })
+                }
             }
+
+
 
         } catch (error) {
             console.log(error);
@@ -210,36 +262,47 @@ const Add = ({ token }) => {
             <form onSubmit={onSubmitHandler} className='flex flex-col w-full items-start gap-5 text-foreground'>
 
                 <div>
-                    <h3 className='text-lg font-semibold mb-4'>Upload Images</h3>
+                    <h3 className='text-lg font-semibold mb-4'>{id ? "Edit Images" : "Upload Images"}</h3>
                     <div className='flex gap-4 flex-wrap'>
-                        {[image1, image2, image3, image4, image5, image6].map((img, index) => (
-                            <div key={index} className='relative group'>
-                                <label htmlFor={`image${index}`}>
-                                    <div className={`w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden relative ${!img ? 'border-dashed' : 'border-solid'}`}>
-                                        {img ? (
-                                            img.type.startsWith('video/') ? (
-                                                <video className='w-full h-full object-cover' src={URL.createObjectURL(img)} muted loop autoPlay />
+                        {[image1, image2, image3, image4, image5, image6].map((img, index) => {
+                            const oldImg = oldImages && oldImages[index] ? oldImages[index] : null;
+                            const isDeleted = deletedIndices.includes(index);
+                            const content = img ? URL.createObjectURL(img) : (oldImg && !isDeleted ? oldImg : null);
+                            const isNew = !!img;
+                            const isOld = !!(oldImg && !isDeleted);
+
+                            return (
+                                <div key={index} className='relative group'>
+                                    <label htmlFor={`image${index}`}>
+                                        <div className={`w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 transition-colors overflow-hidden relative ${isNew || isOld ? 'border-solid' : 'border-dashed'}`}>
+                                            {content ? (
+                                                <img className='w-full h-full object-cover' src={content} alt={`Product ${index + 1}`} />
                                             ) : (
-                                                <img className='w-full h-full object-cover' src={URL.createObjectURL(img)} alt={`Product ${index + 1}`} />
-                                            )
-                                        ) : (
-                                            <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />
-                                        )}
-                                    </div>
-                                    <input onChange={(e) => handleImageChange(e, index)} type="file" id={`image${index}`} accept="image/*,video/*" hidden multiple />
-                                </label>
-                                {img && (
-                                    <button
-                                        type="button"
-                                        onClick={() => [setImage1, setImage2, setImage3, setImage4, setImage5, setImage6][index](false)}
-                                        className='absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 shadow-md hover:bg-destructive/90 transition-colors z-10'
-                                        title="Remove media"
-                                    >
-                                        <X className='w-3 h-3' />
-                                    </button>
-                                )}
-                            </div>
-                        ))}
+                                                <Upload className='text-muted-foreground group-hover:text-foreground transition-colors' />
+                                            )}
+                                        </div>
+                                        <input onChange={(e) => handleImageChange(e, index)} type="file" id={`image${index}`} accept="image/*,video/*" hidden multiple />
+                                    </label>
+                                    {(isNew || isOld) && (
+                                        <button
+                                            type="button"
+                                            onClick={() => {
+                                                if (isNew) {
+                                                    const setters = [setImage1, setImage2, setImage3, setImage4, setImage5, setImage6];
+                                                    setters[index](false);
+                                                } else {
+                                                    setDeletedIndices(prev => [...prev, index]);
+                                                }
+                                            }}
+                                            className='absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 shadow-md hover:bg-destructive/90 transition-colors z-10'
+                                            title="Remove media"
+                                        >
+                                            <X className='w-3 h-3' />
+                                        </button>
+                                    )}
+                                </div>
+                            )
+                        })}
                     </div>
                 </div>
 
@@ -368,37 +431,24 @@ const Add = ({ token }) => {
                 <div>
                     <p className='mb-2 font-medium'>Product Colors</p>
                     <div className='flex items-end gap-3 mb-2'>
-                        <div className="flex flex-col gap-1 relative z-20">
+                        <div className="flex flex-col gap-1">
                             <label className="text-xs text-muted-foreground mr-1">Select Color</label>
-
-                            <div className="relative">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsColorListOpen(!isColorListOpen)}
-                                    className="w-32 px-3 py-2.5 rounded-lg border border-border bg-input flex items-center justify-between text-sm transition-all focus:ring-2 focus:ring-silk-400 hover:bg-muted/50"
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <div className="w-4 h-4 rounded-full border border-gray-300" style={{ backgroundColor: currentColor.toLowerCase() }}></div>
-                                        <span className="truncate">{currentColor}</span>
-                                    </div>
-                                    <svg className={`w-4 h-4 transition-transform duration-200 text-muted-foreground ${isColorListOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
-                                </button>
-
-                                {isColorListOpen && (
-                                    <div className="absolute top-full left-0 mt-1 w-32 bg-popover text-popover-foreground border border-border rounded-lg shadow-lg max-h-48 overflow-y-auto scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent animate-in vide-in-from-top-1">
-                                        {['Red', 'Blue', 'Green', 'Yellow', 'Black', 'White', 'Pink', 'Purple', 'Orange', 'Gray', 'Brown', 'Beige', 'Navy', 'Maroon', 'Teal', 'Olive', 'Gold', 'Silver', 'Cream'].map((colorName) => (
-                                            <button
-                                                key={colorName}
-                                                type="button"
-                                                onClick={() => { setCurrentColor(colorName); setIsColorListOpen(false); }}
-                                                className={`w-full text-left px-3 py-2 hover:bg-muted/50 flex items-center gap-2 text-sm transition-colors ${currentColor === colorName ? 'bg-muted/30 font-medium' : ''}`}
-                                            >
-                                                <div className="w-3 h-3 rounded-full border border-gray-300 flex-shrink-0" style={{ backgroundColor: colorName.toLowerCase() }}></div>
-                                                {colorName}
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
+                            <div className="flex items-center gap-2">
+                                <div className="relative w-10 h-10 overflow-hidden rounded-full border border-border shadow-sm">
+                                    <input
+                                        type="color"
+                                        value={currentColor}
+                                        onChange={(e) => setCurrentColor(e.target.value)}
+                                        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[150%] h-[150%] p-0 border-0 cursor-pointer"
+                                    />
+                                </div>
+                                <input
+                                    type="text"
+                                    value={currentColor}
+                                    onChange={(e) => setCurrentColor(e.target.value)}
+                                    className="w-28 px-3 py-2 rounded-lg border border-border bg-input font-mono text-sm uppercase focus:outline-none focus:ring-2 focus:ring-silk-400"
+                                    maxLength={7}
+                                />
                             </div>
                         </div>
                         <button type="button" onClick={addColor} className="px-4 py-2 bg-silk-100 text-silk-700 hover:bg-silk-200 rounded font-medium transition-colors border border-silk-300">
@@ -408,8 +458,8 @@ const Add = ({ token }) => {
                     <div className='flex gap-2 flex-wrap'>
                         {colors.map((c, i) => (
                             <div key={i} className='flex items-center gap-2 bg-muted/40 p-1 pr-3 rounded border border-border'>
-                                <div className="w-6 h-6 rounded-full border border-gray-300 shadow-sm" style={{ backgroundColor: c.toLowerCase() }}></div>
-                                <span className="text-sm font-mono">{c}</span>
+                                <div className="w-6 h-6 rounded-full border border-gray-300 shadow-sm" style={{ backgroundColor: c }}></div>
+                                <span className="text-sm font-mono uppercase">{c}</span>
                                 <button type="button" onClick={() => removeColor(c)} className="text-muted-foreground hover:text-destructive">
                                     <X className="w-3 h-3" />
                                 </button>
@@ -423,7 +473,9 @@ const Add = ({ token }) => {
                     <label className='cursor-pointer font-medium select-none' htmlFor="bestseller">Bestseller Product</label>
                 </div>
 
-                <button type="submit" className='px-6 py-2 mt-4 bg-emerald-100 text-emerald-800 text-sm font-medium rounded-lg hover:bg-emerald-200 transition-all shadow-sm active:scale-95'>Add Product</button>
+                <button type="submit" className='px-6 py-2 mt-4 bg-emerald-100 text-emerald-800 text-sm font-medium rounded-lg hover:bg-emerald-200 transition-all shadow-sm active:scale-95'>
+                    {id ? "Update Product" : "Add Product"}
+                </button>
 
             </form>
             <UploadProgressPopup
