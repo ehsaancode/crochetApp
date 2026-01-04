@@ -223,8 +223,11 @@ const Orders = ({ compact }) => {
         <div className={compact ? 'p-6' : 'border-t pt-24 px-8 sm:px-12 md:px-24 min-h-[80vh]'}>
 
             {!compact && (
-                <div className='text-2xl mb-8'>
+                <div className='flex justify-between items-center text-2xl mb-8 gap-2'>
                     <h2 className='font-serif text-3xl text-silk-900 dark:text-silk-50'>MY <span className='text-silk-600 font-medium'>ORDERS</span></h2>
+                    <Link to="/contact" className='text-xs font-medium text-gray-400 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-300 transition-colors flex items-center gap-2 whitespace-nowrap'>
+                        Need help? <span className="underline">Chat with us</span>
+                    </Link>
                 </div>
             )}
 
