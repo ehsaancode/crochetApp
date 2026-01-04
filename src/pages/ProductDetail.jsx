@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useDrag } from '@use-gesture/react';
 import { useParams, Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
-import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, Maximize2, X } from 'lucide-react';
+import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, Maximize2, X, Check } from 'lucide-react';
 import QToast from './uiComponents/QToast';
 
 function ProductDetail() {
@@ -253,11 +253,13 @@ function ProductDetail() {
                                 {product.colors.map((item, index) => (
                                     <button
                                         onClick={() => setColor(item)}
-                                        className={`w-8 h-8 rounded-full border-2 shadow-sm ${item === color ? 'border-silk-900 dark:border-white ring-2 ring-offset-2 ring-silk-300' : 'border-gray-300'}`}
+                                        className={`w-8 h-8 rounded-full border shadow-sm flex items-center justify-center transition-all ${item === color ? 'border-silk-900 dark:border-white scale-110' : 'border-gray-200'}`}
                                         style={{ backgroundColor: item.toLowerCase() }}
                                         key={index}
                                         title={item}
-                                    />
+                                    >
+                                        {item === color && <Check className="w-4 h-4 text-white drop-shadow-[0_0_1px_rgba(0,0,0,1)]" strokeWidth={3} />}
+                                    </button>
                                 ))}
                             </div>
                         </div>
