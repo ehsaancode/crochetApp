@@ -96,9 +96,6 @@ const FestiveCard = () => {
                                     alt={product.name}
                                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                                 />
-                                <button className="absolute bottom-2 right-2 bg-white text-black p-1.5 rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
-                                    <ShoppingBag className="w-3 h-3" />
-                                </button>
                             </div>
                             <div>
                                 <h3 className="font-medium text-gray-900 dark:text-white truncate text-xs md:text-sm font-serif">{product.name}</h3>
