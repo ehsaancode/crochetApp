@@ -46,7 +46,7 @@ const FestiveCard = () => {
     return (
         <section className="py-12 px-4 md:px-0">
             {/* Main Card Container - No Overflow Hidden to allow image pop-up */}
-            <div className="relative w-full max-w-7xl mx-auto shadow-2xl min-h-[400px] flex flex-col md:flex-row rounded-3xl">
+            <div className="relative w-full max-w-7xl mx-auto shadow-2xl min-h-[400px] md:min-h-[500px] flex flex-col md:flex-row rounded-3xl">
 
                 {/* Background Layer - Clipped */}
                 <div className="absolute inset-0 rounded-3xl overflow-hidden z-0" style={bgStyle}>
@@ -58,8 +58,11 @@ const FestiveCard = () => {
                     <img
                         src={config.heroImage}
                         alt="Festival"
-                        style={{ width: config.heroWidth || '12rem' }}
-                        className="absolute -top-10 -right-6 z-40 object-contain animate-float pointer-events-none"
+                        style={{
+                            '--mobile-w': config.heroWidth || '12rem',
+                            '--desktop-w': config.heroWidthDesktop || '24rem'
+                        }}
+                        className="absolute -top-10 -right-6 z-20 object-contain animate-float pointer-events-none w-[var(--mobile-w)] md:w-[var(--desktop-w)]"
                     />
                 )}
 

@@ -12,6 +12,7 @@ const Festival = ({ token }) => {
     const [backgroundImage, setBackgroundImage] = useState(false);
     const [isActive, setIsActive] = useState(false);
     const [heroWidth, setHeroWidth] = useState("12rem");
+    const [heroWidthDesktop, setHeroWidthDesktop] = useState("24rem");
     const [productIds, setProductIds] = useState([]);
 
     const [existingHero, setExistingHero] = useState("");
@@ -31,6 +32,7 @@ const Festival = ({ token }) => {
                 setBackgroundColor(f.backgroundColor || "#ffffff");
                 setIsActive(f.isActive);
                 setHeroWidth(f.heroWidth || "12rem");
+                setHeroWidthDesktop(f.heroWidthDesktop || "24rem");
                 setProductIds(f.productIds || []);
                 setExistingHero(f.heroImage);
                 setExistingBg(f.backgroundImage);
@@ -66,6 +68,7 @@ const Festival = ({ token }) => {
             formData.append("backgroundColor", backgroundColor);
             formData.append("isActive", isActive);
             formData.append("heroWidth", heroWidth);
+            formData.append("heroWidthDesktop", heroWidthDesktop);
             formData.append("productIds", JSON.stringify(productIds));
 
             if (heroImage) formData.append("heroImage", heroImage);
@@ -136,9 +139,15 @@ const Festival = ({ token }) => {
                             </label>
                             {existingHero && !heroImage && <span className="text-xs text-muted-foreground">Current Image</span>}
                         </div>
-                        <div className="mt-4">
-                            <p className='mb-1 text-sm font-medium'>Hero Width (e.g. 12rem, 200px)</p>
-                            <input value={heroWidth} onChange={(e) => setHeroWidth(e.target.value)} className='w-full px-3 py-1.5 rounded-lg border border-border bg-input' />
+                        <div className="mt-4 grid grid-cols-2 gap-4">
+                            <div>
+                                <p className='mb-1 text-sm font-medium'>Mobile Width</p>
+                                <input value={heroWidth} onChange={(e) => setHeroWidth(e.target.value)} className='w-full px-3 py-1.5 rounded-lg border border-border bg-input' placeholder="12rem" />
+                            </div>
+                            <div>
+                                <p className='mb-1 text-sm font-medium'>Desktop Width</p>
+                                <input value={heroWidthDesktop} onChange={(e) => setHeroWidthDesktop(e.target.value)} className='w-full px-3 py-1.5 rounded-lg border border-border bg-input' placeholder="24rem" />
+                            </div>
                         </div>
                     </div>
                     <div>

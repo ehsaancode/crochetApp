@@ -8,6 +8,7 @@ const festivalSchema = new mongoose.Schema({
     backgroundImage: { type: String, default: '' }, // URL
     heroImage: { type: String, default: '' }, // URL (Main decorative image)
     heroWidth: { type: String, default: '12rem' }, // CSS value
+    heroWidthDesktop: { type: String, default: '24rem' }, // CSS value for desktop
     productIds: [{ type: String }], // Array of product IDs to show
     lastUpdated: { type: Date, default: Date.now }
 });
