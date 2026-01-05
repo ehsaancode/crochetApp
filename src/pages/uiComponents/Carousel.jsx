@@ -8,6 +8,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [direction, setDirection] = useState(0);
     const [isPaused, setIsPaused] = useState(false);
+    const [interactionTime, setInteractionTime] = useState(0);
 
     useEffect(() => {
         if (!autoPlay || isPaused || !items || items.length === 0) return;
@@ -18,7 +19,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
         }, interval);
 
         return () => clearInterval(timer);
-    }, [autoPlay, interval, isPaused, items?.length]);
+    }, [autoPlay, interval, isPaused, items?.length, interactionTime]);
 
     if (!items || items.length === 0) {
         return <div className="w-full h-[500px] md:h-[600px] flex items-center justify-center bg-silk-100 dark:bg-black/20 rounded-2xl">
@@ -29,11 +30,13 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
     const nextSlide = () => {
         setDirection(1);
         setCurrentIndex((prev) => (prev + 1) % items.length);
+        setInteractionTime(Date.now());
     };
 
     const prevSlide = () => {
         setDirection(-1);
         setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+        setInteractionTime(Date.now());
     };
 
     const variants = {
@@ -163,6 +166,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                         onClick={() => {
                             setDirection(idx > currentIndex ? 1 : -1);
                             setCurrentIndex(idx);
+                            setInteractionTime(Date.now());
                         }}
                         className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'w-8 bg-silk-900 dark:bg-white' : 'bg-silk-400 dark:bg-silk-600 hover:bg-silk-600 dark:hover:bg-silk-400'
                             }`}

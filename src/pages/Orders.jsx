@@ -276,7 +276,7 @@ const Orders = ({ compact }) => {
                                                 <div className="flex items-center justify-between md:justify-end gap-3 w-full">
                                                     <div className="flex flex-col items-start">
                                                         <p className={`text-sm font-medium ${item.status === 'Cancelled' ? 'text-red-500' : 'text-silk-700 dark:text-silk-300'}`}>{item.status}</p>
-                                                        <p className='text-xs text-gray-500 dark:text-gray-400'>{new Date(item.statusDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                                        <p className='text-xs text-gray-500 dark:text-gray-400'>{new Date(item.statusDate || item.date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                                                     </div>
                                                     <div className="flex gap-2">
                                                         {item.status === 'Order Placed' && (Date.now() - new Date(item.date).getTime()) < (5 * 60 * 60 * 1000) && (
@@ -350,7 +350,7 @@ const Orders = ({ compact }) => {
                                                     <div className="flex items-start gap-2">
                                                         <div className="flex flex-col">
                                                             <span className="text-sm font-medium text-green-600">Delivered</span>
-                                                            <span className="text-xs text-gray-500">{new Date(item.statusDate).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                                                            <span className="text-xs text-gray-500">{new Date(item.statusDate || item.date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
                                                         </div>
                                                     </div>
                                                     <div className="flex gap-2">

@@ -13,7 +13,8 @@ const placeOrder = async (req, res) => {
             amount,
             paymentMethod: "COD",
             payment: false,
-            date: Date.now()
+            date: Date.now(),
+            statusDate: Date.now()
         }
 
         const newOrder = new orderModel(orderData);
@@ -56,6 +57,7 @@ const userOrders = async (req, res) => {
 const updateStatus = async (req, res) => {
     try {
         await orderModel.findByIdAndUpdate(req.body.orderId, { status: req.body.status, statusDate: Date.now() });
+        console.log(`Order ${req.body.orderId} status updated to ${req.body.status} at ${new Date().toISOString()}`);
         res.json({ success: true, message: "Status Updated" });
     } catch (error) {
         console.log(error);
