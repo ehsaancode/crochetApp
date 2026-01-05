@@ -7,6 +7,7 @@ import DarkVeil from './uiComponents/DarkVeil';
 import Carousel from './uiComponents/Carousel';
 import ShinyText from './uiComponents/ShinyText';
 import GridMotion from './uiComponents/GridMotion';
+import FestiveCard from '../components/FestiveCard';
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useTheme } from '../context/ThemeContext';
 import Masonry from './uiComponents/Masonry';
@@ -65,6 +66,9 @@ function Home() {
                         colorShiftOnHover={false}
                     />
                 </div>
+
+                <FestiveCard />
+
                 <div className="flex items-end justify-between mb-10">
                     <ShinyText
                         text="New Arrivals"

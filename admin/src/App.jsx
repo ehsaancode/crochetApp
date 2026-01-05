@@ -9,6 +9,7 @@ import Orders from './pages/Orders'
 import Users from './pages/Users'
 import Requests from './pages/Requests'
 import CustomOrders from './pages/CustomOrders'
+import Festival from './pages/Festival'
 import Login from './components/Login'
 import QToast from './components/QToast';
 
@@ -43,6 +44,7 @@ const App = () => {
                 <Route path='/users' element={<Users token={token} />} />
                 <Route path='/requests' element={<Requests token={token} />} />
                 <Route path='/custom-orders' element={<CustomOrders token={token} />} />
+                <Route path='/festival' element={<Festival token={token} />} />
               </Routes>
             </div>
           </div>

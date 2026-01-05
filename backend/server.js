@@ -7,6 +7,7 @@ const productRouter = require('./routes/productRoute');
 const cartRouter = require('./routes/cartRoute');
 const orderRouter = require('./routes/orderRoute');
 const customOrderRouter = require('./routes/customOrderRoute');
+const festivalRouter = require('./routes/festivalRoute');
 
 dotenv.config();
 
@@ -27,6 +28,7 @@ app.use('/api/product', productRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/custom-order', customOrderRouter);
+app.use('/api/festival', festivalRouter);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
