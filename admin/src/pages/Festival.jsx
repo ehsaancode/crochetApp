@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { backendUrl } from '../config'
 import QToast from '../components/QToast'
-import { Upload, X } from 'lucide-react'
+import { Upload, X, Check, Loader2 } from 'lucide-react'
 
 const Festival = ({ token }) => {
     const [name, setName] = useState("");
@@ -14,6 +14,9 @@ const Festival = ({ token }) => {
     const [heroWidth, setHeroWidth] = useState("12rem");
     const [heroWidthDesktop, setHeroWidthDesktop] = useState("24rem");
     const [productIds, setProductIds] = useState([]);
+
+    const [saving, setSaving] = useState(false);
+    const [saveSuccess, setSaveSuccess] = useState(false);
 
     const [existingHero, setExistingHero] = useState("");
     const [existingBg, setExistingBg] = useState("");
@@ -61,6 +64,7 @@ const Festival = ({ token }) => {
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
+        setSaving(true);
         try {
             const formData = new FormData();
             formData.append("name", name);
@@ -76,16 +80,19 @@ const Festival = ({ token }) => {
 
             const response = await axios.post(backendUrl + '/api/festival/update', formData, { headers: { token } });
             if (response.data.success) {
-                QToast.success("Festival Updated");
+                setSaveSuccess(true);
                 fetchData(); // Refresh to show new images
                 setHeroImage(false);
                 setBackgroundImage(false);
+                setTimeout(() => setSaveSuccess(false), 3000);
             } else {
                 QToast.error(response.data.message);
             }
         } catch (error) {
             console.error(error);
             QToast.error(error.message);
+        } finally {
+            setSaving(false);
         }
     }
 
@@ -186,8 +193,27 @@ const Festival = ({ token }) => {
                     </div>
                 </div>
 
-                <button type="submit" className='px-6 py-3 bg-silk-600 text-white font-medium rounded-lg hover:bg-silk-700 transition-all shadow-sm w-max'>
-                    Save Configuration
+                <button
+                    type="submit"
+                    disabled={saving}
+                    className={`px-6 py-3 font-medium rounded-lg transition-all shadow-sm w-max flex items-center gap-2 min-w-[140px] justify-center ${saveSuccess
+                            ? 'bg-green-600 hover:bg-green-700 text-white'
+                            : 'bg-silk-600 hover:bg-silk-700 text-white disabled:opacity-70 disabled:cursor-not-allowed'
+                        }`}
+                >
+                    {saving ? (
+                        <>
+                            <Loader2 className="w-5 h-5 animate-spin" />
+                            Processing...
+                        </>
+                    ) : saveSuccess ? (
+                        <>
+                            <Check className="w-5 h-5" />
+                            Saved
+                        </>
+                    ) : (
+                        'Save Configuration'
+                    )}
                 </button>
             </form>
         </div>
