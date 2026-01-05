@@ -34,7 +34,7 @@ const App = () => {
 
           <div className='flex w-full'>
             <Sidebar isOpen={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
-            <div className={`main-content transition-all duration-300 w-full mx-auto my-8 text-foreground text-base ${sidebarOpen ? 'ml-[250px]' : 'ml-0'}`}>
+            <div className={`main-content transition-all duration-300 w-full mx-auto my-8 text-foreground text-base ${sidebarOpen ? 'ml-[250px]' : 'ml-0'} md:ml-[250px]`}>
               <Routes>
                 <Route path='/' element={<Add token={token} />} /> {/* Default to Add */}
                 <Route path='/add' element={<Add token={token} />} />

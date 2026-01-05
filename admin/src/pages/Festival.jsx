@@ -99,7 +99,7 @@ const Festival = ({ token }) => {
     if (loading) return <div className="p-8">Loading...</div>;
 
     return (
-        <div className="bg-card rounded-xl shadow-sm border border-border p-6 max-w-4xl m-4">
+        <div className="bg-card rounded-xl shadow-sm border border-border p-6 w-full max-w-6xl mx-auto my-4">
             <h2 className='text-xl font-bold mb-6 text-foreground'>Festival Card Configuration</h2>
             <form onSubmit={onSubmitHandler} className='flex flex-col gap-6'>
 
@@ -114,68 +114,70 @@ const Festival = ({ token }) => {
                     <label htmlFor="isActive" className="font-medium cursor-pointer">Activate Festival Card on Home Page</label>
                 </div>
 
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    <div>
-                        <p className='mb-2 font-medium'>Festival Name</p>
-                        <input value={name} onChange={(e) => setName(e.target.value)} className='w-full px-4 py-2 rounded-lg border border-border bg-input' placeholder="e.g. Diwali Special" required />
-                    </div>
-                    <div>
-                        <p className='mb-2 font-medium'>Subtitle / Tagline</p>
-                        <input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className='w-full px-4 py-2 rounded-lg border border-border bg-input' placeholder="e.g. Light up your home" />
-                    </div>
-                    <div>
-                        <p className='mb-2 font-medium'>Background Color</p>
-                        <div className="flex gap-2">
-                            <input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="h-10 w-20 p-1 rounded cursor-pointer" />
-                            <input type="text" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
+                <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
+                    <div className="flex flex-col gap-6">
+                        <div>
+                            <p className='mb-2 font-medium'>Festival Name</p>
+                            <input value={name} onChange={(e) => setName(e.target.value)} className='w-full px-4 py-2 rounded-lg border border-border bg-input' placeholder="e.g. Diwali Special" required />
+                        </div>
+                        <div>
+                            <p className='mb-2 font-medium'>Subtitle / Tagline</p>
+                            <input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className='w-full px-4 py-2 rounded-lg border border-border bg-input' placeholder="e.g. Light up your home" />
+                        </div>
+                        <div>
+                            <p className='mb-2 font-medium'>Background Color</p>
+                            <div className="flex gap-2">
+                                <input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="h-10 w-20 p-1 rounded cursor-pointer" />
+                                <input type="text" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-                    <div>
-                        <p className='mb-2 font-medium'>Hero Image (Main Graphic)</p>
-                        <div className="flex gap-4 items-end">
-                            <label htmlFor="hero" className="w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 relative overflow-hidden">
-                                {heroImage ? (
-                                    <img src={URL.createObjectURL(heroImage)} className="w-full h-full object-cover" />
-                                ) : existingHero ? (
-                                    <img src={existingHero} className="w-full h-full object-cover" />
-                                ) : <Upload className="text-muted-foreground" />}
-                                <input type="file" id="hero" hidden onChange={(e) => setHeroImage(e.target.files[0])} />
-                            </label>
-                            {existingHero && !heroImage && <span className="text-xs text-muted-foreground">Current Image</span>}
-                        </div>
-                        <div className="mt-4 grid grid-cols-2 gap-4">
-                            <div>
-                                <p className='mb-1 text-sm font-medium'>Mobile Width</p>
-                                <input value={heroWidth} onChange={(e) => setHeroWidth(e.target.value)} className='w-full px-3 py-1.5 rounded-lg border border-border bg-input' placeholder="12rem" />
+                    <div className="flex flex-col gap-6">
+                        <div>
+                            <p className='mb-2 font-medium'>Hero Image (Main Graphic)</p>
+                            <div className="flex gap-4 items-end">
+                                <label htmlFor="hero" className="w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 relative overflow-hidden">
+                                    {heroImage ? (
+                                        <img src={URL.createObjectURL(heroImage)} className="w-full h-full object-cover" />
+                                    ) : existingHero ? (
+                                        <img src={existingHero} className="w-full h-full object-cover" />
+                                    ) : <Upload className="text-muted-foreground" />}
+                                    <input type="file" id="hero" hidden onChange={(e) => setHeroImage(e.target.files[0])} />
+                                </label>
+                                {existingHero && !heroImage && <span className="text-xs text-muted-foreground">Current Image</span>}
                             </div>
-                            <div>
-                                <p className='mb-1 text-sm font-medium'>Desktop Width</p>
-                                <input value={heroWidthDesktop} onChange={(e) => setHeroWidthDesktop(e.target.value)} className='w-full px-3 py-1.5 rounded-lg border border-border bg-input' placeholder="24rem" />
+                            <div className="mt-4 grid grid-cols-2 gap-4">
+                                <div>
+                                    <p className='mb-1 text-sm font-medium'>Mobile Width</p>
+                                    <input value={heroWidth} onChange={(e) => setHeroWidth(e.target.value)} className='w-full px-3 py-1.5 rounded-lg border border-border bg-input' placeholder="12rem" />
+                                </div>
+                                <div>
+                                    <p className='mb-1 text-sm font-medium'>Desktop Width</p>
+                                    <input value={heroWidthDesktop} onChange={(e) => setHeroWidthDesktop(e.target.value)} className='w-full px-3 py-1.5 rounded-lg border border-border bg-input' placeholder="24rem" />
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    <div>
-                        <p className='mb-2 font-medium'>Background Image (Optional)</p>
-                        <div className="flex gap-4 items-end">
-                            <label htmlFor="bg" className="w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 relative overflow-hidden">
-                                {backgroundImage ? (
-                                    <img src={URL.createObjectURL(backgroundImage)} className="w-full h-full object-cover" />
-                                ) : existingBg ? (
-                                    <img src={existingBg} className="w-full h-full object-cover" />
-                                ) : <Upload className="text-muted-foreground" />}
-                                <input type="file" id="bg" hidden onChange={(e) => setBackgroundImage(e.target.files[0])} />
-                            </label>
-                            {existingBg && !backgroundImage && <span className="text-xs text-muted-foreground">Current Image</span>}
+                        <div>
+                            <p className='mb-2 font-medium'>Background Image (Optional)</p>
+                            <div className="flex gap-4 items-end">
+                                <label htmlFor="bg" className="w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 relative overflow-hidden">
+                                    {backgroundImage ? (
+                                        <img src={URL.createObjectURL(backgroundImage)} className="w-full h-full object-cover" />
+                                    ) : existingBg ? (
+                                        <img src={existingBg} className="w-full h-full object-cover" />
+                                    ) : <Upload className="text-muted-foreground" />}
+                                    <input type="file" id="bg" hidden onChange={(e) => setBackgroundImage(e.target.files[0])} />
+                                </label>
+                                {existingBg && !backgroundImage && <span className="text-xs text-muted-foreground">Current Image</span>}
+                            </div>
                         </div>
                     </div>
                 </div>
 
                 <div>
                     <p className='mb-2 font-medium'>Select Products ({productIds.length} selected)</p>
-                    <div className="h-60 overflow-y-auto border border-border rounded-lg p-2 bg-muted/10 grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <div className="h-80 overflow-y-auto border border-border rounded-lg p-2 bg-muted/10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
                         {allProducts.map(p => (
                             <div
                                 key={p._id}
@@ -197,8 +199,8 @@ const Festival = ({ token }) => {
                     type="submit"
                     disabled={saving}
                     className={`px-6 py-3 font-medium rounded-lg transition-all shadow-sm w-max flex items-center gap-2 min-w-[140px] justify-center ${saveSuccess
-                            ? 'bg-green-600 hover:bg-green-700 text-white'
-                            : 'bg-silk-600 hover:bg-silk-700 text-white disabled:opacity-70 disabled:cursor-not-allowed'
+                        ? 'bg-green-600 hover:bg-green-700 text-white'
+                        : 'bg-silk-600 hover:bg-silk-700 text-white disabled:opacity-70 disabled:cursor-not-allowed'
                         }`}
                 >
                     {saving ? (

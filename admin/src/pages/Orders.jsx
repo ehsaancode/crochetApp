@@ -42,9 +42,9 @@ const Orders = ({ token }) => {
     }, [token])
 
     return (
-        <div>
-            <h3 className='mb-4 pl-4 font-semibold text-lg text-foreground'>Order Page</h3>
-            <div className="flex flex-col p-4 gap-4">
+        <div className="w-full max-w-7xl mx-auto p-4">
+            <h3 className='mb-4 font-semibold text-lg text-foreground'>Order Page</h3>
+            <div className="flex flex-col gap-4">
                 {orders.map((order, index) => (
                     <React.Fragment key={index}>
                         <div className='flex flex-col gap-4 border border-border bg-card shadow-sm rounded-xl p-4 text-sm text-muted-foreground sm:hidden'>

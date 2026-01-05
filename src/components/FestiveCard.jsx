@@ -83,8 +83,8 @@ const FestiveCard = () => {
                 </div>
 
                 {/* Products Section (Right) */}
-                <div className="relative z-10 w-full md:w-2/3 p-6 md:p-8 flex items-center">
-                    <div className="w-full overflow-x-auto pb-4 hide-scrollbar flex gap-4 snap-x snap-mandatory">
+                <div className="relative z-10 w-full md:w-2/3 p-2 md:p-4 flex items-center">
+                    <div className="w-full py-3 overflow-x-auto pb-2 hide-scrollbar flex gap-4 snap-x snap-mandatory">
                         {displayProducts.map((product) => (
                             <Link
                                 to={`/product/${product._id}`}
