@@ -8,6 +8,7 @@ import { RainbowButton } from "@/components/ui/rainbow-button"
 import { User, Heart, Package, MapPin, LogOut, Edit2, LocateFixed, Info, Phone } from 'lucide-react'
 import Wishlist from './Wishlist'
 import Orders from './Orders'
+import Loading from '../components/Loading'
 
 const Login = () => {
 
@@ -184,9 +185,7 @@ const Login = () => {
 
     if (token && !userData) {
         return (
-            <div className="min-h-screen flex items-center justify-center">
-                <div className="w-12 h-12 border-4 border-silk-200 dark:border-gray-800 border-t-silk-900 dark:border-t-green-900 rounded-full animate-spin"></div>
-            </div>
+            <Loading className="min-h-screen" />
         )
     }
 

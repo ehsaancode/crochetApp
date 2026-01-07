@@ -11,8 +11,7 @@ import FestiveCard from '../components/FestiveCard';
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useTheme } from '../context/ThemeContext';
 import Masonry from './uiComponents/Masonry';
-import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import catYarnAnimation from './uiComponents/lottie/Cat playing with yarn.lottie';
+
 
 function Home() {
     const { theme } = useTheme();
@@ -123,13 +122,7 @@ function Home() {
             <section className="py-6 px-0 md:px-6 bg-transparent dark:bg-black/20 overflow-hidden">
                 <div className="max-w-7xl mx-auto">
                     <div className="flex flex-col items-center justify-center gap-3 px-4 md:px-0">
-                        <div className="w-50 mb-4">
-                            <DotLottieReact
-                                src={catYarnAnimation}
-                                loop
-                                autoplay
-                            />
-                        </div>
+
                         <div className="flex flex-row justify-center items-center gap-6 md:gap-16 w-full">
                             {[
                                 { title: 'Secure', icon: Lock },

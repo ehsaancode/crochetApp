@@ -96,7 +96,7 @@ const Festival = ({ token }) => {
         }
     }
 
-    if (loading) return <div className="p-8">Loading...</div>;
+    if (loading) return <div className="p-1">Loading...</div>;
 
     return (
         <div className="bg-card rounded-xl shadow-sm border border-border p-6 w-full max-w-6xl mx-auto my-4">

@@ -8,6 +8,7 @@ import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import girlStichingAnimation from './uiComponents/lottie/Girl stitching YT.lottie';
 import confettiAnimation from './uiComponents/lottie/Confetti.lottie';
 import { useLocation, Link } from 'react-router-dom';
+import Loading from '../components/Loading';
 
 const Orders = ({ compact }) => {
 
@@ -232,9 +233,7 @@ const Orders = ({ compact }) => {
             )}
 
             {loading ? (
-                <div className="flex justify-center items-center h-64">
-                    <div className="w-12 h-12 border-4 border-silk-200 dark:border-gray-800 border-t-silk-900 dark:border-t-green-900 rounded-full animate-spin"></div>
-                </div>
+                <Loading className="h-64" />
             ) : (
                 <>
                     {/* Standard Orders Section */}
@@ -356,13 +355,13 @@ const Orders = ({ compact }) => {
                                                     <div className="flex gap-2">
                                                         <button
                                                             onClick={() => openReviewModal(item._id, item.orderId, item.date)}
-                                                            className='border px-3 py-1.5 text-xs font-medium rounded-sm border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
+                                                            className='border px-3 py-1.5 text-xs font-medium rounded-full border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
                                                         >
                                                             {userReviews.some(r => String(r.orderId) === String(item.orderId) && String(r.productId) === String(item._id)) ? 'View Your Review' : 'Review'}
                                                         </button>
                                                         <button
                                                             onClick={() => downloadInvoice(item)}
-                                                            className='flex items-center justify-center gap-1 border px-3 py-1.5 text-xs font-medium rounded-sm border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all'
+                                                            className='flex items-center justify-center gap-1 border px-3 py-1.5 text-xs font-medium rounded-full border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all'
                                                         >
                                                             <Download className='w-3 h-3' /> Invoice
                                                         </button>
