@@ -9,6 +9,9 @@ const festivalSchema = new mongoose.Schema({
     heroImage: { type: String, default: '' }, // URL (Main decorative image)
     heroWidth: { type: String, default: '12rem' }, // CSS value
     heroWidthDesktop: { type: String, default: '24rem' }, // CSS value for desktop
+    fontColor: { type: String, default: '' }, // Optional overriding font color
+    blurBackground: { type: Boolean, default: false },
+    productCardColor: { type: String, default: '' }, // Optional overriding product card color
     productIds: [{ type: String }], // Array of product IDs to show
     lastUpdated: { type: Date, default: Date.now }
 });

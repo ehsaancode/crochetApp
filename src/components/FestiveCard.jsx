@@ -41,11 +41,16 @@ const FestiveCard = () => {
         : { backgroundColor: config.backgroundColor };
 
     const isLightBg = config.backgroundColor === '#ffffff' || config.backgroundColor.toLowerCase() === '#fff' || config.backgroundColor.toLowerCase() === '#ffffff';
-    const textColorClass = isLightBg ? 'text-gray-900' : 'text-white';
+    // Use config.fontColor if present, else derive from bg
+    const dynamicTextColor = config.fontColor ? { color: config.fontColor } : {};
+    const textColorClass = config.fontColor ? '' : (isLightBg ? 'text-gray-900' : 'text-white');
+
+    const blurClass = (config.blurBackground === true || config.blurBackground === "true") ? 'backdrop-blur-xl' : '';
+    const productCardStyle = config.productCardColor ? { backgroundColor: config.productCardColor } : {};
 
     return (
         /* Main Card Container - No Overflow Hidden to allow image pop-up */
-        <div className="relative w-full shadow-2xl min-h-[400px] md:min-h-[500px] flex flex-col md:flex-row rounded-3xl mb-16">
+        <div className={`relative w-full shadow-2xl min-h-[400px] md:min-h-[500px] flex flex-col md:flex-row rounded-3xl mb-16 ${blurClass}`}>
 
             {/* Background Layer - Clipped */}
             <div className="absolute inset-0 rounded-3xl overflow-hidden z-0" style={bgStyle}>
@@ -66,7 +71,7 @@ const FestiveCard = () => {
             )}
 
             {/* Content Section (Left) */}
-            <div className={`relative z-10 w-full md:w-1/3 p-6 md:p-8 flex flex-col justify-center ${textColorClass}`}>
+            <div className={`relative z-10 w-full md:w-1/3 p-6 md:p-8 flex flex-col justify-center ${textColorClass}`} style={dynamicTextColor}>
                 <h2 className="font-serif text-3xl md:text-4xl font-bold mb-3 leading-tight">
                     {config.name}
                 </h2>
@@ -75,7 +80,7 @@ const FestiveCard = () => {
                         {config.subtitle}
                     </p>
                 )}
-                <Link to="/collection" className={`bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 px-5 py-2.5 rounded-full w-max flex items-center gap-2 transition-all text-sm ${textColorClass}`}>
+                <Link to="/collection" className={`bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 px-5 py-2.5 rounded-full w-max flex items-center gap-2 transition-all text-sm ${textColorClass}`} style={dynamicTextColor}>
                     <span>Explore Collection</span>
                     <ArrowRight className="w-4 h-4" />
                 </Link>
@@ -89,6 +94,7 @@ const FestiveCard = () => {
                             to={`/product/${product._id}`}
                             key={product._id}
                             className="min-w-[140px] md:min-w-[180px] bg-white/95 dark:bg-black/80 backdrop-blur-sm rounded-xl p-3 shadow-lg hover:-translate-y-2 transition-transform duration-300 snap-center group"
+                            style={productCardStyle}
                         >
                             <div className="w-full aspect-[4/5] rounded-lg overflow-hidden mb-3 relative">
                                 <img

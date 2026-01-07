@@ -13,6 +13,9 @@ const Festival = ({ token }) => {
     const [isActive, setIsActive] = useState(false);
     const [heroWidth, setHeroWidth] = useState("12rem");
     const [heroWidthDesktop, setHeroWidthDesktop] = useState("24rem");
+    const [fontColor, setFontColor] = useState("");
+    const [blurBackground, setBlurBackground] = useState(false);
+    const [productCardColor, setProductCardColor] = useState("");
     const [productIds, setProductIds] = useState([]);
 
     const [saving, setSaving] = useState(false);
@@ -36,6 +39,9 @@ const Festival = ({ token }) => {
                 setIsActive(f.isActive);
                 setHeroWidth(f.heroWidth || "12rem");
                 setHeroWidthDesktop(f.heroWidthDesktop || "24rem");
+                setFontColor(f.fontColor || "");
+                setBlurBackground(f.blurBackground || false);
+                setProductCardColor(f.productCardColor || "");
                 setProductIds(f.productIds || []);
                 setExistingHero(f.heroImage);
                 setExistingBg(f.backgroundImage);
@@ -73,6 +79,9 @@ const Festival = ({ token }) => {
             formData.append("isActive", isActive);
             formData.append("heroWidth", heroWidth);
             formData.append("heroWidthDesktop", heroWidthDesktop);
+            formData.append("fontColor", fontColor);
+            formData.append("blurBackground", blurBackground);
+            formData.append("productCardColor", productCardColor);
             formData.append("productIds", JSON.stringify(productIds));
 
             if (heroImage) formData.append("heroImage", heroImage);
@@ -103,15 +112,28 @@ const Festival = ({ token }) => {
             <h2 className='text-xl font-bold mb-6 text-foreground'>Festival Card Configuration</h2>
             <form onSubmit={onSubmitHandler} className='flex flex-col gap-6'>
 
-                <div className="flex gap-4 items-center p-4 bg-muted/30 rounded-lg border border-border">
-                    <input
-                        type="checkbox"
-                        id="isActive"
-                        checked={isActive}
-                        onChange={(e) => setIsActive(e.target.checked)}
-                        className="w-5 h-5 accent-silk-600"
-                    />
-                    <label htmlFor="isActive" className="font-medium cursor-pointer">Activate Festival Card on Home Page</label>
+                <div className="flex flex-col sm:flex-row gap-6">
+                    <div className="flex-1 flex gap-4 items-center p-4 bg-muted/30 rounded-lg border border-border">
+                        <input
+                            type="checkbox"
+                            id="isActive"
+                            checked={isActive}
+                            onChange={(e) => setIsActive(e.target.checked)}
+                            className="w-5 h-5 accent-silk-600"
+                        />
+                        <label htmlFor="isActive" className="font-medium cursor-pointer">Activate Festival Card</label>
+                    </div>
+
+                    <div className="flex-1 flex gap-4 items-center p-4 bg-muted/30 rounded-lg border border-border">
+                        <input
+                            type="checkbox"
+                            id="blurBackground"
+                            checked={blurBackground}
+                            onChange={(e) => setBlurBackground(e.target.checked)}
+                            className="w-5 h-5 accent-silk-600"
+                        />
+                        <label htmlFor="blurBackground" className="font-medium cursor-pointer">Blur Background</label>
+                    </div>
                 </div>
 
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
@@ -129,6 +151,20 @@ const Festival = ({ token }) => {
                             <div className="flex gap-2">
                                 <input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="h-10 w-20 p-1 rounded cursor-pointer" />
                                 <input type="text" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
+                            </div>
+                        </div>
+                        <div>
+                            <p className='mb-2 font-medium'>Font Color (Optional)</p>
+                            <div className="flex gap-2">
+                                <input type="color" value={fontColor || "#000000"} onChange={(e) => setFontColor(e.target.value)} className="h-10 w-20 p-1 rounded cursor-pointer" />
+                                <input type="text" value={fontColor} onChange={(e) => setFontColor(e.target.value)} placeholder="Default (Based on BG)" className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
+                            </div>
+                        </div>
+                        <div>
+                            <p className='mb-2 font-medium'>Product Card Color (Optional)</p>
+                            <div className="flex gap-2">
+                                <input type="color" value={productCardColor || "#ffffff"} onChange={(e) => setProductCardColor(e.target.value)} className="h-10 w-20 p-1 rounded cursor-pointer" />
+                                <input type="text" value={productCardColor} onChange={(e) => setProductCardColor(e.target.value)} placeholder="Default (White/Translucent)" className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
                             </div>
                         </div>
                     </div>
