@@ -339,20 +339,7 @@ function ProductDetail() {
                 </div>
             </div>
 
-            {/* Trust Badges (Static) */}
-            <div className="flex justify-center items-center mt-12 mb-16">
-                <div className="bg-silk-50/90 dark:bg-black/80 backdrop-blur-md px-6 py-2 rounded-full shadow-sm flex items-center gap-6">
-                    <div className="flex items-center space-x-2 text-silk-700 dark:text-silk-300">
-                        <Truck className="w-4 h-4" />
-                        <span className="text-xs font-medium">Free Shipping &gt; ₹150</span>
-                    </div>
-                    <div className="w-px h-4 bg-silk-300 dark:bg-silk-700"></div>
-                    <div className="flex items-center space-x-2 text-silk-700 dark:text-silk-300">
-                        <ShieldCheck className="w-4 h-4" />
-                        <span className="text-xs font-medium">Secure Payment</span>
-                    </div>
-                </div>
-            </div>
+
 
             {/* Related Products Section */}
             {relatedProducts.length > 0 && (
@@ -430,6 +417,20 @@ function ProductDetail() {
                             <p className="text-gray-500 dark:text-gray-400">No reviews yet. Be the first to review this product!</p>
                         </div>
                     )}
+                </div>
+            </div>
+            {/* Trust Badges (Static) */}
+            <div className="flex justify-center items-center mt-12 mb-5">
+                <div className="bg-silk-50/90 dark:bg-black/80 backdrop-blur-md px-6 py-2 rounded-full shadow-sm flex items-center gap-6">
+                    <div className="flex items-center space-x-2 text-silk-700 dark:text-silk-300">
+                        <Truck className="w-4 h-4" />
+                        <span className="text-xs font-medium">Free Shipping &gt; ₹150</span>
+                    </div>
+                    <div className="w-px h-4 bg-silk-300 dark:bg-silk-700"></div>
+                    <div className="flex items-center space-x-2 text-silk-700 dark:text-silk-300">
+                        <ShieldCheck className="w-4 h-4" />
+                        <span className="text-xs font-medium">Secure Payment</span>
+                    </div>
                 </div>
             </div>
             {/* Fullscreen Modal */}
