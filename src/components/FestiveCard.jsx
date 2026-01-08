@@ -30,31 +30,61 @@ const FestiveCard = () => {
         }
     }, [config, products]);
 
-    // Explicitly check boolean true or string "true"
+    // Verify config isActive
     const isActive = config && (config.isActive === true || config.isActive === "true");
 
     if (!config || !isActive) return null;
 
-    // determine bg style
+    // Helper to convert hex to rgba
+    const hexToRgba = (hex, alpha) => {
+        if (!hex) return '#ffffff';
+        let c;
+        if (/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)) {
+            c = hex.substring(1).split('');
+            if (c.length === 3) {
+                c = [c[0], c[0], c[1], c[1], c[2], c[2]];
+            }
+            c = '0x' + c.join('');
+            return 'rgba(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + ',' + alpha + ')';
+        }
+        return hex;
+    }
+
+    const isBlur = (config.blurBackground === true || config.blurBackground === "true");
+
+    // Glassmorphism (Backdrop blur) - applies if no image or if user wants glass effect over color
+    const backdropClass = (isBlur && !config.backgroundImage) ? 'backdrop-blur-xl' : '';
+
+    // Image Blur - applies if there IS an image and blur is requested
+    const imgBlurClass = (isBlur && config.backgroundImage) ? 'blur-2xl scale-110' : '';
+
+    // Handle transparency for Classmorphism (Color only)
+    let finalBackgroundColor = config.backgroundColor || '#ffffff';
+    if (isBlur && !config.backgroundImage) {
+        finalBackgroundColor = hexToRgba(config.backgroundColor, 0.4); // 40% opacity for glass effect
+    }
+
     const bgStyle = config.backgroundImage
         ? { backgroundImage: `url(${config.backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-        : { backgroundColor: config.backgroundColor };
+        : { backgroundColor: finalBackgroundColor };
 
     const isLightBg = config.backgroundColor === '#ffffff' || config.backgroundColor.toLowerCase() === '#fff' || config.backgroundColor.toLowerCase() === '#ffffff';
-    // Use config.fontColor if present, else derive from bg
+
+    // Config Styles
     const dynamicTextColor = config.fontColor ? { color: config.fontColor } : {};
     const textColorClass = config.fontColor ? '' : (isLightBg ? 'text-gray-900' : 'text-white');
 
-    const blurClass = (config.blurBackground === true || config.blurBackground === "true") ? 'backdrop-blur-xl' : '';
     const productCardStyle = config.productCardColor ? { backgroundColor: config.productCardColor } : {};
 
     return (
-        /* Main Card Container - No Overflow Hidden to allow image pop-up */
-        <div className={`relative w-full shadow-2xl min-h-[400px] md:min-h-[500px] flex flex-col md:flex-row rounded-3xl mb-16 ${blurClass}`}>
+        /* Main Card Container */
+        <div className={`relative w-full shadow-2xl min-h-[400px] md:min-h-[500px] flex flex-col md:flex-row rounded-3xl mb-16 ${backdropClass}`}>
 
-            {/* Background Layer - Clipped */}
-            <div className="absolute inset-0 rounded-3xl overflow-hidden z-0" style={bgStyle}>
-                {config.backgroundImage && <div className="absolute inset-0 bg-black/30"></div>}
+            {/* Background Layer Wrapper - Clips the background but allows Hero Image to pop out */}
+            <div className="absolute inset-0 rounded-3xl overflow-hidden z-0">
+                <div className={`w-full h-full transition-all duration-700 ${imgBlurClass}`} style={bgStyle}>
+                    {config.backgroundImage && <div className="absolute inset-0 bg-black/30"></div>}
+                </div>
             </div>
 
             {/* Hero Image - Popping Out (Top Right) */}
@@ -64,19 +94,21 @@ const FestiveCard = () => {
                     alt="Festival"
                     style={{
                         '--mobile-w': config.heroWidth || '12rem',
-                        '--desktop-w': config.heroWidthDesktop || '24rem'
+                        '--desktop-w': config.heroWidthDesktop || '24rem',
+                        top: config.heroTop || '-2.5rem',
+                        right: config.heroRight || '-1.5rem'
                     }}
-                    className="absolute -top-10 -right-6 z-20 object-contain animate-float pointer-events-none w-[var(--mobile-w)] md:w-[var(--desktop-w)]"
+                    className="absolute z-20 object-contain animate-float pointer-events-none w-[var(--mobile-w)] md:w-[var(--desktop-w)]"
                 />
             )}
 
             {/* Content Section (Left) */}
             <div className={`relative z-10 w-full md:w-1/3 p-6 md:p-8 flex flex-col justify-center ${textColorClass}`} style={dynamicTextColor}>
-                <h2 className="font-serif text-3xl md:text-4xl font-bold mb-3 leading-tight">
+                <h2 className="font-serif text-3xl md:text-4xl font-bold mb-3 leading-tight" style={dynamicTextColor}>
                     {config.name}
                 </h2>
                 {config.subtitle && (
-                    <p className="text-base md:text-lg opacity-90 mb-6 font-light tracking-wide">
+                    <p className="text-base md:text-lg opacity-90 mb-6 font-light tracking-wide" style={dynamicTextColor}>
                         {config.subtitle}
                     </p>
                 )}
@@ -93,7 +125,7 @@ const FestiveCard = () => {
                         <Link
                             to={`/product/${product._id}`}
                             key={product._id}
-                            className="min-w-[140px] md:min-w-[180px] bg-white/95 dark:bg-black/80 backdrop-blur-sm rounded-xl p-3 shadow-lg hover:-translate-y-2 transition-transform duration-300 snap-center group"
+                            className={`min-w-[140px] md:min-w-[180px] rounded-xl p-3 shadow-lg hover:-translate-y-2 transition-transform duration-300 snap-center group ${!config.productCardColor ? 'bg-white/95 dark:bg-black/80 backdrop-blur-sm' : ''}`}
                             style={productCardStyle}
                         >
                             <div className="w-full aspect-[4/5] rounded-lg overflow-hidden mb-3 relative">

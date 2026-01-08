@@ -24,7 +24,7 @@ const getFestival = async (req, res) => {
 // Update festival config
 const updateFestival = async (req, res) => {
     try {
-        let { name, subtitle, backgroundColor, productIds, isActive, heroWidth, heroWidthDesktop } = req.body;
+        let { name, subtitle, backgroundColor, productIds, isActive, heroWidth, heroWidthDesktop, fontColor, blurBackground, productCardColor, heroTop, heroRight } = req.body;
 
         let festival = await festivalModel.findOne();
         if (!festival) {
@@ -37,6 +37,13 @@ const updateFestival = async (req, res) => {
         festival.isActive = isActive === 'true' || isActive === true;
         if (heroWidth) festival.heroWidth = heroWidth;
         if (heroWidthDesktop) festival.heroWidthDesktop = heroWidthDesktop;
+
+        // Add missing fields
+        festival.fontColor = fontColor || "";
+        festival.blurBackground = blurBackground === 'true' || blurBackground === true;
+        festival.productCardColor = productCardColor || "";
+        festival.heroTop = heroTop || "-2.5rem";
+        festival.heroRight = heroRight || "-1.5rem";
 
         if (productIds) {
             festival.productIds = JSON.parse(productIds);

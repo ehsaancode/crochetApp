@@ -13,6 +13,8 @@ const Festival = ({ token }) => {
     const [isActive, setIsActive] = useState(false);
     const [heroWidth, setHeroWidth] = useState("12rem");
     const [heroWidthDesktop, setHeroWidthDesktop] = useState("24rem");
+    const [heroTop, setHeroTop] = useState("-2.5rem");
+    const [heroRight, setHeroRight] = useState("-1.5rem");
     const [fontColor, setFontColor] = useState("");
     const [blurBackground, setBlurBackground] = useState(false);
     const [productCardColor, setProductCardColor] = useState("");
@@ -39,6 +41,8 @@ const Festival = ({ token }) => {
                 setIsActive(f.isActive);
                 setHeroWidth(f.heroWidth || "12rem");
                 setHeroWidthDesktop(f.heroWidthDesktop || "24rem");
+                setHeroTop(f.heroTop || "-2.5rem");
+                setHeroRight(f.heroRight || "-1.5rem");
                 setFontColor(f.fontColor || "");
                 setBlurBackground(f.blurBackground || false);
                 setProductCardColor(f.productCardColor || "");
@@ -79,6 +83,8 @@ const Festival = ({ token }) => {
             formData.append("isActive", isActive);
             formData.append("heroWidth", heroWidth);
             formData.append("heroWidthDesktop", heroWidthDesktop);
+            formData.append("heroTop", heroTop);
+            formData.append("heroRight", heroRight);
             formData.append("fontColor", fontColor);
             formData.append("blurBackground", blurBackground);
             formData.append("productCardColor", productCardColor);
@@ -192,6 +198,14 @@ const Festival = ({ token }) => {
                                     <p className='mb-1 text-sm font-medium'>Desktop Width</p>
                                     <input value={heroWidthDesktop} onChange={(e) => setHeroWidthDesktop(e.target.value)} className='w-full px-3 py-1.5 rounded-lg border border-border bg-input' placeholder="24rem" />
                                 </div>
+                                <div>
+                                    <p className='mb-1 text-sm font-medium'>Top Position</p>
+                                    <input value={heroTop} onChange={(e) => setHeroTop(e.target.value)} className='w-full px-3 py-1.5 rounded-lg border border-border bg-input' placeholder="-2.5rem" />
+                                </div>
+                                <div>
+                                    <p className='mb-1 text-sm font-medium'>Right Position</p>
+                                    <input value={heroRight} onChange={(e) => setHeroRight(e.target.value)} className='w-full px-3 py-1.5 rounded-lg border border-border bg-input' placeholder="-1.5rem" />
+                                </div>
                             </div>
                         </div>
                         <div>
@@ -253,8 +267,8 @@ const Festival = ({ token }) => {
                         'Save Configuration'
                     )}
                 </button>
-            </form>
-        </div>
+            </form >
+        </div >
     )
 }
 
