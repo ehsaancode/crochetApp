@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useDrag } from '@use-gesture/react';
-import { useParams, Link } from 'react-router-dom';
+import { useParams, Link, useLocation } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, Maximize2, X, Check } from 'lucide-react';
 import QToast from './uiComponents/QToast';
@@ -14,11 +14,12 @@ function ProductDetail() {
     const [size, setSize] = useState("");
     const [color, setColor] = useState("");
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const location = useLocation();
 
     const handleBuyNow = () => {
         if (!token) {
             QToast.error('Please login to buy products', { position: "top-center" });
-            navigate('/login');
+            navigate('/account', { state: { from: location } });
             return;
         }
 
@@ -304,7 +305,7 @@ function ProductDetail() {
                                 onClick={() => {
                                     if (!token) {
                                         QToast.error('Please login to add items to cart', { position: "top-center" });
-                                        navigate('/login');
+                                        navigate('/account', { state: { from: location } });
                                         return;
                                     }
 

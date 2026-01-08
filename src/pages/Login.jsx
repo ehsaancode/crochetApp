@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext'
 import axios from 'axios'
 import QToast from './uiComponents/QToast'
@@ -13,6 +13,7 @@ import Loading from '../components/Loading'
 const Login = () => {
 
     const { token, setToken, navigate, backendUrl } = useContext(ShopContext);
+    const location = useLocation();
 
     const [currentState, setCurrentState] = useState('Login');
     const [userData, setUserData] = useState(null);
@@ -52,7 +53,12 @@ const Login = () => {
                     setToken(response.data.token);
                     localStorage.setItem('token', response.data.token);
                     QToast.success("Account created successfully", { position: "top-center" });
-                    fetchUserProfile(response.data.token);
+
+                    if (location.state?.from) {
+                        navigate(location.state.from);
+                    } else {
+                        fetchUserProfile(response.data.token);
+                    }
                 } else {
                     QToast.error(response.data.message, { position: "top-right" });
                 }
@@ -62,7 +68,12 @@ const Login = () => {
                     setToken(response.data.token);
                     localStorage.setItem('token', response.data.token);
                     QToast.success("Logged in successfully", { position: "bottom" });
-                    fetchUserProfile(response.data.token);
+
+                    if (location.state?.from) {
+                        navigate(location.state.from);
+                    } else {
+                        fetchUserProfile(response.data.token);
+                    }
                 } else {
                     QToast.error(response.data.message, { position: "bottom" });
                 }

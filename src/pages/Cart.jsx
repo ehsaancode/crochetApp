@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import { Trash2 } from 'lucide-react'
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import CartTotal from '../components/CartTotal';
 import { RainbowButton } from "../components/ui/rainbow-button";
 import QToast from './uiComponents/QToast';
@@ -19,6 +19,7 @@ const Cart = () => {
     const playCountRef = React.useRef(0);
     const timeoutRef = React.useRef(null);
     const routerNavigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
         if (dotLottie) {
@@ -152,7 +153,7 @@ const Cart = () => {
                             <RainbowButton onClick={() => {
                                 if (!token) {
                                     QToast.error('Please login to checkout', { position: "top-center" });
-                                    navigate('/login');
+                                    navigate('/account', { state: { from: location } });
                                     return;
                                 }
                                 routerNavigate('/place-order');
