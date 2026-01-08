@@ -112,10 +112,12 @@ const FestiveCard = () => {
                         {config.subtitle}
                     </p>
                 )}
-                <Link to="/collection" className={`bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 px-5 py-2.5 rounded-full w-max flex items-center gap-2 transition-all text-sm ${textColorClass}`} style={dynamicTextColor}>
-                    <span>Explore Collection</span>
-                    <ArrowRight className="w-4 h-4" />
-                </Link>
+                {config.showButton !== false && (
+                    <Link to="/collection" className={`bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 px-5 py-2.5 rounded-full w-max flex items-center gap-2 transition-all text-sm ${textColorClass}`} style={dynamicTextColor}>
+                        <span>Explore Collection</span>
+                        <ArrowRight className="w-4 h-4" />
+                    </Link>
+                )}
             </div>
 
             {/* Products Section (Right) */}

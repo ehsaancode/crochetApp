@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { backendUrl } from '../config'
 import QToast from '../components/QToast'
-import { Upload, X, Check, Loader2 } from 'lucide-react'
+import { Upload, X, Check, Loader2, Trash2 } from 'lucide-react'
 
 const Festival = ({ token }) => {
     const [name, setName] = useState("");
@@ -17,6 +17,7 @@ const Festival = ({ token }) => {
     const [heroRight, setHeroRight] = useState("-1.5rem");
     const [fontColor, setFontColor] = useState("");
     const [blurBackground, setBlurBackground] = useState(false);
+    const [showButton, setShowButton] = useState(true);
     const [productCardColor, setProductCardColor] = useState("");
     const [productIds, setProductIds] = useState([]);
 
@@ -25,6 +26,9 @@ const Festival = ({ token }) => {
 
     const [existingHero, setExistingHero] = useState("");
     const [existingBg, setExistingBg] = useState("");
+
+    const [deleteHeroImage, setDeleteHeroImage] = useState(false);
+    const [deleteBackgroundImage, setDeleteBackgroundImage] = useState(false);
 
     const [allProducts, setAllProducts] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -45,6 +49,7 @@ const Festival = ({ token }) => {
                 setHeroRight(f.heroRight || "-1.5rem");
                 setFontColor(f.fontColor || "");
                 setBlurBackground(f.blurBackground || false);
+                setShowButton(f.showButton !== false); // Default true if undefined
                 setProductCardColor(f.productCardColor || "");
                 setProductIds(f.productIds || []);
                 setExistingHero(f.heroImage);
@@ -87,11 +92,15 @@ const Festival = ({ token }) => {
             formData.append("heroRight", heroRight);
             formData.append("fontColor", fontColor);
             formData.append("blurBackground", blurBackground);
+            formData.append("showButton", showButton);
             formData.append("productCardColor", productCardColor);
             formData.append("productIds", JSON.stringify(productIds));
 
             if (heroImage) formData.append("heroImage", heroImage);
             if (backgroundImage) formData.append("backgroundImage", backgroundImage);
+
+            formData.append("deleteHeroImage", deleteHeroImage);
+            formData.append("deleteBackgroundImage", deleteBackgroundImage);
 
             const response = await axios.post(backendUrl + '/api/festival/update', formData, { headers: { token } });
             if (response.data.success) {
@@ -99,6 +108,8 @@ const Festival = ({ token }) => {
                 fetchData(); // Refresh to show new images
                 setHeroImage(false);
                 setBackgroundImage(false);
+                setDeleteHeroImage(false);
+                setDeleteBackgroundImage(false);
                 setTimeout(() => setSaveSuccess(false), 3000);
             } else {
                 QToast.error(response.data.message);
@@ -140,6 +151,17 @@ const Festival = ({ token }) => {
                         />
                         <label htmlFor="blurBackground" className="font-medium cursor-pointer">Blur Background</label>
                     </div>
+
+                    <div className="flex-1 flex gap-4 items-center p-4 bg-muted/30 rounded-lg border border-border">
+                        <input
+                            type="checkbox"
+                            id="showButton"
+                            checked={showButton}
+                            onChange={(e) => setShowButton(e.target.checked)}
+                            className="w-5 h-5 accent-silk-600"
+                        />
+                        <label htmlFor="showButton" className="font-medium cursor-pointer">Show "View Collection" Button</label>
+                    </div>
                 </div>
 
                 <div className='grid grid-cols-1 lg:grid-cols-2 gap-8'>
@@ -177,7 +199,7 @@ const Festival = ({ token }) => {
 
                     <div className="flex flex-col gap-6">
                         <div>
-                            <p className='mb-2 font-medium'>Hero Image (Main Graphic)</p>
+                            <p className='mb-2 font-medium'>Floating Image (Optional)</p>
                             <div className="flex gap-4 items-end">
                                 <label htmlFor="hero" className="w-24 h-24 border-2 border-dashed border-border flex items-center justify-center cursor-pointer bg-muted/30 rounded-lg hover:bg-muted/60 relative overflow-hidden">
                                     {heroImage ? (
@@ -185,9 +207,32 @@ const Festival = ({ token }) => {
                                     ) : existingHero ? (
                                         <img src={existingHero} className="w-full h-full object-cover" />
                                     ) : <Upload className="text-muted-foreground" />}
-                                    <input type="file" id="hero" hidden onChange={(e) => setHeroImage(e.target.files[0])} />
+                                    <input type="file" id="hero" hidden onChange={(e) => { setHeroImage(e.target.files[0]); setDeleteHeroImage(false); }} />
                                 </label>
-                                {existingHero && !heroImage && <span className="text-xs text-muted-foreground">Current Image</span>}
+                                {(existingHero || heroImage) && (
+                                    <div className="flex flex-col gap-2">
+                                        {existingHero && !heroImage && !deleteHeroImage && (
+                                            <button
+                                                type="button"
+                                                onClick={() => { setDeleteHeroImage(true); setExistingHero(""); }}
+                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                title="Delete Current Image"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        )}
+                                        {heroImage && (
+                                            <button
+                                                type="button"
+                                                onClick={() => { setHeroImage(false); }}
+                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                title="Remove Selected"
+                                            >
+                                                <X className="w-5 h-5" />
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                             <div className="mt-4 grid grid-cols-2 gap-4">
                                 <div>
@@ -217,9 +262,32 @@ const Festival = ({ token }) => {
                                     ) : existingBg ? (
                                         <img src={existingBg} className="w-full h-full object-cover" />
                                     ) : <Upload className="text-muted-foreground" />}
-                                    <input type="file" id="bg" hidden onChange={(e) => setBackgroundImage(e.target.files[0])} />
+                                    <input type="file" id="bg" hidden onChange={(e) => { setBackgroundImage(e.target.files[0]); setDeleteBackgroundImage(false); }} />
                                 </label>
-                                {existingBg && !backgroundImage && <span className="text-xs text-muted-foreground">Current Image</span>}
+                                {(existingBg || backgroundImage) && (
+                                    <div className="flex flex-col gap-2">
+                                        {existingBg && !backgroundImage && !deleteBackgroundImage && (
+                                            <button
+                                                type="button"
+                                                onClick={() => { setDeleteBackgroundImage(true); setExistingBg(""); }}
+                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                title="Delete Current Image"
+                                            >
+                                                <Trash2 className="w-5 h-5" />
+                                            </button>
+                                        )}
+                                        {backgroundImage && (
+                                            <button
+                                                type="button"
+                                                onClick={() => { setBackgroundImage(false); }}
+                                                className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                title="Remove Selected"
+                                            >
+                                                <X className="w-5 h-5" />
+                                            </button>
+                                        )}
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>

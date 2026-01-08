@@ -24,7 +24,7 @@ const getFestival = async (req, res) => {
 // Update festival config
 const updateFestival = async (req, res) => {
     try {
-        let { name, subtitle, backgroundColor, productIds, isActive, heroWidth, heroWidthDesktop, fontColor, blurBackground, productCardColor, heroTop, heroRight } = req.body;
+        let { name, subtitle, backgroundColor, productIds, isActive, heroWidth, heroWidthDesktop, fontColor, blurBackground, productCardColor, heroTop, heroRight, deleteHeroImage, deleteBackgroundImage, showButton } = req.body;
 
         let festival = await festivalModel.findOne();
         if (!festival) {
@@ -41,6 +41,7 @@ const updateFestival = async (req, res) => {
         // Add missing fields
         festival.fontColor = fontColor || "";
         festival.blurBackground = blurBackground === 'true' || blurBackground === true;
+        festival.showButton = showButton === 'true' || showButton === true;
         festival.productCardColor = productCardColor || "";
         festival.heroTop = heroTop || "-2.5rem";
         festival.heroRight = heroRight || "-1.5rem";
@@ -49,7 +50,15 @@ const updateFestival = async (req, res) => {
             festival.productIds = JSON.parse(productIds);
         }
 
-        // Handle Image Uploads
+        // Handle Image Deletion (Explicit delete request)
+        if (deleteHeroImage === 'true' || deleteHeroImage === true) {
+            festival.heroImage = '';
+        }
+        if (deleteBackgroundImage === 'true' || deleteBackgroundImage === true) {
+            festival.backgroundImage = '';
+        }
+
+        // Handle Image Uploads (Overrides deletion if new image provided)
         const getUrl = (file) => {
             // If using Cloudinary or other remote storage, path is the full URL
             if (file.path && file.path.startsWith('http')) {
