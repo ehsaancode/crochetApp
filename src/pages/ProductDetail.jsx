@@ -48,9 +48,18 @@ function ProductDetail() {
         })
     }
 
+    const [relatedProducts, setRelatedProducts] = useState([]);
+
     useEffect(() => {
         fetchProductData();
     }, [id, products])
+
+    useEffect(() => {
+        if (product && products.length > 0) {
+            const related = products.filter(item => item.category === product.category && item._id !== product._id);
+            setRelatedProducts(related.slice(0, 5));
+        }
+    }, [product, products]);
 
     const isInWishlist = userData?.wishlist?.some(item => item.productId === product?._id);
 
@@ -344,6 +353,32 @@ function ProductDetail() {
                     </div>
                 </div>
             </div>
+
+            {/* Related Products Section */}
+            {relatedProducts.length > 0 && (
+                <div className="mt-20 border-t border-gray-100 dark:border-gray-800 pt-16">
+                    <h2 className="text-2xl font-serif text-silk-900 dark:text-white mb-8 text-center">You May Also Like</h2>
+                    <div className="flex gap-4 overflow-x-auto pb-8 hide-scrollbar snap-x snap-mandatory px-4 md:justify-center">
+                        {relatedProducts.map((item) => (
+                            <Link
+                                to={`/product/${item._id}`}
+                                key={item._id}
+                                className="min-w-[140px] md:min-w-[180px] max-w-[180px] snap-center group block bg-white dark:bg-white/5 p-3 rounded-xl shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-md transition-all"
+                            >
+                                <div className="relative aspect-[4/5] rounded-lg overflow-hidden mb-3 bg-gray-100 dark:bg-gray-800">
+                                    <img
+                                        src={item.image[0]}
+                                        alt={item.name}
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    />
+                                </div>
+                                <h3 className="font-medium text-sm text-silk-900 dark:text-white truncate font-serif mb-1">{item.name}</h3>
+                                <p className="text-xs text-silk-500 dark:text-silk-400 font-medium">₹{item.price}</p>
+                            </Link>
+                        ))}
+                    </div>
+                </div>
+            )}
 
             {/* Reviews Section */}
             <div className="mt-20">
