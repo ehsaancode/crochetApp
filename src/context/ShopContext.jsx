@@ -25,6 +25,10 @@ const ShopContextProvider = (props) => {
         return saved ? JSON.parse(saved) : null;
     });
     const [orderCount, setOrderCount] = useState(0);
+    const [recentlyViewed, setRecentlyViewed] = useState(() => {
+        const saved = localStorage.getItem('recentlyViewed');
+        return saved ? JSON.parse(saved) : [];
+    });
 
     const getProductsData = async () => {
         try {
@@ -328,6 +332,15 @@ const ShopContextProvider = (props) => {
         }
     }
 
+    const addToRecentlyViewed = (productId) => {
+        setRecentlyViewed(prev => {
+            const temp = prev.filter(id => id !== productId); // Remove if exists to move to top
+            const updated = [productId, ...temp].slice(0, 10); // Keep max 10
+            localStorage.setItem('recentlyViewed', JSON.stringify(updated));
+            return updated;
+        });
+    }
+
     const navigate = useNavigate();
 
     const [shippingFee, setShippingFee] = useState(null);
@@ -343,7 +356,8 @@ const ShopContextProvider = (props) => {
         userData, setUserData, fetchUserProfile,
         addToWishlist, removeFromWishlist, requestProduct,
         getProductsData,
-        setShippingFee, orderCount, getOrderCount
+        setShippingFee, orderCount, getOrderCount,
+        recentlyViewed, addToRecentlyViewed
     }
 
     return (

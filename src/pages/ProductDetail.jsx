@@ -7,7 +7,7 @@ import QToast from './uiComponents/QToast';
 
 function ProductDetail() {
     const { id } = useParams();
-    const { products, addToCart, userData, addToWishlist, removeFromWishlist, navigate, token } = useContext(ShopContext);
+    const { products, addToCart, userData, addToWishlist, removeFromWishlist, navigate, token, addToRecentlyViewed } = useContext(ShopContext);
     const [product, setProduct] = useState(null)
     const [activeImage, setActiveImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
@@ -41,6 +41,7 @@ function ProductDetail() {
         products.map((item) => {
             if (item._id === id) {
                 setProduct(item)
+                addToRecentlyViewed(item._id); // Add to recently viewed
                 setActiveImage(0);
                 if (item.defaultSize && item.sizes.includes(item.defaultSize)) {
                     setSize(item.defaultSize);
