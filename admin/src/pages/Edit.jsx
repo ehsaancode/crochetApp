@@ -61,18 +61,18 @@ const Edit = ({ token }) => {
             const response = await axios.post(backendUrl + '/api/product/single', { productId: id })
             if (response.data.success) {
                 const product = response.data.product;
-                setName(product.name);
+                setName(product.name || "");
                 setDescription(product.description || ""); // Fallback for safety
-                setPrice(product.price);
+                setPrice(product.price || "");
                 setShippingFee(product.shippingFee || 100);
-                setCategory(product.category);
-                setSubCategory(product.subCategory);
-                setBestseller(product.bestseller);
-                setSizes(product.sizes);
+                setCategory(product.category || "Men");
+                setSubCategory(product.subCategory || "Topwear");
+                setBestseller(product.bestseller || false);
+                setSizes(product.sizes || []);
                 setSizePrices(product.sizePrices || {});
                 setDefaultSize(product.defaultSize || "");
                 if (product.colors) setColors(product.colors);
-                setOldImages(product.image); // Array of URLs
+                setOldImages(product.image || []); // Array of URLs, ensure not null
             } else {
                 QToast.error(response.data.message, { position: "top-right" })
             }

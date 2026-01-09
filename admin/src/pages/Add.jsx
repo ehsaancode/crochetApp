@@ -95,18 +95,25 @@ const Add = ({ token }) => {
             const response = await axios.post(backendUrl + '/api/product/single', { productId: id })
             if (response.data.success) {
                 const product = response.data.product;
-                setName(product.name);
+                setName(product.name || "");
                 setDescription(product.description || "");
                 // setPrice(product.price); // Price handled via sizePrices mainly or hidden
                 setShippingFee(product.shippingFee || 100);
-                setCategory(product.category);
-                setSubCategory(product.subCategory);
-                setBestseller(product.bestseller);
-                setSizes(product.sizes);
+
+                // Ensure category exists in list, else default to "Men"
+                const initialCategory = product.category && categoryList[product.category] ? product.category : "Men";
+                setCategory(initialCategory);
+
+                // Ensure subcategory is valid or pick first available
+                const initialSubCat = product.subCategory || "";
+                setSubCategory(initialSubCat);
+
+                setBestseller(product.bestseller || false);
+                setSizes(product.sizes || []);
                 setSizePrices(product.sizePrices || {});
                 setDefaultSize(product.defaultSize || "");
                 if (product.colors) setColors(product.colors);
-                setOldImages(product.image); // Array of URLs
+                setOldImages(product.image || []); // Array of URLs
                 setProductId(product._id); // Show ID
             } else {
                 QToast.error(response.data.message, { position: "top-right" })
@@ -354,7 +361,7 @@ const Add = ({ token }) => {
                                     value={subCategory}
                                     className='w-full px-4 py-2.5 rounded-lg border border-border bg-input focus:outline-none focus:ring-2 focus:ring-silk-400 transition-all cursor-pointer dark:bg-black dark:text-white'
                                 >
-                                    {Object.keys(categoryList[category]).map(group => (
+                                    {categoryList[category] && Object.keys(categoryList[category]).map(group => (
                                         <optgroup key={group} label={group} className="text-silk-700 font-bold bg-silk-50/50 dark:text-silk-400 dark:bg-gray-800">
                                             {categoryList[category][group].map(sub => (
                                                 <option key={sub} value={sub} className="text-foreground bg-white font-normal pl-4 dark:bg-black dark:text-white">{sub}</option>
