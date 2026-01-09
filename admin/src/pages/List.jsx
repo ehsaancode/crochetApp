@@ -4,13 +4,16 @@ import axios from 'axios'
 import QToast from '../components/QToast'
 import { X, Pencil } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import Loading from '../components/Loading'
 
 const List = ({ token }) => {
 
     const navigate = useNavigate();
     const [list, setList] = useState([])
+    const [loading, setLoading] = useState(true)
 
     const fetchList = async () => {
+        setLoading(true)
         try {
             const response = await axios.get(backendUrl + '/api/product/list')
             if (response.data.success) {
@@ -22,6 +25,8 @@ const List = ({ token }) => {
         } catch (error) {
             console.log(error);
             QToast.error(error.message, { position: "top-right" })
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -43,6 +48,10 @@ const List = ({ token }) => {
     useEffect(() => {
         fetchList()
     }, [])
+
+    if (loading) {
+        return <Loading />
+    }
 
     return (
         <div className="w-full max-w-7xl mx-auto p-4">

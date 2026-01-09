@@ -3,6 +3,7 @@ import axios from 'axios'
 import { backendUrl } from '../config' // Correct import path based on sibling pages
 import QToast from '../components/QToast'
 import { User, ShoppingBag, Heart, ChevronDown, ChevronUp } from 'lucide-react'
+import Loading from '../components/Loading'
 
 const Users = ({ token }) => {
     const [users, setUsers] = useState([])
@@ -37,6 +38,10 @@ const Users = ({ token }) => {
     useEffect(() => {
         fetchData()
     }, [token])
+
+    if (loading) {
+        return <Loading />
+    }
 
     return (
         <div className='w-full p-4'>

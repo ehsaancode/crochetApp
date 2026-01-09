@@ -5,14 +5,18 @@ import axios from 'axios'
 import { backendUrl } from '../config'
 import QToast from '../components/QToast'
 import { Package } from 'lucide-react'
+import Loading from '../components/Loading'
 
 const Orders = ({ token }) => {
 
     const [orders, setOrders] = useState([])
+    const [loading, setLoading] = useState(true)
+
     const fetchAllOrders = async () => {
         if (!token) {
             return null;
         }
+        setLoading(true)
         try {
             const response = await axios.post(backendUrl + '/api/order/list', {}, { headers: { token } })
             if (response.data.success) {
@@ -22,6 +26,8 @@ const Orders = ({ token }) => {
             }
         } catch (error) {
             QToast.error(error.message, { position: "top-right" })
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -40,6 +46,10 @@ const Orders = ({ token }) => {
     useEffect(() => {
         fetchAllOrders()
     }, [token])
+
+    if (loading) {
+        return <Loading />
+    }
 
     return (
         <div className="w-full max-w-7xl mx-auto p-4">
