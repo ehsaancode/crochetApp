@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User, Package, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -20,6 +20,8 @@ import { ShopContext } from './context/ShopContext';
 import QToast from './pages/uiComponents/QToast';
 import ScrollToTop from './components/ScrollToTop';
 import SearchBar from './components/SearchBar';
+import { preloadAsset } from './utils/animationCache';
+import catAnimationUrl from './pages/uiComponents/lottie/Cat playing with yarn.lottie';
 
 
 function Navigation() {
@@ -162,6 +164,10 @@ function Navigation() {
 
 
 function App() {
+    useEffect(() => {
+        preloadAsset(catAnimationUrl);
+    }, []);
+
     // State moved to ShopContext
 
     return (

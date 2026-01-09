@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext, useRef } from 'react';
 import { ShoppingBag, Filter, X, Star, Heart, Search } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
+import Loading from '../components/Loading';
 
 function Collection() {
     const { products, userData, addToWishlist, removeFromWishlist, search, setSearch, showSearch, setShowSearch } = useContext(ShopContext);
@@ -18,6 +19,10 @@ function Collection() {
     const [priceRange, setPriceRange] = useState(2000);
     const [isScrolled, setIsScrolled] = useState(false);
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
+
+    const [isLoadingMore, setIsLoadingMore] = useState(false);
+    const observerRef = useRef(null);
+    const [filterProducts, setFilterProducts] = useState([]);
 
     // Initialize from storage if available
     const [visibleProducts, setVisibleProducts] = useState(() => {
@@ -63,13 +68,32 @@ function Collection() {
     }
 
     const handleLoadMore = () => {
-        setVisibleProducts(prev => prev + 12);
+        setIsLoadingMore(true);
+        setTimeout(() => {
+            setVisibleProducts(prev => prev + 12);
+            setIsLoadingMore(false);
+        }, 1500);
     };
+
+    useEffect(() => {
+        const observer = new IntersectionObserver((entries) => {
+            const first = entries[0];
+            if (first.isIntersecting && visibleProducts < filterProducts.length && !isLoadingMore) {
+                handleLoadMore();
+            }
+        });
+
+        if (observerRef.current) observer.observe(observerRef.current);
+
+        return () => {
+            if (observerRef.current) observer.unobserve(observerRef.current);
+        };
+    }, [visibleProducts, filterProducts.length, isLoadingMore]);
 
     const isInWishlist = (id) => userData?.wishlist?.some(item => item.productId === id);
 
 
-    const [filterProducts, setFilterProducts] = useState([]);
+
 
     const applyFilter = () => {
         let productsCopy = products.slice();
@@ -324,13 +348,8 @@ function Collection() {
                 </div>
 
                 {visibleProducts < filterProducts.length && (
-                    <div className="flex justify-center mt-12">
-                        <button
-                            onClick={handleLoadMore}
-                            className="px-8 py-3 bg-silk-900 dark:bg-white text-white dark:text-black font-medium rounded-full hover:bg-silk-800 dark:hover:bg-gray-200 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-                        >
-                            Load More
-                        </button>
+                    <div ref={observerRef} className="mt-8">
+                        <Loading className="h-40" />
                     </div>
                 )}
             </div>
