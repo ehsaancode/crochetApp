@@ -1,6 +1,6 @@
 import React, { useState, useContext } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User, Package } from 'lucide-react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
+import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User, Package, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 import Home from './pages/Home';
@@ -19,13 +19,15 @@ import ThemeToggle from './components/ThemeToggle';
 import { ShopContext } from './context/ShopContext';
 import QToast from './pages/uiComponents/QToast';
 import ScrollToTop from './components/ScrollToTop';
+import SearchBar from './components/SearchBar';
 
 
 function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
 
-    const { getCartCount, userData, orderCount } = useContext(ShopContext);
+    const { getCartCount, userData, orderCount, showSearch, setShowSearch } = useContext(ShopContext);
+    const navigate = useNavigate();
 
     return (
         <>
@@ -65,13 +67,23 @@ function Navigation() {
                 </div>
             </div>
 
-            <header className="fixed top-0 left-0 w-full bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark backdrop-blur-sm z-40 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
+            <header className="fixed top-0 left-0 w-full bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark backdrop-blur-sm z-50 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
-                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="font-serif text-2xl tracking-tight text-silk-900 dark:text-white absolute left-1/2 -translate-x-1/2 group flex items-center justify-center gap-2">
+                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`font-serif text-2xl tracking-tight text-silk-900 dark:text-white group flex items-center justify-center gap-2 absolute top-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out z-50 ${showSearch ? 'left-4 translate-x-0' : 'left-1/2 -translate-x-1/2'}`}>
                         Aalaboo
                     </Link>
+
+                    <AnimatePresence>
+                        {showSearch && <SearchBar />}
+                    </AnimatePresence>
                     <nav className="flex items-center space-x-2 ml-auto">
+
+                        {!showSearch && (
+                            <button onClick={() => setShowSearch(true)} className="p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200">
+                                <Search className="w-5 h-5 text-silk-900 dark:text-white" strokeWidth={1.5} />
+                            </button>
+                        )}
                         <ThemeToggle />
                         <Link to="/wishlist" className="p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
                             <Heart className="w-5 h-5 text-silk-900 dark:text-white" strokeWidth={1.5} />

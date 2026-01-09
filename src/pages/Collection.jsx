@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 
 function Collection() {
-    const { products, userData, addToWishlist, removeFromWishlist } = useContext(ShopContext);
+    const { products, userData, addToWishlist, removeFromWishlist, search, setSearch, showSearch, setShowSearch } = useContext(ShopContext);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
 
     const isVideo = (url) => {
@@ -17,9 +17,7 @@ function Collection() {
     const [reviews, setReviews] = useState([]);
     const [priceRange, setPriceRange] = useState(2000);
     const [isScrolled, setIsScrolled] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearchQuery, setDebouncedSearchQuery] = useState('');
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
 
     // Initialize from storage if available
     const [visibleProducts, setVisibleProducts] = useState(() => {
@@ -30,13 +28,13 @@ function Collection() {
     // Debounce Search Query
     useEffect(() => {
         const handler = setTimeout(() => {
-            setDebouncedSearchQuery(searchQuery);
+            setDebouncedSearchQuery(search);
         }, 500);
 
         return () => {
             clearTimeout(handler);
         };
-    }, [searchQuery]);
+    }, [search]);
 
     const toggleCategory = (e) => {
         if (category.includes(e.target.value)) {
@@ -159,49 +157,18 @@ function Collection() {
     return (
         <div className="pt-20 pb-12 px-4 max-w-7xl mx-auto flex flex-col md:flex-row gap-8">
             {/* Mobile Filter Toggle */}
-            {/* Mobile Filter & Search Toggle */}
-            <div className="md:hidden sticky top-24 z-40 flex gap-3 mb-4 transition-all duration-700 ease-in-out w-full justify-between">
+            {/* Mobile Filter Toggle */}
+            <div className="md:hidden sticky top-24 z-40 flex mb-4 transition-all duration-700 ease-in-out w-full justify-start">
                 <button
                     onClick={() => setIsFilterOpen(true)}
-                    className={`flex items-center justify-center text-silk-900 dark:text-white font-medium shadow-lg overflow-hidden transition-all duration-700 ease-in-out ${isSearchOpen
-                        ? 'w-10 h-10 rounded-full bg-silk-100/50 dark:bg-black/50 backdrop-blur-md'
-                        : (isScrolled
-                            ? 'px-6 py-2 rounded-full bg-silk-100/50 dark:bg-black/50 backdrop-blur-md hover:bg-silk-200/50 dark:hover:bg-gray-900/50 space-x-2'
-                            : 'flex-1 justify-center p-3 rounded-full bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-silk-200 dark:hover:bg-gray-800 space-x-2')
+                    className={`flex items-center justify-center text-silk-900 dark:text-white font-medium shadow-lg overflow-hidden transition-all duration-700 ease-in-out ${isScrolled
+                        ? 'w-32 py-2 rounded-full bg-silk-100/50 dark:bg-black/50 backdrop-blur-md hover:bg-silk-200/50 dark:hover:bg-gray-900/50 space-x-2'
+                        : 'w-full py-3 rounded-full bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-silk-200 dark:hover:bg-gray-800 space-x-2'
                         }`}
                 >
                     <Filter className="w-5 h-5" />
-                    {!isSearchOpen && (
-                        <span className={`transition-all duration-300 ${isSearchOpen ? 'w-0 opacity-0' : 'w-auto opacity-100'}`}>Filters</span>
-                    )}
+                    <span>Filters</span>
                 </button>
-
-                {isSearchOpen ? (
-                    <div className="flex-1 h-10 md:h-12 bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm rounded-full shadow-lg flex items-center px-4 transition-all duration-500 origin-right">
-                        <Search className="w-4 h-4 text-silk-500 mr-2" />
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            value={searchQuery}
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                            autoFocus
-                            className="bg-transparent border-none outline-none text-silk-900 dark:text-white w-full text-base placeholder:text-silk-400"
-                        />
-                        <button onClick={() => { setIsSearchOpen(false); setSearchQuery(''); }} className="ml-2 text-silk-500 hover:text-silk-900 dark:hover:text-white">
-                            <X className="w-4 h-4" />
-                        </button>
-                    </div>
-                ) : (
-                    <button
-                        onClick={() => setIsSearchOpen(true)}
-                        className={`flex items-center justify-center text-silk-900 dark:text-white shadow-lg transition-all duration-700 ease-in-out ${isScrolled
-                            ? 'w-10 h-10 rounded-full bg-silk-100/50 dark:bg-black/50 backdrop-blur-md hover:bg-silk-200/50 dark:hover:bg-gray-900/50'
-                            : 'w-12 rounded-full bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-silk-200 dark:hover:bg-gray-800'
-                            }`}
-                    >
-                        <Search className="w-5 h-5" />
-                    </button>
-                )}
             </div>
 
             {/* Sidebar Filters */}
