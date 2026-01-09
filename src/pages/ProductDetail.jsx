@@ -2,7 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import { useDrag } from '@use-gesture/react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
-import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, Maximize2, X, Check } from 'lucide-react';
+import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, Maximize2, X, Check, Loader2 } from 'lucide-react';
 import QToast from './uiComponents/QToast';
 
 function ProductDetail() {
@@ -14,6 +14,8 @@ function ProductDetail() {
     const [size, setSize] = useState("");
     const [color, setColor] = useState("");
     const [isFullscreen, setIsFullscreen] = useState(false);
+    const [isAdding, setIsAdding] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
     const location = useLocation();
 
     const handleBuyNow = () => {
@@ -311,7 +313,7 @@ function ProductDetail() {
                                 Buy Now
                             </button>
                             <button
-                                onClick={() => {
+                                onClick={async () => {
                                     if (!token) {
                                         QToast.error('Please login to add items to cart', { position: "top-center" });
                                         navigate('/account', { state: { from: location } });
@@ -326,12 +328,32 @@ function ProductDetail() {
                                         QToast.error('Select Product Color', { position: "top-center" });
                                         return;
                                     }
-                                    addToCart(product._id, size, quantity);
+
+                                    setIsAdding(true);
+                                    await addToCart(product._id, size, quantity);
+                                    setIsAdding(false);
+                                    setShowSuccess(true);
+                                    setTimeout(() => setShowSuccess(false), 2000);
                                 }}
-                                className="w-full border border-silk-300 dark:border-silk-600 text-silk-900 dark:text-white bg-transparent px-8 py-3 rounded-full font-medium tracking-wide hover:bg-silk-50 dark:hover:bg-white/10 transition-all duration-300 flex items-center justify-center space-x-2"
+                                disabled={isAdding}
+                                className={`w-full border ${showSuccess ? 'border-green-500 bg-green-50 text-green-700 dark:bg-green-900/20 dark:text-green-400 dark:border-green-500' : 'border-silk-300 dark:border-silk-600 text-silk-900 dark:text-white hover:bg-silk-50 dark:hover:bg-white/10'} bg-transparent px-8 py-3 rounded-full font-medium tracking-wide transition-all duration-300 flex items-center justify-center space-x-2`}
                             >
-                                <ShoppingBag className="w-5 h-5" />
-                                <span>Add to Cart</span>
+                                {isAdding ? (
+                                    <>
+                                        <Loader2 className="w-5 h-5 animate-spin" />
+                                        <span>Adding...</span>
+                                    </>
+                                ) : showSuccess ? (
+                                    <>
+                                        <Check className="w-5 h-5" />
+                                        <span>Added to Cart</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <ShoppingBag className="w-5 h-5" />
+                                        <span>Add to Cart</span>
+                                    </>
+                                )}
                             </button>
                         </div>
                     </div>

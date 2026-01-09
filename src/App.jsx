@@ -25,7 +25,7 @@ function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
 
-    const { getCartCount, userData } = useContext(ShopContext);
+    const { getCartCount, userData, orderCount } = useContext(ShopContext);
 
     return (
         <>
@@ -98,6 +98,8 @@ function Navigation() {
                     { path: '/account', icon: User, label: 'Account', isProfile: true }
                 ].map((item) => {
                     const isActive = location.pathname === item.path;
+                    const badgeCount = item.path === '/cart' ? getCartCount() : item.path === '/orders' ? orderCount : 0;
+
                     return (
                         <Link
                             key={item.path}
@@ -114,7 +116,14 @@ function Navigation() {
                                 />
                             )}
                             <div className="relative z-10 flex items-center gap-2 px-2">
-                                <item.icon className="w-5 h-5" strokeWidth={2} />
+                                <div className="relative">
+                                    <item.icon className="w-5 h-5" strokeWidth={2} />
+                                    {badgeCount > 0 && (
+                                        <span className="absolute -top-2 -right-2 flex items-center justify-center min-w-[16px] h-4 px-1 text-[9px] font-bold text-white bg-red-500 rounded-full shadow-sm">
+                                            {badgeCount > 99 ? '99+' : badgeCount}
+                                        </span>
+                                    )}
+                                </div>
                                 <AnimatePresence>
                                     {isActive && (
                                         <motion.span

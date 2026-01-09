@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import { Link } from 'react-router-dom'
-import { Heart, ShoppingBag, AlertCircle, Trash2 } from 'lucide-react'
+import { Heart, ShoppingBag, AlertCircle, Trash2, Loader2, Check } from 'lucide-react'
 import { RainbowButton } from '../components/ui/rainbow-button'
 import FadeContent from './uiComponents/FadeContent'
 import QToast from './uiComponents/QToast'
@@ -9,6 +9,8 @@ import QToast from './uiComponents/QToast'
 const Wishlist = ({ compact }) => {
 
     const { products, currency, userData, removeFromWishlist, addToCart, requestProduct, token, fetchUserProfile, navigate } = useContext(ShopContext);
+    const [addingId, setAddingId] = React.useState(null);
+    const [successId, setSuccessId] = React.useState(null);
 
     useEffect(() => {
         if (token) {
@@ -111,18 +113,32 @@ const Wishlist = ({ compact }) => {
                                                         </button>
                                                     </Link>
                                                     <button
-                                                        onClick={() => {
+                                                        onClick={async () => {
                                                             if (!token) {
                                                                 QToast.error('Please login to add items to cart', { position: "top-center" });
                                                                 navigate('/login');
                                                                 return;
                                                             }
-                                                            addToCart(productData._id, productData.sizes[0] || 'Default')
+                                                            setAddingId(productData._id);
+                                                            await addToCart(productData._id, productData.sizes[0] || 'Default')
+                                                            setAddingId(null);
+                                                            setSuccessId(productData._id);
+                                                            setTimeout(() => setSuccessId(null), 2000);
                                                         }}
-                                                        className='p-2 bg-silk-900 dark:bg-silk-50 text-white dark:text-black rounded-lg hover:opacity-90 transition-opacity'
-                                                        title="Quick Add"
+                                                        disabled={addingId === productData._id}
+                                                        className={`p-2 rounded-lg transition-all duration-300 ${successId === productData._id
+                                                                ? 'bg-green-500 text-white hover:bg-green-600'
+                                                                : 'bg-silk-900 dark:bg-silk-50 text-white dark:text-black hover:opacity-90'
+                                                            }`}
+                                                        title={successId === productData._id ? "Added to Cart" : "Quick Add"}
                                                     >
-                                                        <ShoppingBag className='w-5 h-5' />
+                                                        {addingId === productData._id ? (
+                                                            <Loader2 className='w-5 h-5 animate-spin' />
+                                                        ) : successId === productData._id ? (
+                                                            <Check className='w-5 h-5' />
+                                                        ) : (
+                                                            <ShoppingBag className='w-5 h-5' />
+                                                        )}
                                                     </button>
                                                 </div>
                                                 <button
