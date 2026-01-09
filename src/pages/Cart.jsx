@@ -82,7 +82,7 @@ const SmallProductCard = ({ product }) => {
     );
 };
 import CartTotal from '../components/CartTotal';
-import { RainbowButton } from "../components/ui/rainbow-button";
+
 import QToast from './uiComponents/QToast';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import whiteCatAnimation from './uiComponents/lottie/White Cat Peeping.lottie';
@@ -272,14 +272,19 @@ const Cart = () => {
                         <div className='w-full sm:w-[450px]'>
                             <CartTotal />
                             <div className='w-full text-end'>
-                                <RainbowButton onClick={() => {
-                                    if (!token) {
-                                        QToast.error('Please login to checkout', { position: "top-center" });
-                                        navigate('/account', { state: { from: location } });
-                                        return;
-                                    }
-                                    routerNavigate('/place-order');
-                                }} className='my-8 px-6 py-2.5 w-auto text-sm font-semibold'>PROCEED TO CHECKOUT</RainbowButton>
+                                <button
+                                    onClick={() => {
+                                        if (!token) {
+                                            QToast.error('Please login to checkout', { position: "top-center" });
+                                            navigate('/account', { state: { from: location } });
+                                            return;
+                                        }
+                                        routerNavigate('/place-order');
+                                    }}
+                                    className='my-8 px-8 py-3 bg-silk-900 dark:bg-silk-50 text-white dark:text-silk-900 text-sm font-semibold rounded-full hover:bg-black dark:hover:bg-white/90 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                                >
+                                    PROCEED TO CHECKOUT
+                                </button>
                             </div>
                         </div>
                     </div>

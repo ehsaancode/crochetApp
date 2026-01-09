@@ -4,7 +4,7 @@ import { ShopContext } from '../context/ShopContext'
 import axios from 'axios'
 import QToast from './uiComponents/QToast'
 import FadeContent from './uiComponents/FadeContent'
-import { RainbowButton } from "@/components/ui/rainbow-button"
+
 import { User, Heart, Package, MapPin, LogOut, Edit2, LocateFixed, Info, Phone } from 'lucide-react'
 import Wishlist from './Wishlist'
 import Orders from './Orders'
@@ -450,9 +450,9 @@ const Login = () => {
                     </div>
 
                     <div className="w-full">
-                        <RainbowButton type="submit" className="w-full py-3">
+                        <button type="submit" className="w-full py-3 bg-silk-900 dark:bg-silk-50 text-white dark:text-silk-900 font-semibold rounded-full hover:bg-black dark:hover:bg-white/90 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
                             {currentState === 'Login' ? 'Sign In' : 'Sign Up'}
-                        </RainbowButton>
+                        </button>
                     </div>
                 </form>
             </FadeContent>
