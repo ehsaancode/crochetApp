@@ -10,6 +10,7 @@ import Users from './pages/Users'
 import Requests from './pages/Requests'
 import CustomOrders from './pages/CustomOrders'
 import Festival from './pages/Festival'
+import Dashboard from './pages/Dashboard'
 import Login from './components/Login'
 import QToast from './components/QToast';
 
@@ -36,7 +37,8 @@ const App = () => {
             <Sidebar isOpen={sidebarOpen} closeSidebar={() => setSidebarOpen(false)} />
             <div className={`main-content transition-all duration-300 w-full mx-auto my-8 text-foreground text-base ${sidebarOpen ? 'ml-[250px]' : 'ml-0'} md:ml-[250px]`}>
               <Routes>
-                <Route path='/' element={<Add token={token} />} /> {/* Default to Add */}
+                <Route path='/' element={<Dashboard token={token} />} />
+                <Route path='/dashboard' element={<Dashboard token={token} />} />
                 <Route path='/add' element={<Add token={token} />} />
                 <Route path='/edit/:id' element={<Add token={token} />} />
                 <Route path='/list' element={<List token={token} />} />

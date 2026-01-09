@@ -6,6 +6,10 @@ const Sidebar = ({ isOpen, closeSidebar }) => {
     return (
         <div className={`sidebar fixed left-0 top-0 h-full bg-card border-r border-border transition-transform duration-300 z-40 w-[250px] pt-20 shadow-xl ${isOpen ? 'translate-x-0' : '-translate-x-full'} md:translate-x-0`}>
             <div className='flex flex-col gap-2 py-8 p-4'>
+                <NavLink onClick={closeSidebar} className={({ isActive }) => `sidebar-link ${isActive ? 'bg-silk-500 text-white dark:text-gray-900 shadow-lg' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`} to='/'>
+                    <p className="font-medium">Dashboard</p>
+                </NavLink>
+
                 <NavLink onClick={closeSidebar} className={({ isActive }) => `sidebar-link ${isActive ? 'bg-silk-500 text-white dark:text-gray-900 shadow-lg' : 'text-muted-foreground hover:bg-muted hover:text-foreground'}`} to='/add'>
                     <p className="font-medium">Add Items</p>
                 </NavLink>
