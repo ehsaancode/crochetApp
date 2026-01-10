@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles, X } from 'lucide-react';
 import axios from 'axios';
 
-const DiscoverIdeas = () => {
+const DiscoverIdeas = ({ isHomePage }) => {
     const { backendUrl } = useContext(ShopContext);
     const navigate = useNavigate();
     const [gallery, setGallery] = useState([]);
@@ -42,13 +42,13 @@ const DiscoverIdeas = () => {
 
     return (
         <div className="mt-8 pt-8 border-t border-gray-100 dark:border-white/5 animate-fade-in">
-            <div className="flex items-center justify-between mb-4">
+            <div className={`flex items-center ${isHomePage ? 'justify-center text-center mb-8' : 'justify-between mb-4'}`}>
                 <div>
-                    <h4 className="font-serif text-lg text-silk-900 dark:text-silk-50 flex items-center gap-2">
+                    <h4 className={`font-serif text-lg text-silk-900 dark:text-silk-50 flex items-center gap-2 ${isHomePage ? 'justify-center text-3xl mb-2' : ''}`}>
                         <Sparkles className="w-4 h-4 text-silk-500" />
                         Ready to create something unique?
                     </h4>
-                    <p className="text-sm text-silk-600 dark:text-silk-400">Discover ideas from our gallery to start your custom request.</p>
+                    <p className={`text-sm text-silk-600 dark:text-silk-400 ${isHomePage ? 'text-lg max-w-2xl mx-auto' : ''}`}>Discover ideas from our gallery to start your custom request.</p>
                 </div>
             </div>
 
@@ -69,7 +69,7 @@ const DiscoverIdeas = () => {
                 ))}
             </div>
 
-            <div className="mt-4 flex flex-col items-end sm:flex-row sm:items-center justify-between gap-4">
+            <div className={`mt-4 flex flex-col gap-4 ${isHomePage ? 'items-center sm:flex-row sm:justify-center' : 'items-end sm:flex-row sm:items-center justify-between'}`}>
                 {visibleCount < gallery.length && (
                     <button
                         onClick={handleLoadMore}
@@ -81,7 +81,7 @@ const DiscoverIdeas = () => {
 
                 <button
                     onClick={() => navigate('/custom-order')}
-                    className="text-xs uppercase tracking-widest font-medium text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white flex items-center gap-1 transition-colors ml-auto"
+                    className={`text-xs uppercase tracking-widest font-medium text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white flex items-center gap-1 transition-colors ${isHomePage ? '' : 'ml-auto'}`}
                 >
                     Start blank request <ArrowRight className="w-3 h-3" />
                 </button>

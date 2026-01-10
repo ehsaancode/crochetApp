@@ -11,6 +11,7 @@ import FestiveCard from '../components/FestiveCard';
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useTheme } from '../context/ThemeContext';
 import Masonry from './uiComponents/Masonry';
+import DiscoverIdeas from '../components/DiscoverIdeas';
 
 
 function Home() {
@@ -98,6 +99,10 @@ function Home() {
                             </button>
                         </Link>
                     </FadeContent>
+                </div>
+
+                <div className="mb-24">
+                    <DiscoverIdeas isHomePage={true} />
                 </div>
             </section>
 
