@@ -227,8 +227,9 @@ const Orders = ({ compact }) => {
             {!compact && (
                 <div className='flex justify-between items-center text-2xl mb-8 gap-2'>
                     <h2 className='font-serif text-3xl text-silk-900 dark:text-silk-50'>MY <span className='text-silk-600 font-medium'>ORDERS</span></h2>
-                    <Link to="/contact" className='text-xs font-medium text-gray-400 hover:text-gray-400 dark:text-gray-400 dark:hover:text-gray-300 transition-colors flex items-center gap-2 whitespace-nowrap'>
-                        Need help? <span className="underline">Chat with us</span>
+                    <Link to="/contact" className='text-xs font-medium text-gray-400 hover:text-gray-400 dark:text-gray-600 dark:hover:text-gray-400 transition-colors flex items-center gap-2 whitespace-nowrap'>
+                        Need help? <br />
+                        <span className="underline">Connect with us</span>
                     </Link>
                 </div>
             )}
