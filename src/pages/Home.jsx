@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState, Suspense } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Mail, Phone, Instagram, Lock, Scissors, Globe, Banknote, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext'; // Added context
@@ -8,12 +8,11 @@ import ShinyText from './uiComponents/ShinyText';
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useTheme } from '../context/ThemeContext';
 
-// Lazy Load Components
-const Carousel = React.lazy(() => import('./uiComponents/Carousel'));
-const GridMotion = React.lazy(() => import('./uiComponents/GridMotion'));
-const Masonry = React.lazy(() => import('./uiComponents/Masonry'));
-const FestiveCard = React.lazy(() => import('../components/FestiveCard'));
-const DiscoverIdeas = React.lazy(() => import('../components/DiscoverIdeas'));
+import Carousel from './uiComponents/Carousel';
+import GridMotion from './uiComponents/GridMotion';
+import Masonry from './uiComponents/Masonry';
+import FestiveCard from '../components/FestiveCard';
+import DiscoverIdeas from '../components/DiscoverIdeas';
 
 
 function Home() {
@@ -62,24 +61,20 @@ function Home() {
 
             <section id="shop" className="pt-32 px-6 max-w-7xl mx-auto">
                 <div className="w-full mb-48">
-                    <Suspense fallback={<div className="h-96 w-full" />}>
-                        <Masonry
-                            items={masonryItems}
-                            ease="power3.out"
-                            duration={0.6}
-                            stagger={0.05}
-                            animateFrom="bottom"
-                            scaleOnHover={true}
-                            hoverScale={0.95}
-                            blurToFocus={true}
-                            colorShiftOnHover={false}
-                        />
-                    </Suspense>
+                    <Masonry
+                        items={masonryItems}
+                        ease="power3.out"
+                        duration={0.6}
+                        stagger={0.05}
+                        animateFrom="bottom"
+                        scaleOnHover={true}
+                        hoverScale={0.95}
+                        blurToFocus={true}
+                        colorShiftOnHover={false}
+                    />
                 </div>
 
-                <Suspense fallback={<div className="h-48 w-full" />}>
-                    <FestiveCard />
-                </Suspense>
+                <FestiveCard />
 
                 <div className="flex items-end justify-between mb-10">
                     <ShinyText
@@ -94,9 +89,7 @@ function Home() {
                 </div>
 
                 <div className="mb-16">
-                    <Suspense fallback={<div className="h-64 w-full" />}>
-                        <Carousel items={products.slice(0, 5).map(p => ({ ...p, img: optimizeImageUrl(p.image[0], 800), id: p._id }))} />
-                    </Suspense>
+                    <Carousel items={products.slice(0, 5).map(p => ({ ...p, img: optimizeImageUrl(p.image[0], 800), id: p._id }))} />
                 </div>
 
                 <div className="text-center py-32 px-6 md:px-32 my-24 rounded-3xl bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27]">
@@ -116,16 +109,12 @@ function Home() {
                 </div>
 
                 <div className="mb-24">
-                    <Suspense fallback={<div className="h-96 w-full" />}>
-                        <DiscoverIdeas isHomePage={true} />
-                    </Suspense>
+                    <DiscoverIdeas isHomePage={true} />
                 </div>
             </section>
 
             <div className="mb-32 h-[80vh] w-full overflow-hidden bg-silk-50 dark:bg-black">
-                <Suspense fallback={<div className="h-full w-full" />}>
-                    <GridMotion items={products.slice(0, 12).map(product => optimizeImageUrl(product.image[0], 400))} />
-                </Suspense>
+                <GridMotion items={products.slice(0, 12).map(product => optimizeImageUrl(product.image[0], 400))} />
             </div>
 
             <section className="text-center py-48 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl">
