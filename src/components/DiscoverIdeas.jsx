@@ -9,7 +9,7 @@ const DiscoverIdeas = ({ isHomePage }) => {
     const navigate = useNavigate();
     const [gallery, setGallery] = useState([]);
 
-    const [visibleCount, setVisibleCount] = useState(6);
+    const [visibleCount, setVisibleCount] = useState(window.innerWidth > 768 ? 12 : 6);
 
     const [selectedImage, setSelectedImage] = useState(null);
 
@@ -69,7 +69,7 @@ const DiscoverIdeas = ({ isHomePage }) => {
                 ))}
             </div>
 
-            <div className={`mt-4 flex flex-col gap-4 ${isHomePage ? 'items-center sm:flex-row sm:justify-center' : 'items-end sm:flex-row sm:items-center justify-between'}`}>
+            <div className={`mt-8 flex flex-col gap-4 ${isHomePage ? 'items-center sm:flex-row sm:justify-center' : 'items-end sm:flex-row sm:items-center justify-between'}`}>
                 {visibleCount < gallery.length && (
                     <button
                         onClick={handleLoadMore}
