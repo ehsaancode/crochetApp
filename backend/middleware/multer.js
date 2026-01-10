@@ -5,7 +5,7 @@ const fs = require('fs');
 require('dotenv').config();
 
 // Check if Cloudinary credentials exist
-const hasCloudinary = process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET;
+const hasCloudinary = false; // process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET;
 
 let storage;
 

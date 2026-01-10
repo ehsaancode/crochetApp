@@ -818,7 +818,7 @@ function CustomOrder() {
                             className="bg-white dark:bg-[#1a1a1a] p-8 rounded-2xl w-full max-w-sm shadow-2xl text-center"
                         >
                             <h3 className="font-serif text-2xl mb-2 text-silk-900 dark:text-silk-50">
-                                {progress === 100 ? 'Success!' : 'Submitting Request'}
+                                {progress === 100 ? 'Success!' : 'Submitting...'}
                             </h3>
                             <p className="text-silk-600 dark:text-silk-400 text-sm mb-6">
                                 {progress === 100 ? 'Your custom order request has been received.' : 'Please wait while we upload your details.'}

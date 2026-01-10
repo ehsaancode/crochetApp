@@ -24,6 +24,7 @@ import Login from './pages/Login';
 import PlaceOrder from './pages/PlaceOrder';
 import Orders from './pages/Orders';
 import CustomOrder from './pages/CustomOrder';
+import BecomeSeller from './pages/BecomeSeller';
 
 
 function Navigation() {
@@ -191,6 +192,7 @@ function App() {
                         <Route path="/account" element={<Login />} />
                         <Route path="/place-order" element={<PlaceOrder />} />
                         <Route path="/orders" element={<Orders />} />
+                        <Route path="/become-seller" element={<BecomeSeller />} />
                     </Routes>
                 </main>
             </div>

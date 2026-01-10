@@ -11,6 +11,7 @@ import Requests from './pages/Requests'
 import CustomOrders from './pages/CustomOrders'
 import Festival from './pages/Festival'
 import Gallery from './pages/Gallery'
+import Applications from './pages/Applications'
 import Dashboard from './pages/Dashboard'
 import Login from './components/Login'
 import QToast from './components/QToast';
@@ -50,6 +51,7 @@ const App = () => {
                 <Route path='/custom-orders' element={<CustomOrders token={token} />} />
                 <Route path='/festival' element={<Festival token={token} />} />
                 <Route path='/gallery' element={<Gallery token={token} />} />
+                <Route path='/applications' element={<Applications token={token} />} />
               </Routes>
             </div>
           </div>

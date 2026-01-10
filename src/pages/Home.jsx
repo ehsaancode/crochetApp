@@ -111,21 +111,43 @@ function Home() {
                 <div className="mb-24">
                     <DiscoverIdeas isHomePage={true} />
                 </div>
+
             </section>
 
             <div className="mb-32 h-[80vh] w-full overflow-hidden bg-silk-50 dark:bg-black">
                 <GridMotion items={products.slice(0, 12).map(product => optimizeImageUrl(product.image[0], 400))} />
             </div>
 
-            <section className="text-center py-48 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl">
+            <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32">
+                <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
+                    <h3 className="font-serif text-3xl md:text-4xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
+                        Are you a skilled crocheter?
+                    </h3>
+                    <p className="text-silk-600 dark:text-silk-400 text-lg font-light mb-8 max-w-xl mx-auto">
+                        Join our community of skilled artisans and sell your unique crochet creations to a global audience.
+                    </p>
+                    <Link to="/become-seller">
+                        <button className="bg-white dark:bg-white/10 text-silk-900 dark:text-white border border-silk-200 dark:border-white/10 text-sm h-10 px-8 rounded-full font-medium transition-all hover:bg-silk-50 dark:hover:bg-white/20 hover:scale-105 shadow-sm">
+                            Become a Seller
+                        </button>
+                    </Link>
+                </FadeContent>
+            </section>
+
+            <section className="text-center pt-25 py-20 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl">
                 <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                     <h3 className="font-serif text-4xl md:text-6xl mb-6 relative z-10 bg-gradient-to-r from-silk-900 to-silk-600 dark:from-white dark:to-silk-300 bg-clip-text text-transparent">
                         No machines. <br className="hidden md:block" /> No mass production.
                     </h3>
                     <div className="w-16 h-0.5 bg-silk-400/50 dark:bg-white/20 mx-auto mb-6"></div>
-                    <p className="text-silk-600 dark:text-silk-400 text-sm md:text-base tracking-[0.2em] uppercase font-medium max-w-xl mx-auto relative z-10">
+                    <p className="text-silk-600 pb-4 dark:text-silk-400 text-sm md:text-base tracking-[0.2em] uppercase font-medium max-w-xl mx-auto relative z-10 mb-6">
                         Every piece is hand-crocheted by skilled artisans
                     </p>
+                    <Link to="/about">
+                        <button className="bg-silk-900 dark:bg-white text-white dark:text-black border border-transparent text-sm h-10 px-8 rounded-full font-medium transition-all hover:bg-silk-800 dark:hover:bg-gray-100 hover:scale-105 shadow-sm relative z-10">
+                            Know More
+                        </button>
+                    </Link>
                 </FadeContent>
             </section>
 
