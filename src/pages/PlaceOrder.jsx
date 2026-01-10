@@ -555,7 +555,7 @@ const PlaceOrder = () => {
                     </div>
 
                     <div className='w-full text-end mt-8'>
-                        <button type='submit' disabled={calculatingShipping} className='bg-silk-900 dark:bg-white text-white dark:text-silk-900 px-16 py-3 text-sm rounded hover:bg-black dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed'>
+                        <button type='submit' disabled={calculatingShipping} className='bg-silk-900 dark:bg-white text-white dark:text-silk-900 px-16 py-3 text-sm rounded-full hover:bg-black dark:hover:bg-gray-200 disabled:opacity-50 disabled:cursor-not-allowed'>
                             {calculatingShipping ? 'Calculating...' : 'PLACE ORDER'}
                         </button>
                     </div>
