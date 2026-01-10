@@ -126,7 +126,7 @@ const DiscoverIdeas = ({ isHomePage }) => {
                 ))}
             </div>
 
-            <div className={`mt-8 flex flex-col gap-4 ${isHomePage ? 'items-center sm:flex-row sm:justify-center' : 'items-end sm:flex-row sm:items-center justify-between'}`}>
+            <div className={`mt-8 pb-15 flex flex-col gap-4 ${isHomePage ? 'items-center sm:flex-row sm:justify-center' : 'items-end sm:flex-row sm:items-center justify-between'}`}>
                 {visibleCount < gallery.length && (
                     <button
                         onClick={handleLoadMore}
