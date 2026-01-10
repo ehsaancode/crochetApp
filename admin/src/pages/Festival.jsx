@@ -130,37 +130,49 @@ const Festival = ({ token }) => {
             <form onSubmit={onSubmitHandler} className='flex flex-col gap-6'>
 
                 <div className="flex flex-col sm:flex-row gap-6">
-                    <div className="flex-1 flex gap-4 items-center p-4 bg-muted/30 rounded-lg border border-border">
-                        <input
-                            type="checkbox"
-                            id="isActive"
-                            checked={isActive}
-                            onChange={(e) => setIsActive(e.target.checked)}
-                            className="w-5 h-5 accent-silk-600"
-                        />
-                        <label htmlFor="isActive" className="font-medium cursor-pointer">Activate Festival Card</label>
+                    {/* Activate Toggle */}
+                    <div className="flex-1 flex flex-row justify-between items-center p-4 bg-muted/30 rounded-lg border border-border hover:border-silk-200 transition-colors">
+                        <label className="font-medium cursor-pointer select-none flex flex-col" onClick={() => setIsActive(!isActive)}>
+                            <span>Activate Festival Card</span>
+                            <span className="text-xs text-muted-foreground font-normal">Show on homepage</span>
+                        </label>
+                        <button
+                            type="button"
+                            onClick={() => setIsActive(!isActive)}
+                            className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none ${isActive ? 'bg-silk-600' : 'bg-gray-300'}`}
+                        >
+                            <span
+                                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-300 ease-in-out ${isActive ? 'translate-x-5' : 'translate-x-0'}`}
+                            />
+                        </button>
                     </div>
 
-                    <div className="flex-1 flex gap-4 items-center p-4 bg-muted/30 rounded-lg border border-border">
-                        <input
-                            type="checkbox"
-                            id="blurBackground"
-                            checked={blurBackground}
-                            onChange={(e) => setBlurBackground(e.target.checked)}
-                            className="w-5 h-5 accent-silk-600"
-                        />
-                        <label htmlFor="blurBackground" className="font-medium cursor-pointer">Blur Background</label>
+                    {/* Blur Toggle */}
+                    <div className="flex-1 flex flex-row justify-between items-center p-4 bg-muted/30 rounded-lg border border-border hover:border-silk-200 transition-colors">
+                        <label className="font-medium cursor-pointer select-none" onClick={() => setBlurBackground(!blurBackground)}>Blur Background</label>
+                        <button
+                            type="button"
+                            onClick={() => setBlurBackground(!blurBackground)}
+                            className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none ${blurBackground ? 'bg-silk-600' : 'bg-gray-300'}`}
+                        >
+                            <span
+                                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-300 ease-in-out ${blurBackground ? 'translate-x-5' : 'translate-x-0'}`}
+                            />
+                        </button>
                     </div>
 
-                    <div className="flex-1 flex gap-4 items-center p-4 bg-muted/30 rounded-lg border border-border">
-                        <input
-                            type="checkbox"
-                            id="showButton"
-                            checked={showButton}
-                            onChange={(e) => setShowButton(e.target.checked)}
-                            className="w-5 h-5 accent-silk-600"
-                        />
-                        <label htmlFor="showButton" className="font-medium cursor-pointer">Show "View Collection" Button</label>
+                    {/* Show Button Toggle */}
+                    <div className="flex-1 flex flex-row justify-between items-center p-4 bg-muted/30 rounded-lg border border-border hover:border-silk-200 transition-colors">
+                        <label className="font-medium cursor-pointer select-none" onClick={() => setShowButton(!showButton)}>Show "View Collection"</label>
+                        <button
+                            type="button"
+                            onClick={() => setShowButton(!showButton)}
+                            className={`relative inline-flex h-7 w-12 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-300 ease-in-out focus:outline-none ${showButton ? 'bg-silk-600' : 'bg-gray-300'}`}
+                        >
+                            <span
+                                className={`pointer-events-none inline-block h-6 w-6 transform rounded-full bg-white shadow ring-0 transition duration-300 ease-in-out ${showButton ? 'translate-x-5' : 'translate-x-0'}`}
+                            />
+                        </button>
                     </div>
                 </div>
 
