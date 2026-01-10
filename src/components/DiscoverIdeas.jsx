@@ -40,6 +40,14 @@ const DiscoverIdeas = ({ isHomePage }) => {
 
 
 
+    // Helper to optimize Cloudinary URLs
+    const optimizeImageUrl = (url, width = 500) => {
+        if (!url || !url.includes('cloudinary.com')) return url;
+        // Check if already has transformation
+        if (url.includes('/upload/w_')) return url;
+        return url.replace('/upload/', `/upload/w_${width},q_auto,f_auto/`);
+    };
+
     return (
         <div className="mt-8 pt-8 border-t border-gray-100 dark:border-white/5 animate-fade-in">
             <div className={`flex items-center ${isHomePage ? 'justify-center text-center mb-8' : 'justify-between mb-4'}`}>
@@ -60,7 +68,8 @@ const DiscoverIdeas = ({ isHomePage }) => {
                         className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100 dark:bg-white/5"
                     >
                         <img
-                            src={item.image}
+                            src={optimizeImageUrl(item.image, 500)}
+                            loading="lazy"
                             alt="Idea"
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                         />

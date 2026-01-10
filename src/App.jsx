@@ -1,19 +1,8 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, X, ShoppingBag, Heart, Home as HomeIcon, Store, User, Package, Search } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-import Home from './pages/Home';
-import Collection from './pages/Collection';
-import About from './pages/About';
-import Contact from './pages/Contact';
-import ProductDetail from './pages/ProductDetail';
-import Cart from './pages/Cart';
-import Wishlist from './pages/Wishlist';
-import Login from './pages/Login';
-import PlaceOrder from './pages/PlaceOrder';
-import Orders from './pages/Orders';
-import CustomOrder from './pages/CustomOrder';
 import { ThemeProvider } from './context/ThemeContext';
 import ThemeToggle from './components/ThemeToggle';
 import { ShopContext } from './context/ShopContext';
@@ -22,6 +11,20 @@ import ScrollToTop from './components/ScrollToTop';
 import SearchBar from './components/SearchBar';
 import { preloadAsset } from './utils/animationCache';
 import catAnimationUrl from './pages/uiComponents/lottie/Cat playing with yarn.lottie';
+import Loading from './components/Loading';
+
+// Lazy Load Pages
+const Home = React.lazy(() => import('./pages/Home'));
+const Collection = React.lazy(() => import('./pages/Collection'));
+const About = React.lazy(() => import('./pages/About'));
+const Contact = React.lazy(() => import('./pages/Contact'));
+const ProductDetail = React.lazy(() => import('./pages/ProductDetail'));
+const Cart = React.lazy(() => import('./pages/Cart'));
+const Wishlist = React.lazy(() => import('./pages/Wishlist'));
+const Login = React.lazy(() => import('./pages/Login'));
+const PlaceOrder = React.lazy(() => import('./pages/PlaceOrder'));
+const Orders = React.lazy(() => import('./pages/Orders'));
+const CustomOrder = React.lazy(() => import('./pages/CustomOrder'));
 
 
 function Navigation() {
@@ -177,19 +180,21 @@ function App() {
             <div className="min-h-screen bg-silk-100 dark:bg-black text-accent-dark dark:text-silk-50 font-sans selection:bg-silk-200 dark:selection:bg-silk-800 transition-colors duration-300">
                 <Navigation />
                 <main className="pb-24 md:pb-0">
-                    <Routes>
-                        <Route path="/" element={<Home />} />
-                        <Route path="/collection" element={<Collection />} />
-                        <Route path="/about" element={<About />} />
-                        <Route path="/contact" element={<Contact />} />
-                        <Route path="/custom-order" element={<CustomOrder />} />
-                        <Route path="/product/:id" element={<ProductDetail />} />
-                        <Route path="/cart" element={<Cart />} />
-                        <Route path="/wishlist" element={<Wishlist />} />
-                        <Route path="/account" element={<Login />} />
-                        <Route path="/place-order" element={<PlaceOrder />} />
-                        <Route path="/orders" element={<Orders />} />
-                    </Routes>
+                    <Suspense fallback={<Loading className="h-[80vh] w-full" />}>
+                        <Routes>
+                            <Route path="/" element={<Home />} />
+                            <Route path="/collection" element={<Collection />} />
+                            <Route path="/about" element={<About />} />
+                            <Route path="/contact" element={<Contact />} />
+                            <Route path="/custom-order" element={<CustomOrder />} />
+                            <Route path="/product/:id" element={<ProductDetail />} />
+                            <Route path="/cart" element={<Cart />} />
+                            <Route path="/wishlist" element={<Wishlist />} />
+                            <Route path="/account" element={<Login />} />
+                            <Route path="/place-order" element={<PlaceOrder />} />
+                            <Route path="/orders" element={<Orders />} />
+                        </Routes>
+                    </Suspense>
                 </main>
             </div>
         </ThemeProvider>

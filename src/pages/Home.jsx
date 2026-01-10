@@ -1,17 +1,19 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, Suspense } from 'react';
 import { Mail, Phone, Instagram, Lock, Scissors, Globe, Banknote, Heart } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext'; // Added context
 import FadeContent from './uiComponents/FadeContent'
 import DarkVeil from './uiComponents/DarkVeil';
-import Carousel from './uiComponents/Carousel';
 import ShinyText from './uiComponents/ShinyText';
-import GridMotion from './uiComponents/GridMotion';
-import FestiveCard from '../components/FestiveCard';
 import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useTheme } from '../context/ThemeContext';
-import Masonry from './uiComponents/Masonry';
-import DiscoverIdeas from '../components/DiscoverIdeas';
+
+// Lazy Load Components
+const Carousel = React.lazy(() => import('./uiComponents/Carousel'));
+const GridMotion = React.lazy(() => import('./uiComponents/GridMotion'));
+const Masonry = React.lazy(() => import('./uiComponents/Masonry'));
+const FestiveCard = React.lazy(() => import('../components/FestiveCard'));
+const DiscoverIdeas = React.lazy(() => import('../components/DiscoverIdeas'));
 
 
 function Home() {
@@ -19,11 +21,17 @@ function Home() {
     const { products } = useContext(ShopContext);
     const [masonryItems, setMasonryItems] = useState([]);
 
+    const optimizeImageUrl = (url, width) => {
+        if (!url || !url.includes('cloudinary.com')) return url;
+        if (url.includes('/upload/w_')) return url;
+        return url.replace('/upload/', `/upload/w_${width},q_auto,f_auto/`);
+    };
+
     useEffect(() => {
         if (products.length > 0) {
             const items = products.slice(0, 12).map((product, index) => ({
                 id: product._id,
-                img: product.image[0],
+                img: optimizeImageUrl(product.image[0], 600),
                 name: product.name,
                 url: `/product/${product._id}`,
                 height: index % 4 === 1 ? 400 : index % 3 === 2 ? 300 : 300
@@ -54,20 +62,24 @@ function Home() {
 
             <section id="shop" className="pt-32 px-6 max-w-7xl mx-auto">
                 <div className="w-full mb-48">
-                    <Masonry
-                        items={masonryItems}
-                        ease="power3.out"
-                        duration={0.6}
-                        stagger={0.05}
-                        animateFrom="bottom"
-                        scaleOnHover={true}
-                        hoverScale={0.95}
-                        blurToFocus={true}
-                        colorShiftOnHover={false}
-                    />
+                    <Suspense fallback={<div className="h-96 w-full" />}>
+                        <Masonry
+                            items={masonryItems}
+                            ease="power3.out"
+                            duration={0.6}
+                            stagger={0.05}
+                            animateFrom="bottom"
+                            scaleOnHover={true}
+                            hoverScale={0.95}
+                            blurToFocus={true}
+                            colorShiftOnHover={false}
+                        />
+                    </Suspense>
                 </div>
 
-                <FestiveCard />
+                <Suspense fallback={<div className="h-48 w-full" />}>
+                    <FestiveCard />
+                </Suspense>
 
                 <div className="flex items-end justify-between mb-10">
                     <ShinyText
@@ -82,7 +94,9 @@ function Home() {
                 </div>
 
                 <div className="mb-16">
-                    <Carousel items={products.slice(0, 5).map(p => ({ ...p, img: p.image[0], id: p._id }))} />
+                    <Suspense fallback={<div className="h-64 w-full" />}>
+                        <Carousel items={products.slice(0, 5).map(p => ({ ...p, img: optimizeImageUrl(p.image[0], 800), id: p._id }))} />
+                    </Suspense>
                 </div>
 
                 <div className="text-center py-32 px-6 md:px-32 my-24 rounded-3xl bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27]">
@@ -102,12 +116,16 @@ function Home() {
                 </div>
 
                 <div className="mb-24">
-                    <DiscoverIdeas isHomePage={true} />
+                    <Suspense fallback={<div className="h-96 w-full" />}>
+                        <DiscoverIdeas isHomePage={true} />
+                    </Suspense>
                 </div>
             </section>
 
             <div className="mb-32 h-[80vh] w-full overflow-hidden bg-silk-50 dark:bg-black">
-                <GridMotion items={products.slice(0, 12).map(product => product.image[0])} />
+                <Suspense fallback={<div className="h-full w-full" />}>
+                    <GridMotion items={products.slice(0, 12).map(product => optimizeImageUrl(product.image[0], 400))} />
+                </Suspense>
             </div>
 
             <section className="text-center py-48 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl">

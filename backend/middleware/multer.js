@@ -20,16 +20,9 @@ if (hasCloudinary) {
     // Configure Cloudinary Storage
     storage = new CloudinaryStorage({
         cloudinary: cloudinary,
-        params: async (req, file) => {
-            const isVideo = file.mimetype.startsWith('video/');
-            return {
-                folder: 'crochet_app',
-                resource_type: 'auto',
-                allowed_formats: ['jpg', 'png', 'jpeg', 'webp', 'mp4', 'mov', 'avi', 'webm', 'mkv'],
-                transformation: isVideo
-                    ? [{ quality: 'auto:eco' }] // Video compression
-                    : [{ quality: 'auto', fetch_format: 'auto' }] // Image compression
-            };
+        params: {
+            folder: 'crochet_app',
+            resource_type: 'auto',
         },
     });
     console.log("Multer configured with Cloudinary storage.");
