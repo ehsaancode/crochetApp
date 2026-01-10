@@ -228,6 +228,37 @@ const PlaceOrder = () => {
         setFormData(data => ({ ...data, [name]: value }))
     }
 
+    const initPay = (order) => {
+        if (!import.meta.env.VITE_RAZORPAY_KEY_ID) {
+            QToast.error("Razorpay Key Not Found. Please check your frontend .env file.", { position: 'top-center' });
+            return;
+        }
+        const options = {
+            key: import.meta.env.VITE_RAZORPAY_KEY_ID,
+            amount: order.amount,
+            currency: order.currency,
+            name: 'Order Payment',
+            description: 'Order Payment',
+            order_id: order.id,
+            receipt: order.receipt,
+            handler: async (response) => {
+                console.log(response)
+                try {
+                    const { data } = await axios.post(backendUrl + '/api/order/verifyRazorpay', response, { headers: { token } })
+                    if (data.success) {
+                        navigate('/orders')
+                        setCartItems({})
+                    }
+                } catch (error) {
+                    console.log(error)
+                    QToast.error(error.message, { position: 'top-right' })
+                }
+            }
+        }
+        const rzp = new window.Razorpay(options)
+        rzp.open()
+    }
+
     const onSubmitHandler = async (event) => {
         event.preventDefault()
         try {
@@ -270,6 +301,7 @@ const PlaceOrder = () => {
                 amount: totalAmount,
             }
 
+
             if (method === 'cod') {
                 const response = await axios.post(backendUrl + '/api/order/place', orderData, { headers: { token } });
                 if (response.data.success) {
@@ -281,6 +313,15 @@ const PlaceOrder = () => {
                     }, 3500); // Wait for animation
                 } else {
                     QToast.error(response.data.message, { position: 'top-right' })
+                }
+            } else if (method === 'razorpay') {
+                console.log("Initiating Razorpay payment...");
+                const response = await axios.post(backendUrl + '/api/order/razorpay', orderData, { headers: { token } })
+                console.log("Razorpay Order Response:", response.data);
+                if (response.data.success) {
+                    initPay(response.data.order)
+                } else {
+                    QToast.error(response.data.message || "Failed to initiate payment", { position: 'top-right' })
                 }
             }
 
@@ -544,9 +585,9 @@ const PlaceOrder = () => {
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'stripe' ? 'bg-green-400' : ''}`}></p>
                             <p className='text-gray-500 text-sm font-medium mx-4'>Stripe</p>
                         </div>
-                        <div onClick={() => setMethod('razorpay')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer opacity-50' title="Not available yet">
+                        <div onClick={() => setMethod('razorpay')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer border-silk-500 bg-silk-50 dark:bg-slate-800 dark:border-silk-400'>
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'razorpay' ? 'bg-green-400' : ''}`}></p>
-                            <p className='text-gray-500 text-sm font-medium mx-4'>Razorpay</p>
+                            <p className='text-silk-900 dark:text-white text-sm font-medium mx-4'>Razorpay</p>
                         </div>
                         <div onClick={() => setMethod('cod')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer border-silk-500 bg-silk-50 dark:bg-slate-800 dark:border-silk-400'>
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'cod' ? 'bg-green-400' : ''}`}></p>

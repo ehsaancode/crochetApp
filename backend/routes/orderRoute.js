@@ -1,5 +1,5 @@
 const express = require('express');
-const { placeOrder, allOrders, userOrders, updateStatus } = require('../controllers/orderController');
+const { placeOrder, placeOrderRazorpay, verifyRazorpay, allOrders, userOrders, updateStatus } = require('../controllers/orderController');
 const authMiddleware = require('../middleware/auth');
 
 const orderRouter = express.Router();
@@ -10,6 +10,8 @@ orderRouter.post('/status', updateStatus); // Ideally should be admin protected
 
 // Payment Features
 orderRouter.post('/place', authMiddleware, placeOrder);
+orderRouter.post('/razorpay', authMiddleware, placeOrderRazorpay);
+orderRouter.post('/verifyRazorpay', authMiddleware, verifyRazorpay);
 
 // User Features
 orderRouter.post('/userorders', authMiddleware, userOrders);
