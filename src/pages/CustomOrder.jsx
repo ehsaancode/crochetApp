@@ -2,7 +2,7 @@ import React, { useState, useRef, useContext, useEffect } from 'react';
 import { Upload, X, Info, MapPin, Plus, CheckCircle2, Pencil, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShopContext } from '../context/ShopContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import FadeContent from './uiComponents/FadeContent';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -12,6 +12,7 @@ function CustomOrder() {
     // Force local backend for testing if needed, or user needs to update env.
     // console.log("Using Backend URL:", backendUrl);
     const navigate = useNavigate();
+    const location = useLocation();
     const [images, setImages] = useState([]);
     const [previewUrls, setPreviewUrls] = useState([]);
     const [showProgress, setShowProgress] = useState(false);
@@ -227,6 +228,25 @@ function CustomOrder() {
             handleFileSelect(Array.from(e.dataTransfer.files));
         }
     };
+
+    // Handle initial image from DiscoverIdeas
+    useEffect(() => {
+        if (location.state?.initialImage && images.length === 0) {
+            const fetchImage = async () => {
+                try {
+                    const response = await fetch(location.state.initialImage);
+                    const blob = await response.blob();
+                    const file = new File([blob], "inspiration.jpg", { type: blob.type });
+                    handleFileSelect([file]);
+                    // Clean up state to prevent re-adding
+                    window.history.replaceState({}, document.title);
+                } catch (error) {
+                    console.error("Error loading inspiration image:", error);
+                }
+            };
+            fetchImage();
+        }
+    }, [location.state]);
 
     const removeImage = (index) => {
         setImages(prev => prev.filter((_, i) => i !== index));

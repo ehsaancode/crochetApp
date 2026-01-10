@@ -8,6 +8,7 @@ const cartRouter = require('./routes/cartRoute');
 const orderRouter = require('./routes/orderRoute');
 const customOrderRouter = require('./routes/customOrderRoute');
 const festivalRouter = require('./routes/festivalRoute');
+const galleryRouter = require('./routes/galleryRoute');
 
 dotenv.config();
 
@@ -29,6 +30,7 @@ app.use('/api/cart', cartRouter);
 app.use('/api/order', orderRouter);
 app.use('/api/custom-order', customOrderRouter);
 app.use('/api/festival', festivalRouter);
+app.use('/api/gallery', galleryRouter);
 
 // Global Error Handler
 app.use((err, req, res, next) => {
@@ -46,3 +48,5 @@ app.get('/', (req, res) => {
 app.listen(port, () => {
     console.log(`Server started on port ${port}`);
 });
+
+// Force nodemon restart

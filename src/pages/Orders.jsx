@@ -9,6 +9,7 @@ import girlStichingAnimation from './uiComponents/lottie/Girl stitching YT.lotti
 import confettiAnimation from './uiComponents/lottie/Confetti.lottie';
 import { useLocation, Link } from 'react-router-dom';
 import Loading from '../components/Loading';
+import DiscoverIdeas from '../components/DiscoverIdeas';
 
 const Orders = ({ compact }) => {
 
@@ -390,6 +391,8 @@ const Orders = ({ compact }) => {
                                             />
                                         </div>
                                         <p className="text-silk-500 text-sm">No custom requests yet.</p>
+
+
                                     </div>
                                 ) : (
                                     customOrders.map((item, index) => (
@@ -425,6 +428,10 @@ const Orders = ({ compact }) => {
                                         </div>
                                     ))
                                 )}
+                            </div>
+
+                            <div className="w-full max-w-4xl mx-auto mt-8">
+                                <DiscoverIdeas />
                             </div>
                         </div>
                     )}
