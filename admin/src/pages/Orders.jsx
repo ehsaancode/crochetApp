@@ -84,7 +84,8 @@ const Orders = ({ token }) => {
                                     <p className='text-xs'>items: {order.items.length}</p>
                                     <p className='text-xs'><span className="font-medium">Method:</span> {order.paymentMethod}</p>
                                     <p className='text-xs'><span className="font-medium">Payment:</span> <span className={order.payment ? "text-green-500" : "text-yellow-500"}>{order.payment ? 'Done' : 'Pending'}</span></p>
-                                    <p className='text-xs'><span className="font-medium">Date:</span> {new Date(order.date).toLocaleDateString()}</p>
+                                    {order.paymentId && <p className='text-xs'><span className="font-medium">Payment ID:</span> {order.paymentId}</p>}
+                                    <p className='text-xs'><span className="font-medium">Date:</span> {new Date(order.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                                 </div>
                             </div>
 
@@ -151,7 +152,8 @@ const Orders = ({ token }) => {
                                 <p className='text-sm sm:text-[15px] font-medium text-foreground'>Items : {order.items.length}</p>
                                 <p className='mt-2'><span className="font-medium">Method :</span> {order.paymentMethod}</p>
                                 <p><span className="font-medium">Payment :</span> <span className={order.payment ? "text-green-500" : "text-yellow-500"}>{order.payment ? 'Done' : 'Pending'}</span></p>
-                                <p><span className="font-medium">Date :</span> {new Date(order.date).toLocaleDateString()}</p>
+                                {order.paymentId && <p><span className="font-medium">Payment ID :</span> <span className="text-xs font-mono bg-gray-100 dark:bg-gray-800 px-1 rounded">{order.paymentId}</span></p>}
+                                <p><span className="font-medium">Date :</span> {new Date(order.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
                             </div>
                             <p className='text-sm sm:text-base font-bold text-silk-600 dark:text-silk-400'>{currency}{order.amount}</p>
                             <select onChange={(event) => statusHandler(event, order._id)} value={order.status} className={`p-2.5 font-semibold bg-input border border-border rounded-lg outline-none focus:ring-2 focus:ring-silk-500 w-full ${order.status === 'Cancelled' ? 'text-red-500' : 'text-foreground'}`}>

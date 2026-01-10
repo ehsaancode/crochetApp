@@ -10,7 +10,8 @@ const orderSchema = new mongoose.Schema({
     payment: { type: Boolean, required: true, default: false },
     date: { type: Number, required: true },
     statusDate: { type: Number, required: false },
-    cancelledBy: { type: String, default: null }
+    cancelledBy: { type: String, default: null },
+    paymentId: { type: String, default: "" }
 });
 
 const orderModel = mongoose.models.order || mongoose.model("order", orderSchema);

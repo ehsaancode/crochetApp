@@ -244,10 +244,13 @@ const PlaceOrder = () => {
             handler: async (response) => {
                 console.log(response)
                 try {
-                    const { data } = await axios.post(backendUrl + '/api/order/verifyRazorpay', response, { headers: { token } })
+                    const { data } = await axios.post(backendUrl + '/api/order/verifyRazorpay', { ...response, receipt: order.receipt }, { headers: { token } })
                     if (data.success) {
-                        navigate('/orders')
                         setCartItems({})
+                        setShowSuccess(true);
+                        setTimeout(() => {
+                            navigate('/orders', { state: { newOrder: true } });
+                        }, 3500);
                     }
                 } catch (error) {
                     console.log(error)
@@ -581,13 +584,13 @@ const PlaceOrder = () => {
                     </div>
                     {/* Payment Method Selection */}
                     <div className='flex gap-3 flex-col lg:flex-row'>
-                        <div onClick={() => setMethod('stripe')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer opacity-50' title="Not available yet">
+                        {/* <div onClick={() => setMethod('stripe')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer opacity-50' title="Not available yet">
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'stripe' ? 'bg-green-400' : ''}`}></p>
                             <p className='text-gray-500 text-sm font-medium mx-4'>Stripe</p>
-                        </div>
+                        </div> */}
                         <div onClick={() => setMethod('razorpay')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer border-silk-500 bg-silk-50 dark:bg-slate-800 dark:border-silk-400'>
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'razorpay' ? 'bg-green-400' : ''}`}></p>
-                            <p className='text-silk-900 dark:text-white text-sm font-medium mx-4'>Razorpay</p>
+                            <p className='text-silk-900 dark:text-white text-sm font-medium mx-4'>Pay Online</p>
                         </div>
                         <div onClick={() => setMethod('cod')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer border-silk-500 bg-silk-50 dark:bg-slate-800 dark:border-silk-400'>
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'cod' ? 'bg-green-400' : ''}`}></p>

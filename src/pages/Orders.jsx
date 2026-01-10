@@ -265,7 +265,7 @@ const Orders = ({ compact }) => {
                                                     <p>Quantity: {item.quantity}</p>
                                                     <p>Size: {item.size}</p>
                                                 </div>
-                                                <p className='mt-1'>Date: <span className='text-gray-400'>{new Date(item.date).toDateString()}</span></p>
+                                                <p className='mt-1'>Date: <span className='text-gray-400'>{new Date(item.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span></p>
                                                 <p className='mt-1'>Payment: <span className='text-gray-400'>{item.paymentMethod}</span></p>
                                             </div>
                                         </Link>

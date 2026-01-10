@@ -82,7 +82,7 @@ const verifyRazorpay = async (req, res) => {
         const orderInfo = await orderModel.findById(req.body.receipt); // receipt is orderId passed from frontend
 
         if (orderInfo) {
-            await orderModel.findByIdAndUpdate(orderInfo._id, { payment: true });
+            await orderModel.findByIdAndUpdate(orderInfo._id, { payment: true, paymentId: razorpay_payment_id });
             await userModel.findByIdAndUpdate(orderInfo.userId, { cartData: {} });
             res.json({ success: true, message: "Payment Successful" });
         } else {
