@@ -22,7 +22,6 @@ if (hasCloudinary) {
         cloudinary: cloudinary,
         params: {
             folder: 'crochet_app',
-            resource_type: 'auto',
         },
     });
     console.log("Multer configured with Cloudinary storage.");
