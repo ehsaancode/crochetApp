@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Mail, Phone, Send, Instagram, Facebook, Sparkles, MessageSquare, Loader2 } from 'lucide-react';
+import { Mail, Phone, Send, Instagram, Facebook, Sparkles, MessageSquare, Loader2, Check } from 'lucide-react';
 import axios from 'axios';
 import { ShopContext } from '../context/ShopContext';
 import QToast from './uiComponents/QToast';
@@ -11,6 +11,7 @@ function Contact() {
     const { theme } = useTheme();
     const { backendUrl } = useContext(ShopContext);
     const [loading, setLoading] = useState(false);
+    const [sent, setSent] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -28,8 +29,9 @@ function Contact() {
         try {
             const response = await axios.post(backendUrl + '/api/user/contact', formData);
             if (response.data.success) {
-                QToast.success('Message sent successfully!');
+                setSent(true);
                 setFormData({ name: '', email: '', message: '' });
+                setTimeout(() => setSent(false), 3000);
             } else {
                 QToast.error(response.data.message);
             }
@@ -161,8 +163,21 @@ function Contact() {
                                             required
                                         ></textarea>
                                     </div>
-                                    <button type="submit" disabled={loading} className="w-full bg-silk-900 dark:bg-white text-white dark:text-black py-4 rounded-full font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-silk-800 dark:hover:bg-gray-100 transition-all hover:scale-[1.02] shadow-lg disabled:opacity-70 disabled:cursor-wait">
-                                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><span>Send Message</span><Send className="w-4 h-4" /></>}
+                                    <button
+                                        type="submit"
+                                        disabled={loading || sent}
+                                        className={`w-full py-4 rounded-full font-medium tracking-wide flex items-center justify-center gap-2 transition-all hover:scale-[1.02] shadow-lg disabled:opacity-70 disabled:cursor-wait ${sent
+                                                ? 'bg-green-600 text-white hover:bg-green-700'
+                                                : 'bg-silk-900 dark:bg-white text-white dark:text-black hover:bg-silk-800 dark:hover:bg-gray-100'
+                                            }`}
+                                    >
+                                        {loading ? (
+                                            <><span>Sending...</span><Loader2 className="w-5 h-5 animate-spin" /></>
+                                        ) : sent ? (
+                                            <><span>Message Sent</span><Check className="w-5 h-5" /></>
+                                        ) : (
+                                            <><span>Send Message</span><Send className="w-4 h-4" /></>
+                                        )}
                                     </button>
                                 </form>
                             </div>

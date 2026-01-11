@@ -129,7 +129,7 @@ function Home() {
                         Join our community of skilled artisans and sell your unique crochet creations to a global audience.
                     </p>
                     <Link to="/become-seller">
-                        <button className="bg-white dark:bg-white/10 text-silk-900 dark:text-white border border-silk-200 dark:border-white/10 text-sm h-10 px-8 rounded-full font-medium transition-all hover:bg-silk-50 dark:hover:bg-white/20 hover:scale-105 shadow-sm">
+                        <button className="bg-silk-900 dark:bg-white text-white dark:text-black border border-transparent text-sm h-10 px-8 rounded-full font-medium transition-all hover:bg-silk-800 dark:hover:bg-gray-100 hover:scale-105 shadow-sm">
                             Become a Seller
                         </button>
                     </Link>
