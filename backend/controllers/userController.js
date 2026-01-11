@@ -3,6 +3,32 @@ const validator = require('validator');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const orderModel = require('../models/Order');
+const productModel = require('../models/Product');
+const nodemailer = require('nodemailer');
+const path = require('path');
+
+const generateEmailTemplate = (userName, content) => {
+    return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: #f7f7f7; padding: 20px; text-align: center; border-bottom: 1px solid #e0e0e0;">
+            <h2 style="margin: 0; color: #4a4a4a;">Aalaboo</h2>
+        </div>
+        <div style="padding: 30px 20px;">
+            <p style="font-size: 16px;">Hello <strong>${userName}</strong>,</p>
+            <div style="font-size: 16px; line-height: 1.6; color: #555;">
+                ${content}
+            </div>
+            <p style="margin-top: 30px; font-size: 14px; color: #888;">Best regards,<br>The Aalaboo Team</p>
+        </div>
+        <div>
+            <img src="cid:aalaboofooter" alt="Aalaboo" style="width: 100%; display: block; border: 0;" />
+        </div>
+        <div style="background-color: #f7f7f7; padding: 15px; text-align: center; font-size: 12px; color: #aaa;">
+            &copy; ${new Date().getFullYear()} Aalaboo. All rights reserved.
+        </div>
+    </div>
+    `;
+};
 
 const createToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET);
@@ -382,53 +408,124 @@ const getAllRequests = async (req, res) => {
 const handleRequest = async (req, res) => {
     try {
         const { userId, productId, action, message } = req.body;
+        console.log("DEBUG BODY:", JSON.stringify(req.body));
+
         const user = await userModel.findById(userId);
 
         if (!user) {
+            console.log("DEBUG: User not found for ID:", userId);
             return res.json({ success: false, message: "User not found" });
+        }
+
+        // DEBUG: Detailed Request Info
+        if (action === 'message' || action === 'accept') {
+            console.log(`--- DEBUG REQUEST START ---`);
+            console.log(`Action: ${action}`);
+            console.log(`Target UserID from Body: ${userId}`);
+            console.log(`Found User: ${user._id} (${user.email})`);
+            console.log(`Target ProductID: ${productId} (Type: ${typeof productId})`);
+            console.log(`User Wishlist Length: ${user.wishlist.length}`);
+            console.log(`User Wishlist Dump:`, JSON.stringify(user.wishlist));
+            console.log(`SMTP Configured: ${process.env.SMTP_PASSWORD ? 'YES' : 'NO'}`);
+            console.log(`--- DEBUG REQUEST END ---`);
         }
 
         if (action === 'message') {
             const itemIndex = user.wishlist.findIndex(item => String(item.productId) === String(productId));
+            let dbUpdated = false;
+
             if (itemIndex > -1) {
                 user.wishlist[itemIndex].adminMessage = message;
                 user.wishlist[itemIndex].requestStatus = 'message_received';
                 user.markModified('wishlist');
-                await user.save();
-                res.json({ success: true, message: "Message sent to user" });
-            } else {
-                const dump = user.wishlist.map(i => i.productId ? `${i.productId}` : 'NO_ID').join(', ');
-                res.json({ success: false, message: `Item not found. Target: ${productId}. Length: ${user.wishlist.length}. Available: ${dump}` });
+                dbUpdated = true;
             }
+
+            await user.save();
+
+            // Send Email Notification
+            const targetEmail = req.body.userEmail || user.email;
+            const targetName = req.body.userName || user.name;
+            console.log("DEBUG EMAIL (MESSAGE): Sending to:", targetEmail, "Name:", targetName);
+
+            try {
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: {
+                        user: 'mail.aalaboo@gmail.com',
+                        pass: process.env.SMTP_PASSWORD
+                    }
+                });
+
+                const emailHtml = generateEmailTemplate(targetName, `Message regarding your request:<br><br><i>"${message}"</i>`);
+                await transporter.sendMail({
+                    from: 'mail.aalaboo@gmail.com',
+                    to: targetEmail,
+                    subject: 'Message regarding your Product Request - Aalaboo',
+                    text: `Hello ${targetName},\n\nAdmin Message regarding your request:\n\n"${message}"\n\nBest regards,\nAalaboo Team`,
+                    html: emailHtml,
+                    attachments: [{
+                        filename: 'footer.png',
+                        path: path.join(process.cwd(), 'assets/footer.png'),
+                        cid: 'aalaboofooter'
+                    }]
+                });
+            } catch (e) {
+                console.log("Email send failed:", e);
+            }
+
+            res.json({ success: true, message: dbUpdated ? "Message sent to user (DB Updated)" : "Message sent via Email only (Item not in wishlist)" });
+
         } else if (action === 'accept') {
-            // Create Order
-            const wishlistItem = user.wishlist.find(item => String(item.productId) === String(productId));
-            if (!wishlistItem) {
-                const dump = user.wishlist.map(i => i.productId ? `${i.productId}` : 'NO_ID').join(', ');
-                return res.json({ success: false, message: `Item not found (Accept). Target: ${productId}. Length: ${user.wishlist.length}. Available: ${dump}` });
-            }
-
-            const newOrder = new orderModel({
-                userId,
-                items: [wishlistItem], // Using snapshot
-                amount: wishlistItem.price,
-                address: user.address || {},
-                status: 'Order Placed',
-                paymentMethod: 'Request/COD',
-                payment: false,
-                date: Date.now()
-            });
-            await newOrder.save();
-
-            // Update wishlist
             const itemIndex = user.wishlist.findIndex(item => String(item.productId) === String(productId));
+
+            let product = null;
+            try {
+                product = await productModel.findById(productId);
+            } catch (e) { console.log("Product fetch error:", e); }
+
+            const sizeToAdd = product ? (product.defaultSize || (product.sizes && product.sizes.length > 0 ? product.sizes[0] : 'One Size')) : 'One Size';
+
+            let cartData = user.cartData || {};
+            if (!cartData[productId]) { cartData[productId] = {}; }
+            if (cartData[productId][sizeToAdd]) { cartData[productId][sizeToAdd] += 1; } else { cartData[productId][sizeToAdd] = 1; }
+            user.cartData = cartData;
+            user.markModified('cartData');
+
             if (itemIndex > -1) {
                 user.wishlist[itemIndex].requestStatus = 'accepted';
-                user.wishlist[itemIndex].adminMessage = 'Order Request Accepted!';
+                user.wishlist[itemIndex].adminMessage = `Request Accepted! Added to your Cart (${sizeToAdd}).`;
                 user.markModified('wishlist');
-                await user.save();
             }
-            res.json({ success: true, message: "Request accepted and order created" });
+
+            await user.save();
+
+            const targetEmail = req.body.userEmail || user.email;
+            const targetName = req.body.userName || user.name;
+            console.log("DEBUG EMAIL (ACCEPT): Sending to:", targetEmail, "Name:", targetName);
+
+            try {
+                const transporter = nodemailer.createTransport({
+                    service: 'gmail',
+                    auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD }
+                });
+
+                const emailHtml = generateEmailTemplate(targetName, `Good news! The product you requested has been restocked and added to your Cart.<br><br>Please login to check out.`);
+                await transporter.sendMail({
+                    from: 'mail.aalaboo@gmail.com',
+                    to: targetEmail,
+                    subject: 'Product Request Accepted - Aalaboo',
+                    text: `Hello ${targetName},\n\nGood news! The product you requested has been restocked and added to your Cart.\n\nPlease login to check out.\n\nBest regards,\nAalaboo Team`,
+                    html: emailHtml,
+                    attachments: [{
+                        filename: 'footer.png',
+                        path: path.join(process.cwd(), 'assets/footer.png'),
+                        cid: 'aalaboofooter'
+                    }]
+                });
+            } catch (e) { console.log("Email send failed:", e); }
+
+            res.json({ success: true, message: "Request accepted (Cart updated & Email sent)" });
         }
 
     } catch (error) {

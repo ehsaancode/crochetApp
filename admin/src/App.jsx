@@ -7,8 +7,8 @@ import Edit from './pages/Edit'
 import List from './pages/List'
 import Orders from './pages/Orders'
 import Users from './pages/Users'
-import Requests from './pages/Requests'
 import CustomOrders from './pages/CustomOrders'
+// import Requests from './pages/Requests'
 import Festival from './pages/Festival'
 import Gallery from './pages/Gallery'
 import Applications from './pages/Applications'
@@ -46,8 +46,7 @@ const App = () => {
                 <Route path='/list' element={<List token={token} />} />
                 <Route path='/orders' element={<Orders token={token} />} />
                 <Route path='/users' element={<Users token={token} />} />
-                <Route path='/requests' element={<Requests token={token} />} />
-                <Route path='/custom-orders' element={<CustomOrders token={token} />} />
+                {/* <Route path='/requests' element={<Requests token={token} />} /> */}
                 <Route path='/custom-orders' element={<CustomOrders token={token} />} />
                 <Route path='/festival' element={<Festival token={token} />} />
                 <Route path='/gallery' element={<Gallery token={token} />} />
