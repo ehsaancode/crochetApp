@@ -9,6 +9,8 @@ const Dashboard = ({ token }) => {
     const [stats, setStats] = useState({
         totalOrders: 0,
         totalEarnings: 0,
+        earningsOnline: 0,
+        earningsCOD: 0,
         totalProducts: 0,
         totalUsers: 0,
         ordersByStatus: {
@@ -37,6 +39,8 @@ const Dashboard = ({ token }) => {
 
             // Calculate Stats
             let totalEarnings = 0;
+            let earningsOnline = 0;
+            let earningsCOD = 0;
             const statusCounts = {
                 "Order Placed": 0,
                 "Packing": 0,
@@ -49,7 +53,13 @@ const Dashboard = ({ token }) => {
             orders.forEach(order => {
                 if (order.status !== 'Cancelled') {
                     // Assuming amount is number
-                    totalEarnings += Number(order.amount);
+                    const amount = Number(order.amount);
+                    totalEarnings += amount;
+                    if (order.paymentMethod === 'cod') {
+                        earningsCOD += amount;
+                    } else {
+                        earningsOnline += amount;
+                    }
                 }
                 if (statusCounts[order.status] !== undefined) {
                     statusCounts[order.status]++;
@@ -62,6 +72,8 @@ const Dashboard = ({ token }) => {
             setStats({
                 totalOrders: orders.length,
                 totalEarnings,
+                earningsOnline,
+                earningsCOD,
                 totalProducts: products.length,
                 totalUsers: users.length,
                 ordersByStatus: statusCounts,
@@ -96,6 +108,18 @@ const Dashboard = ({ token }) => {
                     icon={<CreditCard className="w-5 h-5 text-emerald-600" />}
                     bg="bg-emerald-50"
                     textColor="text-emerald-700"
+                    details={
+                        <div className="flex flex-col gap-0.5 mt-2 text-xs text-muted-foreground">
+                            <div className="flex justify-between w-full">
+                                <span>Online:</span>
+                                <span className="font-medium text-emerald-600">{currency}{stats.earningsOnline.toLocaleString()}</span>
+                            </div>
+                            <div className="flex justify-between w-full">
+                                <span>COD:</span>
+                                <span className="font-medium text-amber-600">{currency}{stats.earningsCOD.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    }
                 />
                 <StatCard
                     title="Total Orders"
@@ -176,15 +200,22 @@ const Dashboard = ({ token }) => {
     )
 }
 
-const StatCard = ({ title, value, icon, bg, textColor }) => (
-    <div className="bg-card border border-border p-5 rounded-xl shadow-sm flex items-center justify-between hover:shadow-md transition-shadow">
-        <div>
-            <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
-            <p className="text-2xl font-bold text-foreground">{value}</p>
+const StatCard = ({ title, value, icon, bg, textColor, details }) => (
+    <div className="bg-card border border-border p-5 rounded-xl shadow-sm hover:shadow-md transition-shadow">
+        <div className="flex items-center justify-between mb-2">
+            <div>
+                <p className="text-sm font-medium text-muted-foreground mb-1">{title}</p>
+                <p className="text-2xl font-bold text-foreground">{value}</p>
+            </div>
+            <div className={`p-3 rounded-full ${bg} ${textColor}`}>
+                {icon}
+            </div>
         </div>
-        <div className={`p-3 rounded-full ${bg} ${textColor}`}>
-            {icon}
-        </div>
+        {details && (
+            <div className="pt-2 border-t border-border mt-2">
+                {details}
+            </div>
+        )}
     </div>
 )
 
