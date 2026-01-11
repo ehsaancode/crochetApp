@@ -534,4 +534,41 @@ const handleRequest = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest, addAddress, updateSecondaryAddress, deleteAddress };
+const contactFormEmail = async (req, res) => {
+    try {
+        const { name, email, message } = req.body;
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD }
+        });
+
+        const emailHtml = generateEmailTemplate("Admin",
+            `New Contact Form Inquiry<br><br>
+            <b>Name:</b> ${name}<br>
+            <b>Email:</b> ${email}<br>
+            <b>Message:</b><br>${message.replace(/\n/g, '<br>')}`
+        );
+
+        await transporter.sendMail({
+            from: 'mail.aalaboo@gmail.com',
+            to: 'mail.aalaboo@gmail.com',
+            replyTo: email,
+            subject: `New Inquiry from ${name}`,
+            text: `Name: ${name}\nEmail: ${email}\nMessage:\n${message}`,
+            html: emailHtml,
+            attachments: [{
+                filename: 'footer.png',
+                path: path.join(process.cwd(), 'assets/footer.png'),
+                cid: 'aalaboofooter'
+            }]
+        });
+
+        res.json({ success: true, message: "Message sent successfully" });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest, addAddress, updateSecondaryAddress, deleteAddress, contactFormEmail };

@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
-import { Mail, Phone, Send, Instagram, Facebook, Sparkles, MessageSquare } from 'lucide-react';
+import React, { useState, useContext } from 'react';
+import { Mail, Phone, Send, Instagram, Facebook, Sparkles, MessageSquare, Loader2 } from 'lucide-react';
+import axios from 'axios';
+import { ShopContext } from '../context/ShopContext';
+import QToast from './uiComponents/QToast';
 import FadeContent from './uiComponents/FadeContent';
 import DarkVeil from './uiComponents/DarkVeil';
 import { useTheme } from '../context/ThemeContext';
 
 function Contact() {
     const { theme } = useTheme();
+    const { backendUrl } = useContext(ShopContext);
+    const [loading, setLoading] = useState(false);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -17,12 +22,23 @@ function Contact() {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleOnSubmit = (e) => {
+    const handleOnSubmit = async (e) => {
         e.preventDefault();
-        const { name, message } = formData;
-        const subject = `Inquiry from ${name} `;
-        const body = `Hi Aalaboo team, \n\n${message} \n\nRegards, \n${name} `;
-        window.location.href = `mailto:mail.aalaboo@gmail.com?subject = ${encodeURIComponent(subject)}& body=${encodeURIComponent(body)} `;
+        setLoading(true);
+        try {
+            const response = await axios.post(backendUrl + '/api/user/contact', formData);
+            if (response.data.success) {
+                QToast.success('Message sent successfully!');
+                setFormData({ name: '', email: '', message: '' });
+            } else {
+                QToast.error(response.data.message);
+            }
+        } catch (error) {
+            console.error(error);
+            QToast.error(error.message);
+        } finally {
+            setLoading(false);
+        }
     };
 
     return (
@@ -68,7 +84,7 @@ function Contact() {
                                         <Mail className="w-5 h-5" strokeWidth={1.5} />
                                         <span className="text-xs uppercase tracking-widest font-medium">Email</span>
                                     </div>
-                                    <p className="text-xl md:text-2xl font-serif text-silk-900 dark:text-silk-100">hello@aalaboo.com</p>
+                                    <p className="text-xl md:text-2xl font-serif text-silk-900 dark:text-silk-100">mail.aalaboo@gmail.com</p>
                                 </div>
 
                                 {/* <div className="group p-8 rounded-3xl bg-silk-50 dark:bg-white/5 border border-transparent hover:border-silk-200 dark:hover:border-white/10 transition-all duration-300 hover:-translate-y-1 w-full flex flex-col items-center md:items-start">
@@ -145,9 +161,8 @@ function Contact() {
                                             required
                                         ></textarea>
                                     </div>
-                                    <button type="submit" className="w-full bg-silk-900 dark:bg-white text-white dark:text-black py-4 rounded-full font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-silk-800 dark:hover:bg-gray-100 transition-all hover:scale-[1.02] shadow-lg">
-                                        <span>Send Message</span>
-                                        <Send className="w-4 h-4" />
+                                    <button type="submit" disabled={loading} className="w-full bg-silk-900 dark:bg-white text-white dark:text-black py-4 rounded-full font-medium tracking-wide flex items-center justify-center gap-2 hover:bg-silk-800 dark:hover:bg-gray-100 transition-all hover:scale-[1.02] shadow-lg disabled:opacity-70 disabled:cursor-wait">
+                                        {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <><span>Send Message</span><Send className="w-4 h-4" /></>}
                                     </button>
                                 </form>
                             </div>
