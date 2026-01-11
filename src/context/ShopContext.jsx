@@ -9,7 +9,8 @@ const ShopContextProvider = (props) => {
 
     const currency = '₹';
     // Use production URL as fallback so the deployed app works on other devices
-    const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:5000"
+    // const backendUrl = import.meta.env.VITE_BACKEND_URL || "http://172.20.10.10:5000"
+    const backendUrl = import.meta.env.VITE_BACKEND_URL
     // const backendUrl = "http://localhost:5000"
     const [search, setSearch] = useState('');
     const [showSearch, setShowSearch] = useState(false);
