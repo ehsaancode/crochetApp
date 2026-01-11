@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import axios from 'axios'
 import { backendUrl, currency } from '../config'
 import QToast from '../components/QToast'
-import { Scissors, MessageSquare, CheckCircle, Package, FileText, ShoppingBag } from 'lucide-react'
+import { Scissors, MessageSquare, CheckCircle, Package, FileText, ShoppingBag, Loader2 } from 'lucide-react'
 
 const CustomOrders = ({ token }) => {
 
@@ -14,6 +14,7 @@ const CustomOrders = ({ token }) => {
     // Product Request State
     const [requests, setRequests] = useState([]);
     const [replyMessage, setReplyMessage] = useState({});
+    const [actionStatus, setActionStatus] = useState({});
 
     // Fetch Custom Orders
     const fetchCustomOrders = async () => {
@@ -60,6 +61,9 @@ const CustomOrders = ({ token }) => {
     }
 
     const handleAction = async (userId, productId, action, message = "", extraData = {}) => {
+        const actionKey = `${userId}-${productId}-${action}`;
+        setActionStatus(prev => ({ ...prev, [actionKey]: 'loading' }));
+
         try {
             const response = await axios.post(backendUrl + '/api/user/admin/request-handle',
                 { userId, productId, action, message, ...extraData },
@@ -67,18 +71,21 @@ const CustomOrders = ({ token }) => {
             );
             if (response.data.success) {
                 QToast.success(response.data.message, { position: "top-right" });
+                setActionStatus(prev => ({ ...prev, [actionKey]: 'success' }));
                 fetchRequests();
                 if (action === 'message') {
                     setReplyMessage(prev => ({ ...prev, [`${userId}-${productId}`]: "" }));
                 }
             } else {
                 QToast.error(response.data.message, { position: "top-right" });
+                setActionStatus(prev => ({ ...prev, [actionKey]: 'error' }));
                 if (action === 'accept' && response.data.message === "Item not found") {
                     fetchRequests();
                 }
             }
         } catch (error) {
             console.log(error);
+            setActionStatus(prev => ({ ...prev, [actionKey]: 'error' }));
             QToast.error(error.message, { position: "top-right" });
         }
     }
@@ -288,26 +295,38 @@ const CustomOrders = ({ token }) => {
                                                     rows='2'
                                                     placeholder='Ex: We can restock this in 5 days...'
                                                     value={replyMessage[msgKey] || ""}
-                                                    onChange={(e) => setReplyMessage(prev => ({ ...prev, [msgKey]: e.target.value }))}
+                                                    onChange={(e) => {
+                                                        setReplyMessage(prev => ({ ...prev, [msgKey]: e.target.value }));
+                                                        if (actionStatus[`${req.userId}-${pid}-message`] === 'success') {
+                                                            setActionStatus(prev => ({ ...prev, [`${req.userId}-${pid}-message`]: null }));
+                                                        }
+                                                    }}
                                                 ></textarea>
                                             </div>
 
                                             <div className='flex justify-end gap-3 mt-auto'>
                                                 <button
                                                     onClick={() => handleAction(req.userId, pid, 'message', replyMessage[msgKey], { userEmail: req.userEmail, userName: req.userName })}
-                                                    disabled={!replyMessage[msgKey]}
-                                                    className='flex items-center gap-2 px-4 py-2 border border-border text-foreground rounded-md hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed transition-colors'
+                                                    disabled={!replyMessage[msgKey] || actionStatus[`${req.userId}-${pid}-message`] === 'loading'}
+                                                    className={`flex items-center gap-2 px-4 py-2 border border-border rounded-md transition-colors ${actionStatus[`${req.userId}-${pid}-message`] === 'success'
+                                                            ? 'bg-green-50 text-green-600 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800'
+                                                            : 'text-foreground hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed'
+                                                        }`}
                                                 >
-                                                    <MessageSquare size={16} />
-                                                    Send Email
+                                                    {actionStatus[`${req.userId}-${pid}-message`] === 'loading' ? <Loader2 size={16} className="animate-spin" /> :
+                                                        actionStatus[`${req.userId}-${pid}-message`] === 'success' ? <CheckCircle size={16} /> : <MessageSquare size={16} />}
+                                                    {actionStatus[`${req.userId}-${pid}-message`] === 'loading' ? "Sending..." :
+                                                        actionStatus[`${req.userId}-${pid}-message`] === 'success' ? "Sent" : "Send Email"}
                                                 </button>
                                                 {!req.isAvailable && (
                                                     <button
                                                         onClick={() => handleAction(req.userId, pid, 'accept', "", { userEmail: req.userEmail, userName: req.userName })}
-                                                        className='flex items-center gap-2 px-4 py-2 bg-silk-900 text-white rounded-md hover:bg-silk-800 transition-colors shadow-sm'
+                                                        disabled={actionStatus[`${req.userId}-${pid}-accept`] === 'loading' || actionStatus[`${req.userId}-${pid}-accept`] === 'success'}
+                                                        className='flex items-center gap-2 px-4 py-2 bg-silk-900 text-white rounded-md hover:bg-silk-800 transition-colors shadow-sm disabled:opacity-70 disabled:cursor-not-allowed'
                                                     >
-                                                        <CheckCircle size={16} />
-                                                        Accept Order
+                                                        {actionStatus[`${req.userId}-${pid}-accept`] === 'loading' ? <Loader2 size={16} className="animate-spin" /> : <CheckCircle size={16} />}
+                                                        {actionStatus[`${req.userId}-${pid}-accept`] === 'loading' ? "Processing..." :
+                                                            actionStatus[`${req.userId}-${pid}-accept`] === 'success' ? "Accepted" : "Accept Order"}
                                                     </button>
                                                 )}
                                             </div>
