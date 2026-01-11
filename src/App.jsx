@@ -31,8 +31,20 @@ function Navigation() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const location = useLocation();
 
-    const { getCartCount, userData, orderCount, showSearch, setShowSearch } = useContext(ShopContext);
+    const { getCartCount, userData, orderCount, showSearch, setShowSearch, setSearch } = useContext(ShopContext);
     const navigate = useNavigate();
+
+    const handleNavClick = (path) => {
+        setIsMenuOpen(false);
+        setSearch('');
+        setShowSearch(false);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+
+        if (path === '/collection') {
+            sessionStorage.removeItem('collectionScrollY');
+            sessionStorage.removeItem('collectionVisibleProducts');
+        }
+    };
 
     return (
         <>
@@ -48,22 +60,22 @@ function Navigation() {
                     </div>
 
                     <nav className="flex flex-col space-y-6 text-center">
-                        <Link to="/" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Home</Link>
-                        <Link to="/collection" onClick={() => { setIsMenuOpen(false); sessionStorage.removeItem('collectionScrollY'); sessionStorage.removeItem('collectionVisibleProducts'); }} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Shop</Link>
-                        <Link to="/about" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">About</Link>
+                        <Link to="/" onClick={() => handleNavClick('/')} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Home</Link>
+                        <Link to="/collection" onClick={() => handleNavClick('/collection')} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Shop</Link>
+                        <Link to="/about" onClick={() => handleNavClick('/about')} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">About</Link>
 
-                        <Link to="/contact" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Contact</Link>
-                        <Link to="/orders" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Orders</Link>
-                        <Link to="/account" onClick={() => setIsMenuOpen(false)} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Profile</Link>
+                        <Link to="/contact" onClick={() => handleNavClick('/contact')} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Contact</Link>
+                        <Link to="/orders" onClick={() => handleNavClick('/orders')} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Orders</Link>
+                        <Link to="/account" onClick={() => handleNavClick('/account')} className="font-serif text-3xl text-silk-900 dark:text-silk-50 hover:text-silk-600 transition-colors">Profile</Link>
                     </nav>
 
                     <div className="mt-auto border-t border-silk-200 dark:border-silk-800 pt-8 md:hidden">
                         <div className="flex justify-center space-x-8 mb-8">
-                            <Link to="/wishlist" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-50">
+                            <Link to="/wishlist" onClick={() => handleNavClick('/wishlist')} className="flex flex-col items-center text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-50">
                                 <Heart className="w-6 h-6 mb-2" strokeWidth={1.5} />
                                 <span className="text-xs uppercase tracking-widest">Wishlist</span>
                             </Link>
-                            <Link to="/cart" onClick={() => setIsMenuOpen(false)} className="flex flex-col items-center text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-50">
+                            <Link to="/cart" onClick={() => handleNavClick('/cart')} className="flex flex-col items-center text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-50">
                                 <ShoppingBag className="w-6 h-6 mb-2" strokeWidth={1.5} />
                                 <span className="text-xs uppercase tracking-widest">Cart ({getCartCount()})</span>
                             </Link>
@@ -75,7 +87,7 @@ function Navigation() {
             <header className="fixed top-0 left-0 w-full bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark backdrop-blur-sm z-50 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
-                    <Link to="/" onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className={`font-serif text-2xl tracking-tight text-silk-900 dark:text-white group flex items-center justify-center gap-2 absolute top-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out z-50 ${showSearch ? 'left-4 translate-x-0' : 'left-1/2 -translate-x-1/2'}`}>
+                    <Link to="/" onClick={() => handleNavClick('/')} className={`font-serif text-2xl tracking-tight text-silk-900 dark:text-white group flex items-center justify-center gap-2 absolute top-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out z-50 ${showSearch ? 'left-4 translate-x-0' : 'left-1/2 -translate-x-1/2'}`}>
                         Aalaboo
                     </Link>
 
@@ -90,10 +102,10 @@ function Navigation() {
                             </button>
                         )}
                         <ThemeToggle />
-                        <Link to="/wishlist" className="p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
+                        <Link to="/wishlist" onClick={() => handleNavClick('/wishlist')} className="p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
                             <Heart className="w-5 h-5 text-silk-900 dark:text-white" strokeWidth={1.5} />
                         </Link>
-                        <Link to="/cart" className="relative p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
+                        <Link to="/cart" onClick={() => handleNavClick('/cart')} className="relative p-2 hover:bg-silk-100 dark:hover:bg-silk-blue-border rounded-full transition-colors duration-200 hidden sm:block">
                             <ShoppingBag className="w-5 h-5 text-silk-900 dark:text-white" strokeWidth={1.5} />
                             <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px]'>{getCartCount()}</p>
                         </Link>
@@ -109,7 +121,7 @@ function Navigation() {
             <div className="fixed bottom-0 left-0 right-0 bg-silk-50/90 dark:bg-silk-blue-dark/95 backdrop-blur-md border-t border-silk-200 dark:border-silk-blue-border shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] z-50 md:hidden px-4 py-3 flex justify-between items-center pb-5">
                 {[
                     { path: '/', icon: HomeIcon, label: 'Home' },
-                    { path: '/collection', icon: Store, label: 'Shop', onClick: () => { sessionStorage.removeItem('collectionScrollY'); sessionStorage.removeItem('collectionVisibleProducts'); } },
+                    { path: '/collection', icon: Store, label: 'Shop' },
                     { path: '/cart', icon: ShoppingBag, label: 'Cart' },
                     { path: '/orders', icon: Package, label: 'Orders' },
                     { path: '/account', icon: User, label: 'Account', isProfile: true }
@@ -121,7 +133,7 @@ function Navigation() {
                         <Link
                             key={item.path}
                             to={item.path}
-                            onClick={item.onClick}
+                            onClick={() => handleNavClick(item.path)}
                             className={`relative flex items-center justify-center p-2 rounded-full transition-colors duration-300 ${isActive ? 'text-silk-900 dark:text-white' : 'text-silk-500 dark:text-white/50 hover:text-silk-700 dark:hover:text-white'}`}
                         >
                             {isActive && (
