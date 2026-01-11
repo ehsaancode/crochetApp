@@ -111,7 +111,7 @@ const CustomOrders = ({ token }) => {
                         className={`flex items-center gap-2 px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'commission' ? 'bg-white text-silk-900 shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}
                     >
                         <Scissors className="w-4 h-4" />
-                        Custom Commissions
+                        Custom Orders
                         {orders.length > 0 && <span className="ml-1 bg-silk-100 text-silk-700 text-[10px] px-1.5 py-0.5 rounded-full">{orders.length}</span>}
                     </button>
                     <button
