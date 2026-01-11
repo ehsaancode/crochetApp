@@ -292,7 +292,7 @@ const CustomOrders = ({ token }) => {
                                                 </div>
                                                 <textarea
                                                     className='w-full bg-input border border-border rounded-md p-2 text-sm focus:ring-1 focus:ring-silk-500 outline-none text-foreground'
-                                                    rows='2'
+                                                    rows='5'
                                                     placeholder='Ex: We can restock this in 5 days...'
                                                     value={replyMessage[msgKey] || ""}
                                                     onChange={(e) => {
@@ -309,8 +309,8 @@ const CustomOrders = ({ token }) => {
                                                     onClick={() => handleAction(req.userId, pid, 'message', replyMessage[msgKey], { userEmail: req.userEmail, userName: req.userName })}
                                                     disabled={!replyMessage[msgKey] || actionStatus[`${req.userId}-${pid}-message`] === 'loading'}
                                                     className={`flex items-center gap-2 px-4 py-2 border border-border rounded-md transition-colors ${actionStatus[`${req.userId}-${pid}-message`] === 'success'
-                                                            ? 'bg-green-50 text-green-600 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800'
-                                                            : 'text-foreground hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed'
+                                                        ? 'bg-green-50 text-green-600 border-green-200 dark:bg-green-900/20 dark:text-green-400 dark:border-green-800'
+                                                        : 'text-foreground hover:bg-secondary disabled:opacity-50 disabled:cursor-not-allowed'
                                                         }`}
                                                 >
                                                     {actionStatus[`${req.userId}-${pid}-message`] === 'loading' ? <Loader2 size={16} className="animate-spin" /> :
