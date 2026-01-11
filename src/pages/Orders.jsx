@@ -19,6 +19,7 @@ const Orders = ({ compact }) => {
     const [orderData, setOrderData] = useState([])
     const [customOrders, setCustomOrders] = useState([])
     const [loading, setLoading] = useState(true);
+    const [activeTab, setActiveTab] = useState('orders');
 
     useEffect(() => {
         if (location.state?.newOrder) {
@@ -234,153 +235,171 @@ const Orders = ({ compact }) => {
                 </div>
             )}
 
+            {!compact && (
+                <div className="flex gap-6 border-b border-gray-200 dark:border-gray-700 mb-8">
+                    <button
+                        onClick={() => setActiveTab('orders')}
+                        className={`pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'orders' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
+                    >
+                        Standard Orders
+                    </button>
+                    <button
+                        onClick={() => setActiveTab('requests')}
+                        className={`pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'requests' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
+                    >
+                        Custom Requests
+                        {customOrders.length > 0 && <span className="ml-2 text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full dark:bg-silk-900 dark:text-silk-100">{customOrders.length}</span>}
+                    </button>
+                </div>
+            )}
+
             {loading ? (
                 <Loading className="h-64" />
             ) : (
                 <>
                     {/* Standard Orders Section */}
-                    <div className='mb-12'>
-                        <h3 className="text-xl font-medium text-silk-900 dark:text-silk-50 mb-4 border-b pb-2">Standard Orders</h3>
-                        <div className='flex flex-col gap-4'>
-                            {orderData.length === 0 ? (
-                                <div className={`flex flex-col items-center justify-center text-center animate-fade-in ${compact ? 'py-4' : 'py-10'}`}>
-                                    <div className="w-80 sm:w-96 mb-4">
-                                        <DotLottieReact
-                                            src={girlStichingAnimation}
-                                            loop
-                                            autoplay
-                                        />
+                    {activeTab === 'orders' && (
+                        <div className='mb-12 animate-fade-in'>
+                            <div className='flex flex-col gap-4'>
+                                {orderData.length === 0 ? (
+                                    <div className={`flex flex-col items-center justify-center text-center animate-fade-in ${compact ? 'py-4' : 'py-10'}`}>
+                                        <div className="w-80 sm:w-96 mb-4">
+                                            <DotLottieReact
+                                                src={girlStichingAnimation}
+                                                loop
+                                                autoplay
+                                            />
+                                        </div>
+                                        <p className="text-silk-500 text-sm">No standard orders yet.</p>
                                     </div>
-                                    <p className="text-silk-500 text-sm">No standard orders yet.</p>
-                                </div>
-                            ) : (
-                                orderData.map((item, index) => (
-                                    <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
-                                        <Link to={`/product/${item._id}`} className='flex items-start gap-4 sm:gap-6 text-sm group'>
-                                            <img className='w-16 sm:w-20 rounded-sm object-cover transition-transform group-hover:scale-105 duration-300' src={item.image[0]} alt="" />
-                                            <div>
-                                                <p className='sm:text-base font-medium group-hover:text-silk-600 transition-colors'>{item.name}</p>
-                                                <div className='flex items-center gap-3 mt-1 text-base text-gray-700 dark:text-gray-300'>
-                                                    <p>{currency}{item.price}</p>
-                                                    <p>Quantity: {item.quantity}</p>
-                                                    <p>Size: {item.size}</p>
-                                                </div>
-                                                <p className='mt-1'>Date: <span className='text-gray-400'>{new Date(item.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span></p>
-                                                <p className='mt-1'>Payment: <span className='text-gray-400'>{item.paymentMethod}</span></p>
-                                            </div>
-                                        </Link>
-                                        <div className='md:w-1/2 flex flex-col gap-2 w-full'>
-
-                                            {/* Delivered State */}
-                                            {item.status !== 'Delivered' && (
-                                                /* Track Order Button & Logic */
-                                                <div className="flex items-center justify-between md:justify-end gap-3 w-full">
-                                                    <div className="flex flex-col items-start">
-                                                        <p className={`text-sm font-medium ${item.status === 'Cancelled' ? 'text-red-500' : 'text-silk-700 dark:text-silk-300'}`}>{item.status}</p>
-                                                        <p className='text-xs text-gray-500 dark:text-gray-400'>{new Date(item.statusDate || item.date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                ) : (
+                                    orderData.map((item, index) => (
+                                        <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
+                                            <Link to={`/product/${item._id}`} className='flex items-start gap-4 sm:gap-6 text-sm group'>
+                                                <img className='w-16 sm:w-20 rounded-sm object-cover transition-transform group-hover:scale-105 duration-300' src={item.image[0]} alt="" />
+                                                <div>
+                                                    <p className='sm:text-base font-medium group-hover:text-silk-600 transition-colors'>{item.name}</p>
+                                                    <div className='flex items-center gap-3 mt-1 text-base text-gray-700 dark:text-gray-300'>
+                                                        <p>{currency}{item.price}</p>
+                                                        <p>Quantity: {item.quantity}</p>
+                                                        <p>Size: {item.size}</p>
                                                     </div>
-                                                    <div className="flex gap-2">
-                                                        {item.status === 'Order Placed' && (Date.now() - new Date(item.date).getTime()) < (5 * 60 * 60 * 1000) && (
+                                                    <p className='mt-1'>Date: <span className='text-gray-400'>{new Date(item.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span></p>
+                                                    <p className='mt-1'>Payment: <span className='text-gray-400'>{item.paymentMethod}</span></p>
+                                                </div>
+                                            </Link>
+                                            <div className='md:w-1/2 flex flex-col gap-2 w-full'>
+
+                                                {/* Delivered State */}
+                                                {item.status !== 'Delivered' && (
+                                                    /* Track Order Button & Logic */
+                                                    <div className="flex items-center justify-between md:justify-end gap-3 w-full">
+                                                        <div className="flex flex-col items-start">
+                                                            <p className={`text-sm font-medium ${item.status === 'Cancelled' ? 'text-red-500' : 'text-silk-700 dark:text-silk-300'}`}>{item.status}</p>
+                                                            <p className='text-xs text-gray-500 dark:text-gray-400'>{new Date(item.statusDate || item.date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</p>
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            {item.status === 'Order Placed' && (Date.now() - new Date(item.date).getTime()) < (5 * 60 * 60 * 1000) && (
+                                                                <button
+                                                                    onClick={() => handleCancelOrder(item.orderId)}
+                                                                    className='border px-3 py-1.5 text-xs font-medium rounded-full border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all'
+                                                                >
+                                                                    Cancel
+                                                                </button>
+                                                            )}
                                                             <button
-                                                                onClick={() => handleCancelOrder(item.orderId)}
-                                                                className='border px-3 py-1.5 text-xs font-medium rounded-full border-red-500 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 transition-all'
-                                                            >
-                                                                Cancel
-                                                            </button>
-                                                        )}
-                                                        <button
-                                                            disabled={refreshingOrderId === item.orderId}
-                                                            onClick={async () => {
-                                                                if (activeTrackOrder === item.orderId) {
-                                                                    setActiveTrackOrder(null);
-                                                                } else {
-                                                                    const oneHour = 60 * 60 * 1000;
-                                                                    // Only fetch if data is older than 1 hour or never fetched
-                                                                    if (Date.now() - lastFetchTime > oneHour) {
-                                                                        setRefreshingOrderId(item.orderId);
-                                                                        await loadOrderData();
-                                                                        setRefreshingOrderId(null);
+                                                                disabled={refreshingOrderId === item.orderId}
+                                                                onClick={async () => {
+                                                                    if (activeTrackOrder === item.orderId) {
+                                                                        setActiveTrackOrder(null);
+                                                                    } else {
+                                                                        const oneHour = 60 * 60 * 1000;
+                                                                        // Only fetch if data is older than 1 hour or never fetched
+                                                                        if (Date.now() - lastFetchTime > oneHour) {
+                                                                            setRefreshingOrderId(item.orderId);
+                                                                            await loadOrderData();
+                                                                            setRefreshingOrderId(null);
+                                                                        }
+                                                                        setActiveTrackOrder(item.orderId);
                                                                     }
-                                                                    setActiveTrackOrder(item.orderId);
-                                                                }
-                                                            }}
-                                                            className='border px-3 py-1.5 text-xs font-medium rounded-full border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-wait'
-                                                        >
-                                                            {refreshingOrderId === item.orderId ? 'Fetching...' :
-                                                                activeTrackOrder === item.orderId ? 'Collapse' : 'Order Status'}
-                                                        </button>
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* Tracker Timeline (Visible on click) */}
-                                            {activeTrackOrder === item.orderId && item.status !== 'Delivered' && (
-                                                <div className="w-full mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg animate-fade-in">
-                                                    <div className="flex flex-col gap-4">
-                                                        {orderSteps.map((step, stepIdx) => {
-                                                            const status = getStepStatus(item.status, step);
-                                                            const isCompleted = status === 'completed' || status === 'current';
-                                                            const isCurrent = status === 'current';
-
-                                                            return (
-                                                                <div key={step} className="flex items-center gap-3">
-                                                                    <div className="relative flex flex-col items-center">
-                                                                        <div
-                                                                            className={`w-4 h-4 rounded-full border-2 transition-colors duration-300 z-10 ${isCompleted ? 'bg-green-500 border-green-500' : 'bg-white border-gray-300'
-                                                                                }`}
-                                                                        ></div>
-                                                                        {stepIdx !== orderSteps.length - 1 && (
-                                                                            <div className={`absolute top-4 w-0.5 h-6 ${isCompleted && status !== 'current' ? 'bg-green-500' : 'bg-gray-200'
-                                                                                }`}></div>
-                                                                        )}
-                                                                    </div>
-                                                                    <p className={`text-sm font-medium ${isCurrent ? 'text-green-600' : isCompleted ? 'text-gray-500' : 'text-gray-400'
-                                                                        }`}>
-                                                                        {step}
-                                                                    </p>
-                                                                </div>
-                                                            )
-                                                        })}
-                                                    </div>
-                                                </div>
-                                            )}
-
-                                            {/* Action Buttons (Review / Invoice) */}
-                                            {item.status === 'Delivered' && (
-                                                <div className='flex items-center justify-between md:justify-end gap-2 mt-2 w-full'>
-                                                    <div className="flex items-start gap-2">
-                                                        <div className="flex flex-col">
-                                                            <span className="text-sm font-medium text-green-600">Delivered</span>
-                                                            <span className="text-xs text-gray-500">{new Date(item.statusDate || item.date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                                                                }}
+                                                                className='border px-3 py-1.5 text-xs font-medium rounded-full border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-800 transition-all disabled:opacity-50 disabled:cursor-wait'
+                                                            >
+                                                                {refreshingOrderId === item.orderId ? 'Fetching...' :
+                                                                    activeTrackOrder === item.orderId ? 'Collapse' : 'Order Status'}
+                                                            </button>
                                                         </div>
                                                     </div>
-                                                    <div className="flex gap-2">
-                                                        <button
-                                                            onClick={() => openReviewModal(item._id, item.orderId, item.date)}
-                                                            className='border px-3 py-1.5 text-xs font-medium rounded-full border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
-                                                        >
-                                                            {userReviews.some(r => String(r.orderId) === String(item.orderId) && String(r.productId) === String(item._id)) ? 'View Your Review' : 'Review'}
-                                                        </button>
-                                                        <button
-                                                            onClick={() => downloadInvoice(item)}
-                                                            className='flex items-center justify-center gap-1 border px-3 py-1.5 text-xs font-medium rounded-full border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all'
-                                                        >
-                                                            <Download className='w-3 h-3' /> Invoice
-                                                        </button>
+                                                )}
+
+                                                {/* Tracker Timeline (Visible on click) */}
+                                                {activeTrackOrder === item.orderId && item.status !== 'Delivered' && (
+                                                    <div className="w-full mt-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-lg animate-fade-in">
+                                                        <div className="flex flex-col gap-4">
+                                                            {orderSteps.map((step, stepIdx) => {
+                                                                const status = getStepStatus(item.status, step);
+                                                                const isCompleted = status === 'completed' || status === 'current';
+                                                                const isCurrent = status === 'current';
+
+                                                                return (
+                                                                    <div key={step} className="flex items-center gap-3">
+                                                                        <div className="relative flex flex-col items-center">
+                                                                            <div
+                                                                                className={`w-4 h-4 rounded-full border-2 transition-colors duration-300 z-10 ${isCompleted ? 'bg-green-500 border-green-500' : 'bg-white border-gray-300'
+                                                                                    }`}
+                                                                            ></div>
+                                                                            {stepIdx !== orderSteps.length - 1 && (
+                                                                                <div className={`absolute top-4 w-0.5 h-6 ${isCompleted && status !== 'current' ? 'bg-green-500' : 'bg-gray-200'
+                                                                                    }`}></div>
+                                                                            )}
+                                                                        </div>
+                                                                        <p className={`text-sm font-medium ${isCurrent ? 'text-green-600' : isCompleted ? 'text-gray-500' : 'text-gray-400'
+                                                                            }`}>
+                                                                            {step}
+                                                                        </p>
+                                                                    </div>
+                                                                )
+                                                            })}
+                                                        </div>
                                                     </div>
-                                                </div>
-                                            )}
+                                                )}
+
+                                                {/* Action Buttons (Review / Invoice) */}
+                                                {item.status === 'Delivered' && (
+                                                    <div className='flex items-center justify-between md:justify-end gap-2 mt-2 w-full'>
+                                                        <div className="flex items-start gap-2">
+                                                            <div className="flex flex-col">
+                                                                <span className="text-sm font-medium text-green-600">Delivered</span>
+                                                                <span className="text-xs text-gray-500">{new Date(item.statusDate || item.date).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                                                            </div>
+                                                        </div>
+                                                        <div className="flex gap-2">
+                                                            <button
+                                                                onClick={() => openReviewModal(item._id, item.orderId, item.date)}
+                                                                className='border px-3 py-1.5 text-xs font-medium rounded-full border-silk-600 text-silk-600 hover:bg-silk-50 dark:hover:bg-gray-800 transition-all'
+                                                            >
+                                                                {userReviews.some(r => String(r.orderId) === String(item.orderId) && String(r.productId) === String(item._id)) ? 'View Your Review' : 'Review'}
+                                                            </button>
+                                                            <button
+                                                                onClick={() => downloadInvoice(item)}
+                                                                className='flex items-center justify-center gap-1 border px-3 py-1.5 text-xs font-medium rounded-full border-green-600 text-green-600 hover:bg-green-50 dark:hover:bg-green-900/20 transition-all'
+                                                            >
+                                                                <Download className='w-3 h-3' /> Invoice
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                )}
+                                            </div>
                                         </div>
-                                    </div>
-                                ))
-                            )}
+                                    ))
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     {/* Custom Orders Section */}
-                    {!compact && (
-                        <div>
-                            <h3 className="text-xl font-medium text-silk-900 dark:text-silk-50 mb-4 border-b pb-2">Custom Requests</h3>
+                    {activeTab === 'requests' && !compact && (
+                        <div className="animate-fade-in">
                             <div className='flex flex-col gap-4'>
                                 {customOrders.length === 0 ? (
                                     <div className="flex flex-col items-center justify-center text-center animate-fade-in py-10">
