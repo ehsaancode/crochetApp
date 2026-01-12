@@ -273,7 +273,7 @@ function Collection() {
 
                 <div className="mt-8">
                     <button
-                        onClick={applyFilter}
+                        onClick={() => { applyFilter(); setIsFilterOpen(false); }}
                         className="w-full px-4 py-2 bg-silk-900 dark:bg-silk-100 text-white dark:text-black font-medium rounded-lg hover:bg-silk-800 dark:hover:bg-white transition-colors shadow-sm"
                     >
                         Apply Filters
