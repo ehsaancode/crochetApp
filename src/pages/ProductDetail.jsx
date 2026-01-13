@@ -4,7 +4,7 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, Maximize2, X, Check, Loader2 } from 'lucide-react';
 import QToast from './uiComponents/QToast';
-import freeSizeIcon from '../assets/freeSizeIcon.png';
+import freeSizeIcon from '../assets/centimeter.png';
 
 function ProductDetail() {
     const { id } = useParams();
@@ -244,25 +244,27 @@ function ProductDetail() {
                     {product.sizes.length > 0 && (
                         <div className="flex flex-col gap-4 my-8">
                             <p className="text-sm font-medium text-silk-900 dark:text-silk-50">Select Size</p>
-                            <div className="flex items-center gap-2">
-                                {product.sizes.map((item, index) => {
-                                    const isFreeSize = item.toLowerCase() === 'free size';
-                                    return (
-                                        <button
-                                            onClick={() => setSize(item)}
-                                            className={`${isFreeSize ? 'h-auto w-auto p-0 bg-transparent border-none' : 'h-8 w-8 rounded-full border'} flex items-center justify-center text-xs transition-all ${!isFreeSize && (item === size
-                                                ? 'bg-silk-50 border-silk-500 dark:bg-white dark:text-black dark:border-white'
-                                                : 'bg-gray-100 border-transparent dark:bg-slate-800 dark:text-gray-300 dark:border-slate-700 hover:border-silk-300')}`}
-                                            key={index}
-                                        >
-                                            {isFreeSize ? (
-                                                <div className={`relative ${item === size ? 'scale-110 drop-shadow-lg' : 'opacity-80 hover:opacity-100 hover:scale-105'} transition-all duration-200`}>
-                                                    <img src={freeSizeIcon} alt={item} className="h-8 w-auto object-contain" />
-                                                </div>
-                                            ) : item}
-                                        </button>
-                                    );
-                                })}
+                            <div className="flex gap-2">
+                                {product.sizes.map((item, index) => (
+                                    <button
+                                        onClick={() => setSize(item)}
+                                        className={`${item.toLowerCase() === 'free size' ? 'h-auto w-auto p-1 rounded-none border-0' : 'h-8 w-8 rounded-full border'} flex items-center justify-center text-xs transition-all ${item.toLowerCase() === 'free size'
+                                            ? (item === size ? 'opacity-100 scale-110' : 'opacity-50 hover:opacity-80')
+                                            : (item === size ? 'bg-silk-50 border-silk-500 dark:bg-white dark:text-black dark:border-white' : 'bg-gray-100 border-transparent dark:bg-slate-800 dark:text-gray-300 dark:border-slate-700 hover:border-silk-300')
+                                            }`}
+                                        key={index}
+                                        title={item}
+                                    >
+                                        {item.toLowerCase() === 'free size' ? (
+                                            <div className="flex flex-col items-center gap-1">
+                                                <img src={freeSizeIcon} alt="Free Size" className="h-8 w-auto object-contain" />
+                                                <span className="text-[10px] text-gray-400 font-medium">Free Size</span>
+                                            </div>
+                                        ) : (
+                                            item
+                                        )}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     )}
