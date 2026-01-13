@@ -4,6 +4,7 @@ import { useParams, Link, useLocation } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
 import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, Maximize2, X, Check, Loader2 } from 'lucide-react';
 import QToast from './uiComponents/QToast';
+import freeSizeIcon from '../assets/freeSizeIcon.png';
 
 function ProductDetail() {
     const { id } = useParams();
@@ -243,18 +244,25 @@ function ProductDetail() {
                     {product.sizes.length > 0 && (
                         <div className="flex flex-col gap-4 my-8">
                             <p className="text-sm font-medium text-silk-900 dark:text-silk-50">Select Size</p>
-                            <div className="flex gap-2">
-                                {product.sizes.map((item, index) => (
-                                    <button
-                                        onClick={() => setSize(item)}
-                                        className={`h-8 w-8 rounded-full flex items-center justify-center text-xs border transition-all ${item === size
-                                            ? 'bg-silk-50 border-silk-500 dark:bg-white dark:text-black dark:border-white'
-                                            : 'bg-gray-100 border-transparent dark:bg-slate-800 dark:text-gray-300 dark:border-slate-700 hover:border-silk-300'}`}
-                                        key={index}
-                                    >
-                                        {item}
-                                    </button>
-                                ))}
+                            <div className="flex items-center gap-2">
+                                {product.sizes.map((item, index) => {
+                                    const isFreeSize = item.toLowerCase() === 'free size';
+                                    return (
+                                        <button
+                                            onClick={() => setSize(item)}
+                                            className={`${isFreeSize ? 'h-auto w-auto p-0 bg-transparent border-none' : 'h-8 w-8 rounded-full border'} flex items-center justify-center text-xs transition-all ${!isFreeSize && (item === size
+                                                ? 'bg-silk-50 border-silk-500 dark:bg-white dark:text-black dark:border-white'
+                                                : 'bg-gray-100 border-transparent dark:bg-slate-800 dark:text-gray-300 dark:border-slate-700 hover:border-silk-300')}`}
+                                            key={index}
+                                        >
+                                            {isFreeSize ? (
+                                                <div className={`relative ${item === size ? 'scale-110 drop-shadow-lg' : 'opacity-80 hover:opacity-100 hover:scale-105'} transition-all duration-200`}>
+                                                    <img src={freeSizeIcon} alt={item} className="h-8 w-auto object-contain" />
+                                                </div>
+                                            ) : item}
+                                        </button>
+                                    );
+                                })}
                             </div>
                         </div>
                     )}
