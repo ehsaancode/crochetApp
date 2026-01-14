@@ -100,39 +100,80 @@ export default function DarkVeil({
     darkMode = false
 }) {
     const ref = useRef(null);
+    const glRef = useRef(null);
+
+    // Use refs for props that change frequently to avoid re-initializing the renderer
+    const propsRef = useRef({
+        hueShift,
+        noiseIntensity,
+        scanlineIntensity,
+        speed,
+        scanlineFrequency,
+        warpAmount,
+        resolutionScale,
+        darkMode
+    });
+
+    useLayoutEffect(() => {
+        propsRef.current = {
+            hueShift,
+            noiseIntensity,
+            scanlineIntensity,
+            speed,
+            scanlineFrequency,
+            warpAmount,
+            resolutionScale,
+            darkMode
+        };
+    }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale, darkMode]);
+
     useLayoutEffect(() => {
         const canvas = ref.current;
         const parent = canvas.parentElement;
+        let renderer;
+        let program;
+        let mesh;
+        let frame;
 
-        const renderer = new Renderer({
-            dpr: Math.min(window.devicePixelRatio, 2),
-            canvas
-        });
+        try {
+            renderer = new Renderer({
+                dpr: Math.min(window.devicePixelRatio, 2),
+                canvas,
+                alpha: true, // often helps with context management
+                powerPreference: "high-performance"
+            });
+            glRef.current = renderer.gl;
+        } catch (e) {
+            console.error("DarkVeil: Unable to create WebGL context", e);
+            return;
+        }
 
         const gl = renderer.gl;
         const geometry = new Triangle(gl);
 
-        const program = new Program(gl, {
+        program = new Program(gl, {
             vertex,
             fragment,
             uniforms: {
                 uTime: { value: 0 },
                 uResolution: { value: new Vec2() },
-                uHueShift: { value: hueShift },
-                uNoise: { value: noiseIntensity },
-                uScan: { value: scanlineIntensity },
-                uScanFreq: { value: scanlineFrequency },
-                uWarp: { value: warpAmount },
-                uDarkMode: { value: darkMode ? 1.0 : 0.0 }
+                uHueShift: { value: propsRef.current.hueShift },
+                uNoise: { value: propsRef.current.noiseIntensity },
+                uScan: { value: propsRef.current.scanlineIntensity },
+                uScanFreq: { value: propsRef.current.scanlineFrequency },
+                uWarp: { value: propsRef.current.warpAmount },
+                uDarkMode: { value: propsRef.current.darkMode ? 1.0 : 0.0 }
             }
         });
 
-        const mesh = new Mesh(gl, { geometry, program });
+        mesh = new Mesh(gl, { geometry, program });
 
         const resize = () => {
-            const w = parent.clientWidth,
-                h = parent.clientHeight;
-            renderer.setSize(w * resolutionScale, h * resolutionScale);
+            if (!parent) return;
+            const w = parent.clientWidth;
+            const h = parent.clientHeight;
+            // Use current resolutionScale from ref
+            renderer.setSize(w * propsRef.current.resolutionScale, h * propsRef.current.resolutionScale);
             program.uniforms.uResolution.value.set(w, h);
         };
 
@@ -140,16 +181,18 @@ export default function DarkVeil({
         resize();
 
         const start = performance.now();
-        let frame = 0;
 
         const loop = () => {
-            program.uniforms.uTime.value = ((performance.now() - start) / 1000) * speed;
-            program.uniforms.uHueShift.value = hueShift;
-            program.uniforms.uNoise.value = noiseIntensity;
-            program.uniforms.uScan.value = scanlineIntensity;
-            program.uniforms.uScanFreq.value = scanlineFrequency;
-            program.uniforms.uWarp.value = warpAmount;
-            program.uniforms.uDarkMode.value = darkMode ? 1.0 : 0.0;
+            // Access latest props from ref
+            const p = propsRef.current;
+            program.uniforms.uTime.value = ((performance.now() - start) / 1000) * p.speed;
+            program.uniforms.uHueShift.value = p.hueShift;
+            program.uniforms.uNoise.value = p.noiseIntensity;
+            program.uniforms.uScan.value = p.scanlineIntensity;
+            program.uniforms.uScanFreq.value = p.scanlineFrequency;
+            program.uniforms.uWarp.value = p.warpAmount;
+            program.uniforms.uDarkMode.value = p.darkMode ? 1.0 : 0.0;
+
             renderer.render({ scene: mesh });
             frame = requestAnimationFrame(loop);
         };
@@ -159,7 +202,9 @@ export default function DarkVeil({
         return () => {
             cancelAnimationFrame(frame);
             window.removeEventListener('resize', resize);
+            const ext = gl.getExtension('WEBGL_lose_context');
+            if (ext) ext.loseContext();
         };
-    }, [hueShift, noiseIntensity, scanlineIntensity, speed, scanlineFrequency, warpAmount, resolutionScale, darkMode]);
+    }, []); // Only run once on mount
     return <canvas ref={ref} className="w-full h-full block bg-silk-100 dark:bg-black" />;
 }
