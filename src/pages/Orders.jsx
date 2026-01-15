@@ -230,21 +230,21 @@ const Orders = ({ compact }) => {
                     <div className="flex w-full md:w-auto md:gap-6">
                         <button
                             onClick={() => setActiveTab('orders')}
-                            className={`flex-1 text-center md:flex-none md:text-left pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'orders' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
+                            className={`whitespace-nowrap flex-1 text-center md:flex-none md:text-left pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'orders' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
                         >
                             Standard Orders
                         </button>
                         <button
                             onClick={() => setActiveTab('requests')}
-                            className={`flex-1 text-center md:flex-none md:text-left pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'requests' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
+                            className={`whitespace-nowrap flex-1 text-center md:flex-none md:text-left pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'requests' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
                         >
                             Custom Requests
                             {customOrders.length > 0 && <span className="ml-2 text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full dark:bg-silk-900 dark:text-silk-100">{customOrders.length}</span>}
                         </button>
                     </div>
 
-                    <Link to="/contact" className='mb-3 text-xs font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors flex items-center gap-2 whitespace-nowrap'>
-                        Need help? <span className="underline">Connect with us</span>
+                    <Link to="/contact" className='mb-3 text-xs font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors flex items-center gap-2 whitespace-nowrap underline'>
+                        Need help?
                     </Link>
                 </div>
             )}
