@@ -226,30 +226,26 @@ const Orders = ({ compact }) => {
         <div className={compact ? 'p-6' : 'border-t pt-24 px-8 sm:px-12 md:px-24 min-h-[80vh]'}>
 
             {!compact && (
-                <div className='flex justify-between items-center text-2xl mb-8 gap-2'>
-                    <h2 className='font-serif text-3xl text-silk-900 dark:text-silk-50'>MY <span className='text-silk-600 font-medium'>ORDERS</span></h2>
-                    <Link to="/contact" className='text-xs font-medium text-gray-400 hover:text-gray-400 dark:text-gray-600 dark:hover:text-gray-400 transition-colors flex items-center gap-2 whitespace-nowrap'>
-                        Need help? <br />
-                        <span className="underline">Connect with us</span>
-                    </Link>
-                </div>
-            )}
+                <div className="flex flex-col-reverse md:flex-row justify-between items-end border-b border-gray-200 dark:border-gray-700 mb-8 gap-4">
+                    <div className="flex w-full md:w-auto md:gap-6">
+                        <button
+                            onClick={() => setActiveTab('orders')}
+                            className={`flex-1 text-center md:flex-none md:text-left pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'orders' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
+                        >
+                            Standard Orders
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('requests')}
+                            className={`flex-1 text-center md:flex-none md:text-left pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'requests' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
+                        >
+                            Custom Requests
+                            {customOrders.length > 0 && <span className="ml-2 text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full dark:bg-silk-900 dark:text-silk-100">{customOrders.length}</span>}
+                        </button>
+                    </div>
 
-            {!compact && (
-                <div className="flex gap-6 border-b border-gray-200 dark:border-gray-700 mb-8">
-                    <button
-                        onClick={() => setActiveTab('orders')}
-                        className={`pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'orders' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
-                    >
-                        Standard Orders
-                    </button>
-                    <button
-                        onClick={() => setActiveTab('requests')}
-                        className={`pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'requests' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
-                    >
-                        Custom Requests
-                        {customOrders.length > 0 && <span className="ml-2 text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full dark:bg-silk-900 dark:text-silk-100">{customOrders.length}</span>}
-                    </button>
+                    <Link to="/contact" className='mb-3 text-xs font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors flex items-center gap-2 whitespace-nowrap'>
+                        Need help? <span className="underline">Connect with us</span>
+                    </Link>
                 </div>
             )}
 
