@@ -25,6 +25,39 @@ function CustomOrder() {
     const [addressMode, setAddressMode] = useState('new'); // 'saved' or 'new'
     const [isSavingAddress, setIsSavingAddress] = useState(false);
     const [showSaveSuccess, setShowSaveSuccess] = useState(false);
+    const [loading, setLoading] = useState(false);
+
+    // Gallery Picker
+    const [gallery, setGallery] = useState([]);
+    const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+
+    useEffect(() => {
+        const fetchGallery = async () => {
+            try {
+                const response = await axios.get(backendUrl + '/api/gallery/list');
+                if (response.data.success) setGallery(response.data.images);
+            } catch (error) { console.error(error); }
+        };
+        fetchGallery();
+    }, [backendUrl]);
+
+    const optimizeImageUrl = (url, width) => {
+        if (!url || !url.includes('cloudinary.com')) return url;
+        if (url.includes('/upload/w_')) return url;
+        return url.replace('/upload/', `/upload/w_${width},q_auto,f_auto/`);
+    };
+
+    const handleGalleryPicker = async (imageUrl) => {
+        setIsGalleryOpen(false);
+        setLoading(true);
+        try {
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            const file = new File([blob], "gallery_pick.jpg", { type: blob.type });
+            handleFileSelect([file]);
+            toast.success("Image added from gallery");
+        } catch (error) { toast.error("Failed to add image"); } finally { setLoading(false); }
+    };
 
     const [addressData, setAddressData] = useState({
         firstName: '', lastName: '', street: '', city: '', state: '', zip: '', country: '', phone: '', landmark: ''
@@ -258,7 +291,7 @@ function CustomOrder() {
         if (fileInputRef.current) fileInputRef.current.value = '';
     };
 
-    const [loading, setLoading] = useState(false);
+    // const [loading, setLoading] = useState(false); // Removed duplicate
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -801,11 +834,60 @@ function CustomOrder() {
                                 >
                                     {loading ? 'Processing...' : (token ? 'Request Quote' : 'Login to Request')}
                                 </motion.button>
+
+                                <div className="mt-4 text-center">
+                                    <button
+                                        type="button"
+                                        onClick={() => setIsGalleryOpen(true)}
+                                        className="text-xs uppercase tracking-widest text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-200 transition-colors border-b border-transparent hover:border-silk-900 dark:hover:border-silk-200 pb-0.5"
+                                    >
+                                        Need a suggestion? Pick from Gallery
+                                    </button>
+                                </div>
                             </div>
                         </form>
                     </div>
                 </FadeContent>
             </div>
+
+            {/* Gallery Picker Modal */}
+            <AnimatePresence>
+                {isGalleryOpen && (
+                    <div className="fixed inset-0 z-[60] bg-white dark:bg-black overflow-y-auto animate-fade-in p-6 md:p-12">
+                        <div className="max-w-7xl mx-auto">
+                            <div className="flex justify-between items-center mb-8">
+                                <div>
+                                    <h2 className="font-serif text-2xl md:text-3xl text-silk-900 dark:text-silk-50 mb-2">Pick a Design</h2>
+                                    <p className="text-sm text-silk-600 dark:text-silk-400">Select an image to use as a reference</p>
+                                </div>
+                                <button
+                                    onClick={() => setIsGalleryOpen(false)}
+                                    className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors"
+                                >
+                                    <X className="w-8 h-8 text-silk-900 dark:text-silk-50" />
+                                </button>
+                            </div>
+                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
+                                {gallery.map((item) => (
+                                    <div
+                                        key={item._id}
+                                        onClick={() => handleGalleryPicker(item.image)}
+                                        className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100 dark:bg-white/5 border border-transparent hover:border-silk-500 transition-all"
+                                    >
+                                        <img
+                                            src={optimizeImageUrl(item.image, 300)}
+                                            loading="lazy"
+                                            alt="Idea"
+                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                        />
+                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </AnimatePresence>
 
             {/* Progress Popup */}
             <AnimatePresence>
