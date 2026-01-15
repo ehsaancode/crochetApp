@@ -3,17 +3,26 @@ import { ShopContext } from '../context/ShopContext';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, Sparkles, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import axios from 'axios';
+import GridMotion from '../pages/uiComponents/GridMotion';
 
 const DiscoverIdeas = ({ isHomePage }) => {
     const { backendUrl } = useContext(ShopContext);
     const navigate = useNavigate();
     const [gallery, setGallery] = useState([]);
 
-    const [visibleCount, setVisibleCount] = useState(window.innerWidth > 768 ? 12 : 6);
+    const [visibleCount, setVisibleCount] = useState(window.innerWidth > 768 ? 24 : 12); // Increased default for grid motion
+    const [showAllGallery, setShowAllGallery] = useState(false);
 
     const [selectedIndex, setSelectedIndex] = useState(null);
     const touchStart = useRef(null);
     const touchEnd = useRef(null);
+
+    // ... (rest of imports/state)
+
+    // (hook implementations remain same)
+
+    // ...
+
 
     // Min swipe distance (in px) 
     const minSwipeDistance = 50;
@@ -49,8 +58,8 @@ const DiscoverIdeas = ({ isHomePage }) => {
         navigate('/custom-order', { state: { initialImage: image } });
     };
 
-    const handleLoadMore = () => {
-        setVisibleCount(prev => prev + 6);
+    const handleShowAll = () => {
+        setShowAllGallery(true);
     };
 
     const handleNext = (e) => {
@@ -100,41 +109,30 @@ const DiscoverIdeas = ({ isHomePage }) => {
         <div className="mt-8 pt-8 border-t border-gray-100 dark:border-white/5 animate-fade-in">
             <div className={`flex items-center ${isHomePage ? 'justify-center text-center mb-8' : 'justify-between mb-4'}`}>
                 <div>
-                    <h4 className={`font-serif text-lg text-silk-900 dark:text-silk-50 flex items-center gap-2 ${isHomePage ? 'justify-center text-xl md:text-3xl mb-2' : ''}`}>
-                        <Sparkles className="w-4 h-4 text-silk-500" />
-                        Ready to create something unique?
-                    </h4>
+                    <div className={`flex flex-col ${isHomePage ? 'items-center' : 'items-start'} gap-2 mb-2`}>
+                        <Sparkles className="w-5 h-5 text-silk-500" />
+                        <h4 className={`font-serif text-lg text-silk-900 dark:text-silk-50 ${isHomePage ? 'text-xl md:text-3xl' : ''}`}>
+                            Ready to create something unique?
+                        </h4>
+                    </div>
                     <p className={`text-sm text-silk-600 dark:text-silk-400 ${isHomePage ? 'text-sm md:text-lg max-w-2xl mx-auto' : ''}`}>Discover ideas from our gallery to start your custom request.</p>
                 </div>
             </div>
 
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3">
-                {gallery.slice(0, visibleCount).map((item, index) => (
-                    <div
-                        key={item._id}
-                        onClick={() => setSelectedIndex(index)}
-                        className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100 dark:bg-white/5"
-                    >
-                        <img
-                            src={optimizeImageUrl(item.image, 500)}
-                            loading="lazy"
-                            alt="Idea"
-                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                        />
-                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                    </div>
-                ))}
+            <div className="h-[60vh] w-full overflow-hidden rounded-xl bg-gray-50 dark:bg-black/20 my-6">
+                <GridMotion
+                    items={gallery.slice(0, visibleCount).map(item => optimizeImageUrl(item.image, 500))}
+                    gradientColor="transparent"
+                />
             </div>
 
             <div className={`mt-8 pb-15 flex flex-col gap-4 ${isHomePage ? 'items-center sm:flex-row sm:justify-center' : 'items-end sm:flex-row sm:items-center justify-between'}`}>
-                {visibleCount < gallery.length && (
-                    <button
-                        onClick={handleLoadMore}
-                        className="text-xs uppercase tracking-widest font-medium text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white flex items-center gap-1 transition-colors"
-                    >
-                        Load More <ArrowRight className="w-3 h-3" />
-                    </button>
-                )}
+                <button
+                    onClick={handleShowAll}
+                    className="px-4 py-1 rounded-full border border-silk-900 dark:border-silk-100 text-silk-900 dark:text-silk-100 text-[10px] md:text-xs uppercase tracking-widest hover:bg-silk-900 hover:text-silk-50 dark:hover:bg-silk-100 dark:hover:text-silk-900 transition-all duration-300 flex items-center gap-1"
+                >
+                    Show All <ArrowRight className="w-3 h-3" />
+                </button>
 
                 <button
                     onClick={() => navigate('/custom-order')}
@@ -143,6 +141,40 @@ const DiscoverIdeas = ({ isHomePage }) => {
                     Start blank request <ArrowRight className="w-3 h-3" />
                 </button>
             </div>
+
+            {/* Full Gallery Modal */}
+            {showAllGallery && (
+                <div className="fixed inset-0 z-[45] bg-white dark:bg-black overflow-y-auto animate-fade-in p-6 md:p-12">
+                    <div className="max-w-7xl mx-auto">
+                        <div className="flex justify-between items-center mb-8">
+                            <h2 className="font-serif text-2xl md:text-4xl text-silk-900 dark:text-silk-50">Gallery</h2>
+                            <button
+                                onClick={() => setShowAllGallery(false)}
+                                className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors"
+                            >
+                                <X className="w-8 h-8 text-silk-900 dark:text-silk-50" />
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 mb-12">
+                            {gallery.map((item, index) => (
+                                <div
+                                    key={item._id}
+                                    onClick={() => setSelectedIndex(index)}
+                                    className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100 dark:bg-white/5"
+                                >
+                                    <img
+                                        src={optimizeImageUrl(item.image, 500)}
+                                        loading="lazy"
+                                        alt="Idea"
+                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                                    />
+                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            )}
 
             {/* Image Modal */}
             {selectedIndex !== null && gallery[selectedIndex] && (

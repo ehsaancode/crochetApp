@@ -9,7 +9,7 @@ import { RainbowButton } from "@/components/ui/rainbow-button";
 import { useTheme } from '../context/ThemeContext';
 
 import Carousel from './uiComponents/Carousel';
-import GridMotion from './uiComponents/GridMotion';
+// import GridMotion from './uiComponents/GridMotion';
 import Masonry from './uiComponents/Masonry';
 import FestiveCard from '../components/FestiveCard';
 import DiscoverIdeas from '../components/DiscoverIdeas';
@@ -127,9 +127,9 @@ function Home() {
 
             </section>
 
-            <div className="mb-32 h-[50vh] md:h-[80vh] w-full overflow-hidden bg-silk-100 dark:bg-black">
+            {/* <div className="mb-32 h-[50vh] md:h-[80vh] w-full overflow-hidden bg-silk-100 dark:bg-black">
                 <GridMotion items={(galleryImages.length > 0 ? galleryImages.map(item => optimizeImageUrl(item.image, 400)) : products.slice(0, 12).map(product => optimizeImageUrl(product.image[0], 400))).concat(Array(24).fill(galleryImages.length > 0 ? galleryImages.map(item => optimizeImageUrl(item.image, 400)) : products.slice(0, 12).map(product => optimizeImageUrl(product.image[0], 400))).flat()).slice(0, 300)} />
-            </div>
+            </div> */}
 
             <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32 shadow-xl">
                 <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
