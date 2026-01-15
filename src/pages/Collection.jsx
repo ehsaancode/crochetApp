@@ -197,9 +197,18 @@ function Collection() {
 
             {/* Sidebar Filters */}
             <aside className={`fixed inset-y-0 left-0 z-50 w-64 bg-white dark:bg-black p-6 shadow-2xl transform transition-transform duration-300 ease-out md:sticky md:top-24 md:h-[80vh] overflow-y-auto scrollbar-thin scrollbar-thumb-silk-200 dark:scrollbar-thumb-gray-700 md:translate-x-0 md:shadow-none md:bg-transparent md:w-64 md:block ${isFilterOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-                <div className="flex justify-between items-center mb-8 md:hidden">
+                <div className="flex justify-between items-center mb-4 md:hidden">
                     <h3 className="font-serif text-xl dark:text-white">Filters</h3>
                     <button onClick={() => setIsFilterOpen(false)} className="dark:text-white"><X className="w-6 h-6" /></button>
+                </div>
+
+                <div className="sticky top-[-1.5rem] -mx-6 px-6 py-3 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-900 md:hidden mb-6 shadow-sm">
+                    <button
+                        onClick={() => { applyFilter(); setIsFilterOpen(false); }}
+                        className="w-full py-2 bg-silk-900 dark:bg-silk-100 text-white dark:text-black font-medium text-sm rounded-full hover:bg-silk-800 dark:hover:bg-white transition-all shadow-md active:scale-95"
+                    >
+                        Apply Filters
+                    </button>
                 </div>
 
                 <div className="space-y-8">
@@ -271,7 +280,7 @@ function Collection() {
                     </div>
                 </div>
 
-                <div className="mt-8">
+                <div className="mt-8 hidden md:block">
                     <button
                         onClick={() => { applyFilter(); setIsFilterOpen(false); }}
                         className="w-full px-4 py-2 bg-silk-900 dark:bg-silk-100 text-white dark:text-black font-medium rounded-lg hover:bg-silk-800 dark:hover:bg-white transition-colors shadow-sm"
