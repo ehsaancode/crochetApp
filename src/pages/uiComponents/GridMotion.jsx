@@ -5,20 +5,24 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
     const gridRef = useRef(null);
     const rowRefs = useRef([]);
     const mouseXRef = useRef(window.innerWidth / 2);
-    const [columnCount, setColumnCount] = useState(7); // Default to desktop (7 columns)
+    const [columnCount, setColumnCount] = useState(7); // Default to desktop
 
-    // Ensure we have enough items to fill the grid
-    const totalItems = 4 * columnCount;
+    // Determine row count based on column count (Mobile = 12 cols -> 7 rows, Desktop = 7 cols -> 4 rows)
+    const rowCount = columnCount > 6 ? 5 : 9;
+
+    // Ensure we have enough items to fill the grid (or at least defaults)
+    // We will use modulo to repeat items so totalItems is just for generating defaults if needed
+    const totalItems = rowCount * columnCount;
     const defaultItems = Array.from({ length: totalItems }, (_, index) => `Item ${index + 1}`);
-    const combinedItems = items.length > 0 ? items.slice(0, totalItems) : defaultItems;
+    const combinedItems = items.length > 0 ? items : defaultItems;
 
     // Handle resize to update column count
     useEffect(() => {
         const handleResize = () => {
             if (window.innerWidth < 768) {
-                setColumnCount(3); // Mobile
+                setColumnCount(6); // Mobile: Reduce columns to increase width
             } else {
-                setColumnCount(7); // Desktop
+                setColumnCount(7); // Desktop: Maintain specific user preference
             }
         };
 
@@ -38,13 +42,18 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
 
         const handleScroll = () => {
             const scrollY = window.scrollY;
-            const maxScroll = (document.documentElement.scrollHeight || document.body.scrollHeight) - window.innerHeight;
-            const scrollFraction = maxScroll > 0 ? scrollY / maxScroll : 0;
-            mouseXRef.current = scrollFraction * window.innerWidth;
+            // Use a sine wave to create continuous, smooth motion as you scroll
+            // This decouples the movement from the total page height, ensuring activity
+            // even on long pages or short viewports.
+            // 0.002 controls the frequency of the wave (speed of oscillation relative to scroll)
+            const oscillation = Math.sin(scrollY * 0.002);
+            // Map -1..1 to 0..window.innerWidth
+            mouseXRef.current = ((oscillation + 1) / 2) * window.innerWidth;
         };
 
         const updateMotion = () => {
-            const maxMoveAmount = columnCount === 3 ? 200 : 600; // Reduced for mobile
+            const isMobile = columnCount !== 7;
+            const maxMoveAmount = isMobile ? 300 : 600;
             const baseDuration = 0.8;
             const inertiaFactors = [0.6, 0.4, 0.3, 0.2];
 
@@ -67,7 +76,7 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
 
         // Add listeners
         window.addEventListener('mousemove', handleMouseMove);
-        window.addEventListener('scroll', handleScroll);
+        window.addEventListener('scroll', handleScroll, { passive: true });
 
         return () => {
             window.removeEventListener('mousemove', handleMouseMove);
@@ -81,16 +90,22 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
             <section
                 className="w-full h-screen overflow-hidden relative flex items-center justify-center"
             >
-                <div className={`flex-none relative h-[150vh] grid grid-rows-4 grid-cols-1 rotate-[-15deg] origin-center z-[2] ${columnCount === 3 ? 'w-[120vw] gap-3' : 'w-[150vw] gap-6'}`}>
-                    {[...Array(4)].map((_, rowIndex) => (
+                {/* Dynamically adjust width and gap based on device/columnCount */}
+                <div className={`flex-none relative h-[150vh] grid grid-cols-1 rotate-[-15deg] origin-center z-[2] ${columnCount !== 7 ? 'w-[200vw] gap-2' : 'w-[150vw] gap-6'}`}
+                    style={{ gridTemplateRows: `repeat(${rowCount}, minmax(0, 1fr))` }}
+                >
+                    {[...Array(rowCount)].map((_, rowIndex) => (
                         <div
                             key={rowIndex}
-                            className={`grid ${columnCount === 3 ? 'grid-cols-3 gap-3' : 'grid-cols-7 gap-6'}`}
-                            style={{ willChange: 'transform, filter' }}
+                            className={`grid w-full h-full ${columnCount !== 7 ? 'gap-2' : 'gap-6'}`}
+                            style={{
+                                willChange: 'transform, filter',
+                                gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`
+                            }}
                             ref={el => (rowRefs.current[rowIndex] = el)}
                         >
                             {[...Array(columnCount)].map((_, itemIndex) => {
-                                const content = combinedItems[rowIndex * columnCount + itemIndex];
+                                const content = combinedItems[(rowIndex * columnCount + itemIndex) % combinedItems.length];
                                 return (
                                     <div key={itemIndex} className="relative">
                                         <div className="relative w-full h-full overflow-hidden rounded-[10px] bg-transparent flex items-center justify-center text-white text-[1.5rem]">

@@ -1,5 +1,6 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { gsap } from 'gsap';
+import { useNavigate } from 'react-router-dom';
 
 const useMedia = (queries, values, defaultValue) => {
     const get = () => values[queries.findIndex(q => matchMedia(q).matches)] ?? defaultValue;
@@ -46,9 +47,10 @@ const Masonry = ({
     blurToFocus = true,
     colorShiftOnHover = false
 }) => {
+    const navigate = useNavigate();
     const columns = useMedia(
         ['(min-width:1500px)', '(min-width:1000px)', '(min-width:600px)'],
-        [6, 4, 3],
+        [6, 4, 4],
         3
     );
 
@@ -207,7 +209,7 @@ const Masonry = ({
                     data-key={item.id}
                     className="absolute box-content opacity-0"
                     style={{ willChange: 'transform, width, height, opacity' }}
-                    onClick={() => window.open(item.url, '_blank', 'noopener')}
+                    onClick={() => navigate(item.url)}
                     onMouseEnter={e => handleMouseEnter(item.id, e.currentTarget)}
                     onMouseLeave={e => handleMouseLeave(item.id, e.currentTarget)}
                 >

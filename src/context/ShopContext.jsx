@@ -31,6 +31,8 @@ const ShopContextProvider = (props) => {
         return saved ? JSON.parse(saved) : [];
     });
 
+    const [galleryImages, setGalleryImages] = useState([]);
+
     const getProductsData = async () => {
         try {
             const response = await axios.get(backendUrl + '/api/product/list')
@@ -46,8 +48,20 @@ const ShopContextProvider = (props) => {
         }
     }
 
+    const getGalleryImages = async () => {
+        try {
+            const response = await axios.get(backendUrl + '/api/gallery/list');
+            if (response.data.success) {
+                setGalleryImages(response.data.images);
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
     useEffect(() => {
         getProductsData()
+        getGalleryImages()
     }, [])
 
     const fetchUserProfile = async (tokenArg) => {
@@ -358,7 +372,8 @@ const ShopContextProvider = (props) => {
         addToWishlist, removeFromWishlist, requestProduct,
         getProductsData,
         setShippingFee, orderCount, getOrderCount,
-        recentlyViewed, addToRecentlyViewed
+        recentlyViewed, addToRecentlyViewed,
+        galleryImages
     }
 
     return (

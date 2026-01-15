@@ -17,7 +17,7 @@ import DiscoverIdeas from '../components/DiscoverIdeas';
 
 function Home() {
     const { theme } = useTheme();
-    const { products } = useContext(ShopContext);
+    const { products, galleryImages } = useContext(ShopContext);
     const [masonryItems, setMasonryItems] = useState([]);
 
     const optimizeImageUrl = (url, width) => {
@@ -60,6 +60,17 @@ function Home() {
             </section>
 
             <section id="shop" className="pt-32 px-6 max-w-7xl mx-auto">
+                <div className="text-center mb-16">
+                    <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
+                        <h3 className="font-serif text-2xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4">
+                            Curated Favorites
+                        </h3>
+                        <p className="text-silk-600 dark:text-silk-400 text-sm md:text-xl font-light">
+                            Discover the finest selection of our most-loved handcrafted treasures
+                        </p>
+                    </FadeContent>
+                </div>
+
                 <div className="w-full mb-32">
                     <Masonry
                         items={masonryItems}
@@ -83,11 +94,11 @@ function Home() {
                         text="New Arrivals"
                         disabled={false}
                         speed={3}
-                        className="font-serif text-2xl md:text-3xl"
+                        className="font-serif text-xl md:text-3xl"
                         baseColor={theme === 'dark' ? '#ece0cc' : '#673c2e'} // silk-200 : silk-900
                         shineColor={theme === 'dark' ? '#add9e6' : '#c58a5b'} // silk-blue-light : silk-500
                     />
-                    <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="text-xs uppercase tracking-widest border-b border-silk-900 pb-1 hover:text-silk-600 hover:border-silk-600 transition-colors">View All</Link>
+                    <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')} className="px-4 py-1 rounded-full border border-silk-900 dark:border-silk-100 text-silk-900 dark:text-silk-100 text-[10px] md:text-xs uppercase tracking-widest hover:bg-silk-900 hover:text-silk-50 dark:hover:bg-silk-100 dark:hover:text-silk-900 transition-all duration-300">View All</Link>
                 </div>
 
                 <div className="mb-32">
@@ -116,8 +127,8 @@ function Home() {
 
             </section>
 
-            <div className="mb-32 h-[80vh] w-full overflow-hidden bg-silk-50 dark:bg-black">
-                <GridMotion items={products.slice(0, 12).map(product => optimizeImageUrl(product.image[0], 400))} />
+            <div className="mb-32 h-[50vh] md:h-[80vh] w-full overflow-hidden bg-silk-100 dark:bg-black">
+                <GridMotion items={(galleryImages.length > 0 ? galleryImages.map(item => optimizeImageUrl(item.image, 400)) : products.slice(0, 12).map(product => optimizeImageUrl(product.image[0], 400))).concat(Array(24).fill(galleryImages.length > 0 ? galleryImages.map(item => optimizeImageUrl(item.image, 400)) : products.slice(0, 12).map(product => optimizeImageUrl(product.image[0], 400))).flat()).slice(0, 300)} />
             </div>
 
             <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32 shadow-xl">
