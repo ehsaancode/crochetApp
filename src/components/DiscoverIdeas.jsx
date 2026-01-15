@@ -188,7 +188,7 @@ const DiscoverIdeas = ({ isHomePage }) => {
                     <div className="relative max-w-4xl w-full flex flex-col items-center gap-6" onClick={(e) => e.stopPropagation()}>
                         <button
                             onClick={() => setSelectedIndex(null)}
-                            className="absolute top-0 right-0 -mt-10 sm:-mr-10 sm:mt-0 text-white/70 hover:text-white transition-colors p-2 z-50"
+                            className="absolute top-0 right-0 -mt-14 sm:-mr-12 sm:mt-0 text-white/70 hover:text-white transition-colors p-2 z-50"
                         >
                             <X className="w-8 h-8" />
                         </button>

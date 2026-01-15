@@ -1,5 +1,5 @@
 import React, { useState, useRef, useContext, useEffect } from 'react';
-import { Upload, X, Info, MapPin, Plus, CheckCircle2, Pencil, Trash2 } from 'lucide-react';
+import { Upload, X, Info, MapPin, Plus, CheckCircle2, Pencil, Trash2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShopContext } from '../context/ShopContext';
 import { useNavigate, useLocation } from 'react-router-dom';
@@ -30,6 +30,7 @@ function CustomOrder() {
     // Gallery Picker
     const [gallery, setGallery] = useState([]);
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
+    const [selectedIndex, setSelectedIndex] = useState(null);
 
     useEffect(() => {
         const fetchGallery = async () => {
@@ -47,8 +48,9 @@ function CustomOrder() {
         return url.replace('/upload/', `/upload/w_${width},q_auto,f_auto/`);
     };
 
-    const handleGalleryPicker = async (imageUrl) => {
+    const confirmGallerySelection = async (imageUrl) => {
         setIsGalleryOpen(false);
+        setSelectedIndex(null);
         setLoading(true);
         try {
             const response = await fetch(imageUrl);
@@ -56,6 +58,7 @@ function CustomOrder() {
             const file = new File([blob], "gallery_pick.jpg", { type: blob.type });
             handleFileSelect([file]);
             toast.success("Image added from gallery");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         } catch (error) { toast.error("Failed to add image"); } finally { setLoading(false); }
     };
 
@@ -868,10 +871,10 @@ function CustomOrder() {
                                 </button>
                             </div>
                             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
-                                {gallery.map((item) => (
+                                {gallery.map((item, index) => (
                                     <div
                                         key={item._id}
-                                        onClick={() => handleGalleryPicker(item.image)}
+                                        onClick={() => setSelectedIndex(index)}
                                         className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100 dark:bg-white/5 border border-transparent hover:border-silk-500 transition-all"
                                     >
                                         <img
@@ -888,6 +891,52 @@ function CustomOrder() {
                     </div>
                 )}
             </AnimatePresence>
+
+            {/* Full Screen Image View */}
+            {selectedIndex !== null && gallery[selectedIndex] && (
+                <div
+                    className="fixed inset-0 z-[70] flex items-center justify-center bg-black/95 p-4 animate-fade-in backdrop-blur-sm"
+                    onClick={() => setSelectedIndex(null)}
+                >
+                    <div className="relative max-w-4xl w-full flex flex-col items-center gap-6" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            onClick={() => setSelectedIndex(null)}
+                            className="absolute top-0 right-0 -mt-14 sm:-mr-12 sm:mt-0 text-white/70 hover:text-white transition-colors p-2 z-50"
+                        >
+                            <X className="w-8 h-8" />
+                        </button>
+
+                        <button
+                            onClick={(e) => { e.stopPropagation(); setSelectedIndex((prev) => (prev - 1 + gallery.length) % gallery.length); }}
+                            className="absolute left-[-20px] sm:left-[-60px] top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white transition-colors hidden sm:block"
+                        >
+                            <ChevronLeft className="w-10 h-10" />
+                        </button>
+
+                        <button
+                            onClick={(e) => { e.stopPropagation(); setSelectedIndex((prev) => (prev + 1) % gallery.length); }}
+                            className="absolute right-[-20px] sm:right-[-60px] top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white transition-colors hidden sm:block"
+                        >
+                            <ChevronRight className="w-10 h-10" />
+                        </button>
+
+                        <img
+                            src={gallery[selectedIndex].image}
+                            alt="Full view"
+                            className="max-h-[70vh] w-auto object-contain rounded-lg shadow-2xl select-none"
+                        />
+
+                        <button
+                            onClick={() => confirmGallerySelection(gallery[selectedIndex].image)}
+                            className="bg-white text-black px-10 py-3 rounded-full font-serif uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]"
+                        >
+                            Use This Design
+                        </button>
+                    </div>
+                </div>
+            )}
+
+            {/* AnimatePresence for Progress (kept for structure) */}
 
             {/* Progress Popup */}
             <AnimatePresence>
