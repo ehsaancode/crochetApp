@@ -49,7 +49,7 @@ function Home() {
                 <div className="absolute inset-0 opacity-20)] pointer-events-none"></div>
                 <div className="relative z-10 animate-slide-up">
                     <p className="text-xs font-medium uppercase tracking-[0.2em] mb-4 text-silk-600 dark:text-white">Handmade Luxury</p>
-                    <h2 className="font-serif text-3xl md:text-5xl mb-6 text-silk-900 dark:text-silk-200 leading-tight">Artisan<br />Crochet</h2>
+                    <h2 className="font-serif text-4xl md:text-5xl mb-6 text-silk-900 dark:text-silk-200 leading-tight">Artisan<br />Crochet</h2>
                     <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')}>
                         <FadeContent blur={true} duration={900} delay={300} easing="ease-out" initialOpacity={10}>
                             <RainbowButton>View Collection</RainbowButton>
@@ -94,7 +94,7 @@ function Home() {
                     <Carousel items={products.slice(0, 5).map(p => ({ ...p, img: optimizeImageUrl(p.image[0], 800), id: p._id }))} />
                 </div>
 
-                <div className="text-center py-24 px-8 md:px-32 mb-32 rounded-3xl bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27]">
+                <div className="text-center py-24 px-8 md:px-32 mb-32 rounded-3xl shadow-xl bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27]">
                     <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                         <h3 className="font-serif text-2xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
                             Have a design in mind?
@@ -120,7 +120,7 @@ function Home() {
                 <GridMotion items={products.slice(0, 12).map(product => optimizeImageUrl(product.image[0], 400))} />
             </div>
 
-            <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32">
+            <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32 shadow-xl">
                 <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                     <h3 className="font-serif text-2xl md:text-4xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
                         Are you a skilled crocheter?
@@ -136,7 +136,7 @@ function Home() {
                 </FadeContent>
             </section>
 
-            <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32">
+            <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32 shadow-xl">
                 <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                     <h3 className="font-serif text-2xl md:text-6xl mb-6 relative z-10 bg-gradient-to-r from-silk-900 to-silk-600 dark:from-white dark:to-silk-300 bg-clip-text text-transparent">
                         No machines. <br className="hidden md:block" /> No mass production.
