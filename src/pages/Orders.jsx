@@ -278,11 +278,11 @@ const Orders = ({ compact }) => {
                                             <Link to={`/product/${item._id}`} className='flex items-start gap-4 sm:gap-6 text-sm group'>
                                                 <img className='w-16 sm:w-20 rounded-sm object-cover transition-transform group-hover:scale-105 duration-300' src={item.image[0]} alt="" />
                                                 <div>
-                                                    <p className='sm:text-base font-medium group-hover:text-silk-600 transition-colors'>{item.name}</p>
-                                                    <div className='flex items-center gap-3 mt-1 text-base text-gray-700 dark:text-gray-300'>
-                                                        <p>{currency}{item.price}</p>
-                                                        <p>Quantity: {item.quantity}</p>
-                                                        <p>Size: {item.size}</p>
+                                                    <p className='sm:text-base font-medium text-silk-600 transition-colors'>{item.name}</p>
+                                                    <div className='flex flex-wrap items-center gap-3 mt-1 text-base text-gray-700 dark:text-gray-300'>
+                                                        <p className="whitespace-nowrap border-r pr-3 border-gray-300 dark:border-gray-600">{currency}{item.price}</p>
+                                                        <p className="whitespace-nowrap border-r pr-3 border-gray-300 dark:border-gray-600">Quantity: {item.quantity}</p>
+                                                        <p className="whitespace-nowrap">Size: {item.size}</p>
                                                     </div>
                                                     <p className='mt-1'>Date: <span className='text-gray-400'>{new Date(item.date).toLocaleString('en-US', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span></p>
                                                     <p className='mt-1'>Payment: <span className='text-gray-400'>{item.paymentMethod}</span></p>
