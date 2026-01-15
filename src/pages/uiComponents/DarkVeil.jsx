@@ -9,9 +9,9 @@ export default function DarkVeil() {
                 src={lighthouseAnim}
                 loop
                 autoplay
-                // speed={0.4}
+                speed={0.3}
                 mode="bounce"
-                className="w-full h-full absolute inset-0 sepia-[.70] hue-rotate-[15deg] saturate-[.8] dark:filter-none rotate-180 scale-[1.5] md:scale-105 [&>canvas]:!w-full [&>canvas]:!h-full [&>canvas]:!object-cover"
+                className="w-full h-full absolute inset-0 sepia-[.70] hue-rotate-[15deg] saturate-[.8] blur-[0.4px] dark:sepia-0 dark:hue-rotate-0 dark:saturate-100 rotate-180 scale-[1.5] md:scale-105 [&>canvas]:!w-full [&>canvas]:!h-full [&>canvas]:!object-cover"
                 style={{ width: '100%', height: '100%' }}
             />
             {/* Optional overlay to maintain the 'veil' effect if desired for contrast */}
