@@ -100,11 +100,11 @@ const DiscoverIdeas = ({ isHomePage }) => {
         <div className="mt-8 pt-8 border-t border-gray-100 dark:border-white/5 animate-fade-in">
             <div className={`flex items-center ${isHomePage ? 'justify-center text-center mb-8' : 'justify-between mb-4'}`}>
                 <div>
-                    <h4 className={`font-serif text-lg text-silk-900 dark:text-silk-50 flex items-center gap-2 ${isHomePage ? 'justify-center text-3xl mb-2' : ''}`}>
+                    <h4 className={`font-serif text-lg text-silk-900 dark:text-silk-50 flex items-center gap-2 ${isHomePage ? 'justify-center text-xl md:text-3xl mb-2' : ''}`}>
                         <Sparkles className="w-4 h-4 text-silk-500" />
                         Ready to create something unique?
                     </h4>
-                    <p className={`text-sm text-silk-600 dark:text-silk-400 ${isHomePage ? 'text-lg max-w-2xl mx-auto' : ''}`}>Discover ideas from our gallery to start your custom request.</p>
+                    <p className={`text-sm text-silk-600 dark:text-silk-400 ${isHomePage ? 'text-sm md:text-lg max-w-2xl mx-auto' : ''}`}>Discover ideas from our gallery to start your custom request.</p>
                 </div>
             </div>
 

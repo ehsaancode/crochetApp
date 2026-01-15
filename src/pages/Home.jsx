@@ -49,7 +49,7 @@ function Home() {
                 <div className="absolute inset-0 opacity-20)] pointer-events-none"></div>
                 <div className="relative z-10 animate-slide-up">
                     <p className="text-xs font-medium uppercase tracking-[0.2em] mb-4 text-silk-600 dark:text-white">Handmade Luxury</p>
-                    <h2 className="font-serif text-5xl mb-6 text-silk-900 dark:text-silk-200 leading-tight">Artisan<br />Crochet</h2>
+                    <h2 className="font-serif text-3xl md:text-5xl mb-6 text-silk-900 dark:text-silk-200 leading-tight">Artisan<br />Crochet</h2>
                     <Link to="/collection" onClick={() => sessionStorage.removeItem('collectionScrollY')}>
                         <FadeContent blur={true} duration={900} delay={300} easing="ease-out" initialOpacity={10}>
                             <RainbowButton>View Collection</RainbowButton>
@@ -83,7 +83,7 @@ function Home() {
                         text="New Arrivals"
                         disabled={false}
                         speed={3}
-                        className="font-serif text-3xl"
+                        className="font-serif text-2xl md:text-3xl"
                         baseColor={theme === 'dark' ? '#ece0cc' : '#673c2e'} // silk-200 : silk-900
                         shineColor={theme === 'dark' ? '#add9e6' : '#c58a5b'} // silk-blue-light : silk-500
                     />
@@ -96,10 +96,10 @@ function Home() {
 
                 <div className="text-center py-24 px-8 md:px-32 mb-32 rounded-3xl bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27]">
                     <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
-                        <h3 className="font-serif text-3xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
+                        <h3 className="font-serif text-2xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
                             Have a design in mind?
                         </h3>
-                        <p className="text-silk-600 dark:text-silk-300 text-lg md:text-xl font-light mb-8 max-w-2xl mx-auto">
+                        <p className="text-silk-600 dark:text-silk-300 text-base md:text-xl font-light mb-8 max-w-2xl mx-auto">
                             Upload an image and we’ll crochet it just for you
                         </p>
                         <Link to="/custom-order">
@@ -122,10 +122,10 @@ function Home() {
 
             <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32">
                 <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
-                    <h3 className="font-serif text-3xl md:text-4xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
+                    <h3 className="font-serif text-2xl md:text-4xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
                         Are you a skilled crocheter?
                     </h3>
-                    <p className="text-silk-600 dark:text-silk-400 text-lg font-light mb-8 max-w-xl mx-auto">
+                    <p className="text-silk-600 dark:text-silk-400 text-sm md:text-lg font-light mb-8 max-w-xl mx-auto">
                         Join our community of skilled artisans and sell your unique crochet creations to a global audience.
                     </p>
                     <Link to="/become-seller">
@@ -138,11 +138,11 @@ function Home() {
 
             <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32">
                 <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
-                    <h3 className="font-serif text-4xl md:text-6xl mb-6 relative z-10 bg-gradient-to-r from-silk-900 to-silk-600 dark:from-white dark:to-silk-300 bg-clip-text text-transparent">
+                    <h3 className="font-serif text-2xl md:text-6xl mb-6 relative z-10 bg-gradient-to-r from-silk-900 to-silk-600 dark:from-white dark:to-silk-300 bg-clip-text text-transparent">
                         No machines. <br className="hidden md:block" /> No mass production.
                     </h3>
                     <div className="w-16 h-0.5 bg-silk-400/50 dark:bg-white/20 mx-auto mb-6"></div>
-                    <p className="text-silk-600 pb-4 dark:text-silk-400 text-sm md:text-base tracking-[0.2em] uppercase font-medium max-w-xl mx-auto relative z-10 mb-6">
+                    <p className="text-silk-600 pb-4 dark:text-silk-400 text-xs md:text-base tracking-[0.2em] uppercase font-medium max-w-xl mx-auto relative z-10 mb-6">
                         Every piece is hand-crocheted by skilled artisans
                     </p>
                     <Link to="/about">

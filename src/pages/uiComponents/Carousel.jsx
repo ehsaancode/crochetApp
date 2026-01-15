@@ -113,7 +113,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.3 }}
-                            className="font-serif text-3xl md:text-5xl text-silk-900 dark:text-white mb-4 leading-tight"
+                            className="font-serif text-xl md:text-5xl text-silk-900 dark:text-white mb-4 leading-tight"
                         >
                             {items[currentIndex].name}
                         </motion.h3>
@@ -121,7 +121,7 @@ export default function Carousel({ items, autoPlay = true, interval = 3000 }) {
                             initial={{ opacity: 0, y: 20 }}
                             animate={{ opacity: 1, y: 0 }}
                             transition={{ delay: 0.4 }}
-                            className="text-silk-700 dark:text-silk-300 text-base mb-6 max-w-md hidden md:block"
+                            className="text-silk-700 dark:text-silk-300 text-sm md:text-base mb-6 max-w-md hidden md:block"
                         >
                             Handcrafted with premium natural cotton. Experience the luxury of artisan crochet.
                         </motion.p>

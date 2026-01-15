@@ -11,8 +11,8 @@ export default function DarkVeil() {
                 autoplay
                 // speed={0.4}
                 mode="bounce"
-                className="w-full h-full absolute inset-0 sepia-[.70] hue-rotate-[15deg] saturate-[.8] dark:filter-none scale-105 rotate-180"
-                style={{ width: '100%', height: '100%', objectFit: 'cover' }}
+                className="w-full h-full absolute inset-0 sepia-[.70] hue-rotate-[15deg] saturate-[.8] dark:filter-none rotate-180 scale-[1.5] md:scale-105 [&>canvas]:!w-full [&>canvas]:!h-full [&>canvas]:!object-cover"
+                style={{ width: '100%', height: '100%' }}
             />
             {/* Optional overlay to maintain the 'veil' effect if desired for contrast */}
             <div className="absolute inset-0 bg-black/5 dark:bg-black/20 pointer-events-none" />

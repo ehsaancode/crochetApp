@@ -218,7 +218,7 @@ function ProductDetail() {
                             <span className="text-sm font-medium text-silk-500 dark:text-silk-400 uppercase tracking-wider">{product.category}</span>
                         )}
                     </div>
-                    <h1 className="text-4xl font-serif text-silk-900 dark:text-white mb-4">{product.name}</h1>
+                    <h1 className="text-2xl md:text-4xl font-serif text-silk-900 dark:text-white mb-4">{product.name}</h1>
 
                     <div className="flex items-center space-x-4 mb-6">
                         <div className="flex items-center text-yellow-500">
@@ -230,14 +230,14 @@ function ProductDetail() {
                         <span className="text-silk-600 text-sm">{product.numReviews || 0} Reviews</span>
                     </div>
 
-                    <p className="text-2xl font-light text-silk-900 dark:text-silk-200 mb-8">
+                    <p className="text-xl md:text-2xl font-light text-silk-900 dark:text-silk-200 mb-8">
                         ₹{(size && product.sizePrices && product.sizePrices[size]
                             ? Number(product.sizePrices[size])
                             : (product.sizePrices && Object.values(product.sizePrices).length > 0 ? Number(Object.values(product.sizePrices)[0]) : 0)
                         ).toFixed(2)}
                     </p>
 
-                    <div className="prose prose-silk dark:prose-invert text-silk-700 dark:text-silk-300 mb-10 leading-relaxed">
+                    <div className="prose prose-sm md:prose-base prose-silk dark:prose-invert text-silk-700 dark:text-silk-300 mb-10 leading-relaxed">
                         <p>{product.description}</p>
                     </div>
 
@@ -377,7 +377,7 @@ function ProductDetail() {
             {/* Related Products Section */}
             {relatedProducts.length > 0 && (
                 <div className="mt-20 border-t border-gray-100 dark:border-gray-800 pt-16">
-                    <h2 className="text-2xl font-serif text-silk-900 dark:text-white mb-8 text-center">You May Also Like</h2>
+                    <h2 className="text-xl md:text-2xl font-serif text-silk-900 dark:text-white mb-8 text-center">You May Also Like</h2>
                     <div className="flex gap-4 overflow-x-auto pb-8 hide-scrollbar snap-x snap-mandatory px-4 md:justify-center">
                         {relatedProducts.map((item) => (
                             <Link
@@ -403,7 +403,7 @@ function ProductDetail() {
             {/* Reviews Section */}
             <div className="mt-20">
                 <div className="text-center mb-12">
-                    <h2 className="text-3xl font-serif text-silk-900 dark:text-white mb-4">Customer Reviews</h2>
+                    <h2 className="text-xl md:text-3xl font-serif text-silk-900 dark:text-white mb-4">Customer Reviews</h2>
                     <div className="flex items-center justify-center gap-2">
                         <div className="flex text-yellow-400">
                             {[...Array(5)].map((_, i) => (

@@ -104,11 +104,11 @@ const FestiveCard = () => {
 
             {/* Content Section (Left) */}
             <div className={`relative z-10 w-full md:w-1/3 p-6 md:p-8 flex flex-col justify-center ${textColorClass}`} style={dynamicTextColor}>
-                <h2 className="font-serif text-3xl md:text-4xl font-bold mb-3 leading-tight" style={dynamicTextColor}>
+                <h2 className="font-serif text-2xl md:text-4xl font-bold mb-3 leading-tight" style={dynamicTextColor}>
                     {config.name}
                 </h2>
                 {config.subtitle && (
-                    <p className="text-base md:text-lg opacity-90 mb-6 font-light tracking-wide" style={dynamicTextColor}>
+                    <p className="text-sm md:text-lg opacity-90 mb-6 font-light tracking-wide" style={dynamicTextColor}>
                         {config.subtitle}
                     </p>
                 )}
