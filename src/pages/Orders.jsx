@@ -274,7 +274,7 @@ const Orders = ({ compact }) => {
                                     </div>
                                 ) : (
                                     orderData.map((item, index) => (
-                                        <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-center md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
+                                        <div key={index} className='py-4 border-t border-b text-gray-700 flex flex-col md:flex-row md:items-start md:justify-between gap-4 animate-fade-in dark:text-gray-200 dark:border-gray-700'>
                                             <Link to={`/product/${item._id}`} className='flex items-start gap-4 sm:gap-6 text-sm group'>
                                                 <img className='w-16 sm:w-20 rounded-sm object-cover transition-transform group-hover:scale-105 duration-300' src={item.image[0]} alt="" />
                                                 <div>
@@ -366,7 +366,7 @@ const Orders = ({ compact }) => {
 
                                                 {/* Action Buttons (Review / Invoice) */}
                                                 {item.status === 'Delivered' && (
-                                                    <div className='flex items-center justify-between md:justify-end gap-2 mt-2 w-full'>
+                                                    <div className='flex items-center justify-between md:justify-end gap-2 w-full'>
                                                         <div className="flex items-start gap-2">
                                                             <div className="flex flex-col">
                                                                 <span className="text-sm font-medium text-green-600">Delivered</span>
