@@ -90,6 +90,10 @@ export default {
 				script: [
 					'Birthstone',
 					'cursive'
+				],
+				dancing: [
+					'Dancing Script',
+					'cursive'
 				]
 			},
 			animation: {

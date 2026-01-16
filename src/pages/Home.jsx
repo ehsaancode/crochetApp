@@ -63,7 +63,7 @@ function Home() {
                 <div className="text-center mb-16">
                     <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                         <h3 className="font-serif text-2xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4">
-                            Curated Favorites For You
+                            Curated <span className="italic">Favorites</span> For You
                             <Sparkles className="inline-block w-5 h-5 md:w-8 md:h-8 ml-3 mb-2 text-silk-600 dark:text-silk-400" />
                         </h3>
                         <p className="text-silk-600 dark:text-silk-400 text-sm md:text-xl font-light">
@@ -109,7 +109,7 @@ function Home() {
                 <div className="text-center py-24 px-8 md:px-32 mb-32 rounded-3xl shadow-xl bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27]">
                     <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                         <h3 className="font-serif text-2xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
-                            Have a design in mind?
+                            Have a <span className="italic">design</span> in mind?
                         </h3>
                         <p className="text-silk-600 dark:text-silk-300 text-base md:text-xl font-light mb-8 max-w-2xl mx-auto">
                             Upload an image and we’ll crochet it just for you
@@ -135,10 +135,10 @@ function Home() {
             <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32 shadow-xl">
                 <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                     <h3 className="font-serif text-2xl md:text-4xl text-silk-900 dark:text-silk-100 mb-4 leading-tight">
-                        Are you a skilled crocheter?
+                        Are you a skilled <span className="italic">crocheter?</span>
                     </h3>
                     <p className="text-silk-600 dark:text-silk-400 text-sm md:text-lg font-light mb-8 max-w-xl mx-auto">
-                        Join our community of skilled artisans and sell your unique crochet creations to a global audience.
+                        Join our community of skilled artisans and sell your <span className="italic">unique</span> crochet creations to a global audience.
                     </p>
                     <Link to="/become-seller">
                         <button className="bg-silk-900 dark:bg-white text-white dark:text-black border border-transparent text-sm h-10 px-8 rounded-full font-medium transition-all hover:bg-silk-800 dark:hover:bg-gray-100 hover:scale-105 shadow-sm">
@@ -197,7 +197,7 @@ function Home() {
 
             <footer className="bg-silk-900 text-silk-100 py-12 px-6 hidden md:block">
                 <div className="max-w-md mx-auto text-center">
-                    <h4 className="font-serif text-2xl mb-6">Aalaboo</h4>
+                    <h4 className="font-dancing font-bold text-2xl mb-6">Aalaboo</h4>
                     <div className="flex justify-center space-x-6 mb-8">
                         <a href="#" className="hover:text-white transition-colors"><Instagram className="w-5 h-5" /></a>
                         <a href="#" className="hover:text-white transition-colors"><Mail className="w-5 h-5" /></a>

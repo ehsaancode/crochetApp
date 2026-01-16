@@ -91,7 +91,7 @@ const DiscoverIdeas = ({ isHomePage }) => {
                     <div className={`flex flex-col ${isHomePage ? 'items-center' : 'items-start'} gap-2 mb-2`}>
                         <Sparkles className="w-5 h-5 text-silk-500" />
                         <h4 className={`font-serif text-lg text-silk-900 dark:text-silk-50 ${isHomePage ? 'text-xl md:text-3xl' : ''}`}>
-                            Ready to create something unique?
+                            Ready to create something <span className="italic">unique?</span>
                         </h4>
                     </div>
                     <p className={`text-sm text-silk-600 dark:text-silk-400 ${isHomePage ? 'text-sm md:text-lg max-w-2xl mx-auto' : ''}`}>Discover ideas from our gallery to start your custom request.</p>

@@ -89,7 +89,7 @@ function Navigation() {
             <header className="fixed top-0 left-0 w-full bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark backdrop-blur-sm z-50 border-b border-silk-200 dark:border-silk-blue-border transition-all duration-300">
                 <div className="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between relative">
 
-                    <Link to="/" onClick={() => handleNavClick('/')} className={`font-serif text-2xl tracking-tight text-silk-900 dark:text-white group flex items-center justify-center gap-2 absolute top-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out z-50 ${showSearch ? 'left-4 translate-x-0' : 'left-1/2 -translate-x-1/2'}`}>
+                    <Link to="/" onClick={() => handleNavClick('/')} className={`font-dancing font-bold text-3xl tracking-tight text-silk-900 dark:text-white group flex items-center justify-center gap-2 absolute top-1/2 -translate-y-1/2 transition-all duration-500 ease-in-out z-50 ${showSearch ? 'left-4 translate-x-0' : 'left-1/2 -translate-x-1/2'}`}>
                         Aalaboo
                     </Link>
 

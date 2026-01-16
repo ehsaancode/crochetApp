@@ -349,7 +349,7 @@ const Login = () => {
 
                     {/* Welcome Messages */}
                     <div className="text-center">
-                        <h2 className='font-serif text-4xl md:text-5xl text-silk-900 dark:text-silk-100 mb-2 leading-tight'>Welcome to <span className="italic">Aalaboo</span></h2>
+                        <h2 className='font-serif text-4xl md:text-5xl text-silk-900 dark:text-silk-100 mb-2 leading-tight'>Welcome to <span className="font-dancing font-bold">Aalaboo</span></h2>
                         <p className='text-sm md:text-lg text-silk-600 dark:text-silk-300'>
                             {currentState === 'Login'
                                 ? 'Please sign in to continue.'
