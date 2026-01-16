@@ -241,52 +241,54 @@ function ProductDetail() {
                         <p>{product.description}</p>
                     </div>
 
-                    {product.sizes.length > 0 && (
-                        <div className="flex flex-col gap-4 my-8">
-                            <p className="text-sm font-medium text-silk-900 dark:text-silk-50">Select Size</p>
-                            <div className="flex gap-2">
-                                {product.sizes.map((item, index) => (
-                                    <button
-                                        onClick={() => setSize(item)}
-                                        className={`${item.toLowerCase() === 'free size' ? 'h-auto w-auto p-1 rounded-none border-0' : 'h-8 w-8 rounded-full border'} flex items-center justify-center text-xs transition-all ${item.toLowerCase() === 'free size'
-                                            ? (item === size ? 'opacity-100 scale-110' : 'opacity-50 hover:opacity-80')
-                                            : (item === size ? 'bg-silk-50 border-silk-500 dark:bg-white dark:text-black dark:border-white' : 'bg-gray-100 border-transparent dark:bg-slate-800 dark:text-gray-300 dark:border-slate-700 hover:border-silk-300')
-                                            }`}
-                                        key={index}
-                                        title={item}
-                                    >
-                                        {item.toLowerCase() === 'free size' ? (
-                                            <div className="flex flex-col items-center gap-1">
-                                                <img src={freeSizeIcon} alt="Free Size" className="h-8 w-auto object-contain" />
-                                                <span className="text-[10px] text-gray-400 font-medium">Free Size</span>
-                                            </div>
-                                        ) : (
-                                            item
-                                        )}
-                                    </button>
-                                ))}
+                    <div className="flex flex-row gap-8 my-8">
+                        {product.sizes.length > 0 && (
+                            <div className="flex flex-col gap-4">
+                                <p className="text-sm font-medium text-silk-900 dark:text-silk-50">Size</p>
+                                <div className="flex gap-2">
+                                    {product.sizes.map((item, index) => (
+                                        <button
+                                            onClick={() => setSize(item)}
+                                            className={`${item.toLowerCase() === 'free size' ? 'h-auto w-auto p-1 rounded-none border-0' : 'h-8 w-8 rounded-full border'} flex items-center justify-center text-xs transition-all ${item.toLowerCase() === 'free size'
+                                                ? (item === size ? 'opacity-100 scale-110' : 'opacity-50 hover:opacity-80')
+                                                : (item === size ? 'bg-silk-50 border-silk-500 dark:bg-white dark:text-black dark:border-white' : 'bg-gray-100 border-transparent dark:bg-slate-800 dark:text-gray-300 dark:border-slate-700 hover:border-silk-300')
+                                                }`}
+                                            key={index}
+                                            title={item}
+                                        >
+                                            {item.toLowerCase() === 'free size' ? (
+                                                <div className="flex flex-col items-center gap-1">
+                                                    <img src={freeSizeIcon} alt="Free Size" className="h-8 w-auto object-contain" />
+                                                    <span className="text-[10px] text-gray-400 font-medium">Free Size</span>
+                                                </div>
+                                            ) : (
+                                                item
+                                            )}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
 
-                    {product.colors && product.colors.length > 0 && (
-                        <div className="flex flex-col gap-4 mb-8">
-                            <p className="text-sm font-medium text-silk-900 dark:text-silk-50">Select Color</p>
-                            <div className="flex gap-2">
-                                {product.colors.map((item, index) => (
-                                    <button
-                                        onClick={() => setColor(item)}
-                                        className={`w-8 h-8 rounded-full border shadow-sm flex items-center justify-center transition-all ${item === color ? 'border-silk-900 dark:border-white scale-110' : 'border-gray-200'}`}
-                                        style={{ backgroundColor: item.toLowerCase() }}
-                                        key={index}
-                                        title={item}
-                                    >
-                                        {item === color && <Check className="w-4 h-4 text-white drop-shadow-[0_0_1px_rgba(0,0,0,1)]" strokeWidth={3} />}
-                                    </button>
-                                ))}
+                        {product.colors && product.colors.length > 0 && (
+                            <div className="flex flex-col gap-4">
+                                <p className="text-sm font-medium text-silk-900 dark:text-silk-50">Color</p>
+                                <div className="flex gap-2">
+                                    {product.colors.map((item, index) => (
+                                        <button
+                                            onClick={() => setColor(item)}
+                                            className={`w-8 h-8 rounded-full border shadow-sm flex items-center justify-center transition-all ${item === color ? 'border-silk-900 dark:border-white scale-110' : 'border-gray-200'}`}
+                                            style={{ backgroundColor: item.toLowerCase() }}
+                                            key={index}
+                                            title={item}
+                                        >
+                                            {item === color && <Check className="w-4 h-4 text-white drop-shadow-[0_0_1px_rgba(0,0,0,1)]" strokeWidth={3} />}
+                                        </button>
+                                    ))}
+                                </div>
                             </div>
-                        </div>
-                    )}
+                        )}
+                    </div>
 
                     {/* Actions */}
                     <div className="space-y-4 mb-10">
