@@ -336,7 +336,7 @@ const Login = () => {
                         style={{
                             width: '100%',
                             height: '100%',
-                            filter: theme === 'dark' ? 'brightness(0.8) contrast(1.2) hue-rotate(190deg) saturate(1.5)' : 'none',
+                            filter: theme === 'dark' ? 'brightness(0.85) sepia(1) hue-rotate(190deg) saturate(2.5)' : 'none',
                         }}
                     />
                 </div>
