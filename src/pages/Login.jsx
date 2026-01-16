@@ -10,7 +10,7 @@ import Wishlist from './Wishlist'
 import Orders from './Orders'
 import Loading from '../components/Loading'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import officeHelloAnimation from './uiComponents/lottie/Office Team Worker saying Hello.lottie';
+import welcomeAnimation from '../assets/newLottie/Welcome.lottie';
 
 const Login = () => {
 
@@ -323,11 +323,24 @@ const Login = () => {
     }
 
     return (
-        <div className='min-h-[100dvh] w-full flex flex-col md:flex-row-reverse items-center justify-between px-4 relative bg-white dark:bg-black transition-colors duration-300 overflow-y-auto'>
-            <FadeContent blur={true} duration={0.6} className="w-full md:w-1/2 flex-1 flex flex-col items-center relative z-10 justify-center">
+        <div className='h-[100dvh] w-full flex flex-col md:flex-row-reverse items-center justify-between px-4 relative bg-white dark:bg-black transition-colors duration-300 overflow-hidden pt-16'>
+
+            {/* Top/Right Lottie Animation */}
+            <div className={`w-full md:w-1/2 flex justify-center items-end md:items-center transition-all duration-500 ease-in-out shrink-0 relative ${currentState === 'Sign Up' ? 'h-[25vh] md:h-full' : 'h-[30vh] md:h-full'}`}>
+                <div className={`h-full w-full transition-all duration-500 ease-in-out flex items-center justify-center`}>
+                    <DotLottieReact
+                        src={welcomeAnimation}
+                        loop
+                        autoplay
+                        className="w-full h-full object-contain"
+                    />
+                </div>
+            </div>
+
+            <FadeContent blur={true} duration={0.6} className="w-full md:w-1/2 flex-1 flex flex-col items-center relative z-10 justify-center h-full overflow-y-auto md:overflow-hidden">
 
                 {/* Main Content Container - Centered and Spaced */}
-                <div className='flex flex-col items-center justify-center w-full max-w-lg mx-auto gap-3 md:gap-8 pt-28 md:pt-0 pb-8 scale-90 sm:scale-100'>
+                <div className='flex flex-col items-center justify-center w-full max-w-lg mx-auto gap-3 md:gap-6 py-4 md:py-0 scale-90 sm:scale-100'>
 
                     {/* Welcome Messages */}
                     <div className="text-center">
@@ -345,16 +358,16 @@ const Login = () => {
 
                         {currentState === 'Sign Up' && (
                             <div className="w-full animate-fade-in flex flex-col gap-3 mb-3">
-                                <div className='flex items-center gap-4 w-full'>
-                                    <label htmlFor="image-upload-signup" className='cursor-pointer flex items-center gap-2 group whitespace-nowrap'>
-                                        <div className='w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/40 dark:bg-gray-800 flex items-center justify-center overflow-hidden border border-silk-200 dark:border-gray-700 transition-colors group-hover:border-silk-400'>
+                                <div className='flex items-center gap-4 w-full justify-center'>
+                                    <label htmlFor="image-upload-signup" className='cursor-pointer flex items-center gap-2 group whitespace-nowrap bg-silk-50 dark:bg-gray-900/50 px-4 py-2 rounded-full border border-silk-100 dark:border-gray-800 hover:border-silk-300 transition-all'>
+                                        <div className='w-8 h-8 md:w-10 md:h-10 rounded-full bg-white/40 dark:bg-gray-800 flex items-center justify-center overflow-hidden border border-silk-200 dark:border-gray-700 transition-colors group-hover:border-silk-400'>
                                             {image ? <img src={URL.createObjectURL(image)} alt="Profile" className='w-full h-full object-cover' /> : <span className='text-[10px] md:text-xs text-silk-500 dark:text-silk-400'>+ Img</span>}
                                         </div>
                                         <span className='text-xs md:text-sm text-silk-600 dark:text-silk-300 group-hover:text-silk-900 dark:group-hover:text-white transition-colors'>Add Picture</span>
                                     </label>
                                     <input type="file" id="image-upload-signup" hidden onChange={(e) => setImage(e.target.files[0])} />
                                 </div>
-                                <div className="grid grid-cols-2 gap-3">
+                                <div className="grid grid-cols-2 gap-3 w-full">
                                     <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-3 py-2 md:px-4 md:py-3 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-xs md:placeholder:text-sm text-sm dark:text-white' placeholder='Full Name' required />
                                     <input onChange={(e) => setPhone(e.target.value)} value={phone} type="text" className='w-full px-3 py-2 md:px-4 md:py-3 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-xs md:placeholder:text-sm text-sm dark:text-white' placeholder='Phone' />
                                 </div>
@@ -366,7 +379,7 @@ const Login = () => {
                             <input onChange={(e) => setPassword(e.target.value)} value={password} type="password" className='w-full px-3 py-2.5 md:px-4 md:py-3.5 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-xs md:placeholder:text-base text-sm dark:text-white' placeholder='Password' required />
                         </div>
 
-                        <div className='w-full flex justify-between text-xs md:text-sm mt-1 mb-8 px-1'>
+                        <div className='w-full flex justify-between text-xs md:text-sm mt-1 mb-6 px-1'>
                             <p
                                 className='cursor-pointer text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white transition-colors font-medium'
                                 onClick={() => navigate('/forgot-password')}
@@ -387,18 +400,6 @@ const Login = () => {
                     </form>
                 </div>
             </FadeContent>
-
-            {/* Bottom Lottie Animation - Static Position to prevent overlap */}
-            <div className={`w-full md:w-1/2 flex justify-center items-end md:items-center mt-auto md:mt-0 pointer-events-none opacity-90 z-0 transition-all duration-500 ease-in-out shrink-0 ${currentState === 'Sign Up' ? 'h-[250px] md:h-[80vh]' : 'h-[300px] md:h-[80vh]'}`}>
-                <div className={`h-full transition-all duration-500 ease-in-out ${currentState === 'Sign Up' ? 'w-[70vw] md:w-full' : 'w-[80vw] md:w-full'}`}>
-                    <DotLottieReact
-                        src={officeHelloAnimation}
-                        loop
-                        autoplay
-                        className="w-full h-full object-contain object-bottom"
-                    />
-                </div>
-            </div>
         </div>
     )
 }
