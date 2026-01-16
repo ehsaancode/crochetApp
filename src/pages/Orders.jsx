@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { ShopContext } from '../context/ShopContext'
 import axios from 'axios';
-import { Package, Star, X, Download } from 'lucide-react';
+import { Package, Star, X, Download, ArrowLeft } from 'lucide-react';
 import jsPDF from 'jspdf';
 import QToast from './uiComponents/QToast';
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
@@ -15,7 +15,7 @@ const Orders = ({ compact }) => {
 
     const location = useLocation();
     const [showConfetti, setShowConfetti] = useState(false);
-    const { backendUrl, token, currency, orders, customOrders, fetchUserOrders } = useContext(ShopContext);
+    const { backendUrl, token, currency, orders, customOrders, fetchUserOrders, navigate } = useContext(ShopContext);
     const [orderData, setOrderData] = useState([]);
     // const [customOrders, setCustomOrders] = useState([]); // Removed local state, using contextCustomOrders directly
     const [loading, setLoading] = useState(true);
@@ -227,8 +227,20 @@ const Orders = ({ compact }) => {
         <div className={compact ? 'p-6' : 'border-t pt-24 px-8 sm:px-12 md:px-24 min-h-[80vh]'}>
 
             {!compact && (
-                <div className="flex flex-col-reverse md:flex-row justify-between items-end border-b border-gray-200 dark:border-gray-700 mb-8 gap-4">
-                    <div className="flex w-full md:w-auto md:gap-6">
+                <div className="flex flex-col gap-2 mb-8">
+                    {/* Header matching Profile page style */}
+                    <div className="flex items-center justify-between mb-6">
+                        <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                            <ArrowLeft className="w-6 h-6 text-silk-900 dark:text-white" />
+                        </button>
+                        <h1 className="text-xl font-bold text-silk-900 dark:text-white">My Orders</h1>
+                        <Link to="/contact" className='text-xs font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors whitespace-nowrap underline'>
+                            Need help?
+                        </Link>
+                    </div>
+
+                    {/* Bottom Row: Tabs */}
+                    <div className="flex w-full md:w-auto md:gap-6 border-b border-gray-200 dark:border-gray-700">
                         <button
                             onClick={() => setActiveTab('orders')}
                             className={`whitespace-nowrap flex-1 text-center md:flex-none md:text-left pb-3 px-2 transition-all font-medium text-sm md:text-base border-b-2 ${activeTab === 'orders' ? 'border-silk-900 text-silk-900 dark:border-silk-50 dark:text-silk-50' : 'border-transparent text-gray-500 hover:text-gray-700 dark:text-gray-400'}`}
@@ -243,10 +255,6 @@ const Orders = ({ compact }) => {
                             {customOrders.length > 0 && <span className="ml-2 text-xs bg-gray-200 text-gray-800 px-2 py-0.5 rounded-full dark:bg-silk-900 dark:text-silk-100">{customOrders.length}</span>}
                         </button>
                     </div>
-
-                    <Link to="/contact" className='mb-3 text-xs font-medium text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors flex items-center gap-2 whitespace-nowrap underline'>
-                        Need help?
-                    </Link>
                 </div>
             )}
 
