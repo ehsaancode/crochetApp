@@ -10,10 +10,11 @@ import Wishlist from './Wishlist'
 import Orders from './Orders'
 import Loading from '../components/Loading'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
-import welcomeAnimation from '../assets/newLottie/Welcome.lottie';
+import { useTheme } from '../context/ThemeContext';
+import girlSayHiAnimation from '../assets/newLottie/girl say hi.lottie';
 
 const Login = () => {
-
+    const { theme } = useTheme();
     const { token, setToken, navigate, backendUrl, userData, fetchUserProfile, setUserData } = useContext(ShopContext);
     const location = useLocation();
 
@@ -326,25 +327,29 @@ const Login = () => {
         <div className='h-[100dvh] w-full flex flex-col md:flex-row-reverse items-center justify-between px-4 relative bg-white dark:bg-black transition-colors duration-300 overflow-hidden pt-16'>
 
             {/* Top/Right Lottie Animation */}
-            <div className={`w-full md:w-1/2 flex justify-center items-end md:items-center transition-all duration-500 ease-in-out shrink-0 relative ${currentState === 'Sign Up' ? 'h-[25vh] md:h-full' : 'h-[30vh] md:h-full'}`}>
-                <div className={`h-full w-full transition-all duration-500 ease-in-out flex items-center justify-center`}>
+            <div className={`w-full md:w-1/2 flex justify-center items-center transition-all duration-500 ease-in-out shrink-0 relative ${currentState === 'Sign Up' ? 'h-[25vh] md:h-full' : 'h-[30vh] md:h-full'}`}>
+                <div className="w-full h-full md:w-[75%] md:h-[75%]">
                     <DotLottieReact
-                        src={welcomeAnimation}
+                        src={girlSayHiAnimation}
                         loop
                         autoplay
-                        className="w-full h-full object-contain"
+                        style={{
+                            width: '100%',
+                            height: '100%',
+                            filter: theme === 'dark' ? 'brightness(0.8) contrast(1.2) hue-rotate(190deg) saturate(1.5)' : 'none',
+                        }}
                     />
                 </div>
             </div>
 
-            <FadeContent blur={true} duration={0.6} className="w-full md:w-1/2 flex-1 flex flex-col items-center relative z-10 justify-center h-full overflow-y-auto md:overflow-hidden">
+            <FadeContent blur={true} duration={0.6} className="w-full md:w-1/2 flex-1 flex flex-col items-center relative z-10 justify-start md:justify-center h-full overflow-y-auto md:overflow-hidden">
 
                 {/* Main Content Container - Centered and Spaced */}
-                <div className='flex flex-col items-center justify-center w-full max-w-lg mx-auto gap-3 md:gap-6 py-4 md:py-0 scale-90 sm:scale-100'>
+                <div className='flex flex-col pb-20 items-center justify-center w-full max-w-lg mx-auto gap-3 md:gap-6 py-0 md:py-0 scale-90 sm:scale-100'>
 
                     {/* Welcome Messages */}
                     <div className="text-center">
-                        <h2 className='font-serif text-2xl md:text-5xl font-bold text-silk-900 dark:text-white mb-2'>Welcome to Aalaboo</h2>
+                        <h2 className='font-serif text-4xl md:text-5xl text-silk-900 dark:text-silk-100 mb-2 leading-tight'>Welcome to <span className="italic">Aalaboo</span></h2>
                         <p className='text-sm md:text-lg text-silk-600 dark:text-silk-300'>
                             {currentState === 'Login'
                                 ? 'Please sign in to continue.'
