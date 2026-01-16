@@ -9,6 +9,8 @@ import { User, Heart, Package, MapPin, LogOut, Edit2, LocateFixed, Info, Phone, 
 import Wishlist from './Wishlist'
 import Orders from './Orders'
 import Loading from '../components/Loading'
+import { DotLottieReact } from '@lottiefiles/dotlottie-react';
+import officeHelloAnimation from './uiComponents/lottie/Office Team Worker saying Hello.lottie';
 
 const Login = () => {
 
@@ -321,54 +323,80 @@ const Login = () => {
     }
 
     return (
-        <div className='min-h-screen pt-32 pb-12 flex items-center justify-center px-4'>
-            <FadeContent blur={true} duration={0.6}>
-                <form onSubmit={onSubmitHandler} className='flex flex-col items-center w-full max-w-md m-auto bg-silk-50 dark:bg-[linear-gradient(105deg,var(--tw-gradient-stops))] dark:from-black dark:to-silk-blue-dark rounded-2xl p-8 shadow-2xl border border-silk-200 dark:border-silk-blue-border text-silk-800 dark:text-gray-200'>
-                    {/* ... (Keep existing login form code) ... */}
-                    <div className='inline-flex items-center gap-2 mb-6'>
-                        <p className='font-serif text-3xl font-medium text-silk-900 dark:text-white'>{currentState}</p>
-                        <hr className='border-none h-[1.5px] w-8 bg-silk-900 dark:bg-white' />
-                    </div>
+        <div className='h-[100dvh] w-full flex flex-col items-center px-4 overflow-hidden relative bg-white dark:bg-black transition-colors duration-300'>
+            <FadeContent blur={true} duration={0.6} className="w-full h-full flex flex-col items-center relative z-10">
 
-                    {currentState === 'Sign Up' && (
-                        <>
-                            <div className='flex items-center gap-4 mb-4 w-full'>
-                                <label htmlFor="image-upload-signup" className='cursor-pointer flex items-center gap-2 group'>
-                                    <div className='w-12 h-12 rounded-full bg-white/40 dark:bg-black/40 flex items-center justify-center overflow-hidden border border-silk-200 dark:border-silk-blue-border transition-colors group-hover:border-silk-400'>
-                                        {image ? <img src={URL.createObjectURL(image)} alt="Profile" className='w-full h-full object-cover' /> : <span className='text-xs text-silk-500 dark:text-silk-400'>+ Img</span>}
-                                    </div>
-                                    <span className='text-sm text-silk-600 dark:text-silk-300 group-hover:text-silk-900 dark:group-hover:text-white transition-colors'>Add Profile Picture</span>
-                                </label>
-                                <input type="file" id="image-upload-signup" hidden onChange={(e) => setImage(e.target.files[0])} />
-                            </div>
-                            <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-4 py-3 border border-silk-200 dark:border-silk-blue-border rounded-lg bg-white/60 dark:bg-black/30 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 mb-3' placeholder='Full Name' required />
-                            <input onChange={(e) => setPhone(e.target.value)} value={phone} type="text" className='w-full px-4 py-3 border border-silk-200 dark:border-silk-blue-border rounded-lg bg-white/60 dark:bg-black/30 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 mb-3' placeholder='Phone Number' />
-                        </>
-                    )}
+                {/* Main Content Container - Centered and Spaced */}
+                <div className='flex-1 flex flex-col items-center justify-center w-full max-w-lg mx-auto gap-4 md:gap-8 pb-32 md:pb-0'>
 
-                    <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" className='w-full px-4 py-3 border border-silk-200 dark:border-silk-blue-border rounded-lg bg-white/60 dark:bg-black/30 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 mb-3' placeholder='Email' required />
-                    <input onChange={(e) => setPassword(e.target.value)} value={password} type="password" className='w-full px-4 py-3 border border-silk-200 dark:border-silk-blue-border rounded-lg bg-white/60 dark:bg-black/30 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 mb-3' placeholder='Password' required />
-
-                    <div className='w-full flex justify-between text-sm mt-1 mb-8'>
-                        <p
-                            className='cursor-pointer text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white transition-colors'
-                            onClick={() => navigate('/forgot-password')}
-                        >
-                            Forgot your password?
+                    {/* Welcome Messages */}
+                    <div className="text-center">
+                        <h2 className='font-serif text-3xl md:text-5xl font-bold text-silk-900 dark:text-white mb-2'>Welcome to Aalaboo</h2>
+                        <p className='text-sm md:text-lg text-silk-600 dark:text-silk-300'>
+                            {currentState === 'Login'
+                                ? 'Please sign in to continue.'
+                                : 'Join our community of crochet lovers today!'}
                         </p>
-                        {currentState === 'Login'
-                            ? <p onClick={() => setCurrentState('Sign Up')} className='cursor-pointer text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white transition-colors'>Create account</p>
-                            : <p onClick={() => setCurrentState('Login')} className='cursor-pointer text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white transition-colors'>Login Here</p>
-                        }
                     </div>
 
-                    <div className="w-full">
-                        <button type="submit" className="w-full py-3 bg-silk-900 dark:bg-silk-50 text-white dark:text-silk-900 font-semibold rounded-full hover:bg-black dark:hover:bg-white/90 transition-all shadow-md hover:shadow-lg transform hover:-translate-y-0.5">
-                            {currentState === 'Login' ? 'Sign In' : 'Sign Up'}
-                        </button>
-                    </div>
-                </form>
+                    <form onSubmit={onSubmitHandler} className='flex flex-col items-center w-full px-2 md:px-0'>
+
+                        <p className='font-serif text-2xl md:text-3xl font-medium text-silk-900 dark:text-white mb-6'>{currentState}</p>
+
+                        {currentState === 'Sign Up' && (
+                            <div className="w-full animate-fade-in flex flex-col gap-3 mb-3">
+                                <div className='flex items-center gap-4 w-full'>
+                                    <label htmlFor="image-upload-signup" className='cursor-pointer flex items-center gap-2 group whitespace-nowrap'>
+                                        <div className='w-10 h-10 md:w-12 md:h-12 rounded-full bg-white/40 dark:bg-gray-800 flex items-center justify-center overflow-hidden border border-silk-200 dark:border-gray-700 transition-colors group-hover:border-silk-400'>
+                                            {image ? <img src={URL.createObjectURL(image)} alt="Profile" className='w-full h-full object-cover' /> : <span className='text-[10px] md:text-xs text-silk-500 dark:text-silk-400'>+ Img</span>}
+                                        </div>
+                                        <span className='text-xs md:text-sm text-silk-600 dark:text-silk-300 group-hover:text-silk-900 dark:group-hover:text-white transition-colors'>Add Picture</span>
+                                    </label>
+                                    <input type="file" id="image-upload-signup" hidden onChange={(e) => setImage(e.target.files[0])} />
+                                </div>
+                                <div className="grid grid-cols-2 gap-3">
+                                    <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-4 py-3 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-sm dark:text-white' placeholder='Full Name' required />
+                                    <input onChange={(e) => setPhone(e.target.value)} value={phone} type="text" className='w-full px-4 py-3 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-sm dark:text-white' placeholder='Phone' />
+                                </div>
+                            </div>
+                        )}
+
+                        <div className="w-full flex flex-col gap-3 mb-4">
+                            <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" className='w-full px-4 py-3.5 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-sm md:placeholder:text-base dark:text-white' placeholder='Email' required />
+                            <input onChange={(e) => setPassword(e.target.value)} value={password} type="password" className='w-full px-4 py-3.5 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-sm md:placeholder:text-base dark:text-white' placeholder='Password' required />
+                        </div>
+
+                        <div className='w-full flex justify-between text-xs md:text-sm mt-1 mb-8 px-1'>
+                            <p
+                                className='cursor-pointer text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white transition-colors font-medium'
+                                onClick={() => navigate('/forgot-password')}
+                            >
+                                Forgot password?
+                            </p>
+                            {currentState === 'Login'
+                                ? <p onClick={() => setCurrentState('Sign Up')} className='cursor-pointer text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white transition-colors font-medium'>Create account</p>
+                                : <p onClick={() => setCurrentState('Login')} className='cursor-pointer text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white transition-colors font-medium'>Login Here</p>
+                            }
+                        </div>
+
+                        <div className="w-full">
+                            <button type="submit" className="w-full py-4 bg-silk-900 dark:bg-white text-white dark:text-black text-lg font-semibold rounded-full hover:bg-black dark:hover:bg-gray-200 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95">
+                                {currentState === 'Login' ? 'Sign In' : 'Sign Up'}
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </FadeContent>
+
+            {/* Background Lottie Animation */}
+            <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none opacity-90 z-0 transition-all duration-500 ease-in-out ${currentState === 'Sign Up' ? 'w-[80vw] h-[70vw] md:w-[500px] md:h-[500px] max-h-[35vh]' : 'w-[90vw] h-[80vw] md:w-[600px] md:h-[600px] max-h-[45vh]'}`}>
+                <DotLottieReact
+                    src={officeHelloAnimation}
+                    loop
+                    autoplay
+                    className="w-full h-full object-contain object-bottom"
+                />
+            </div>
         </div>
     )
 }
