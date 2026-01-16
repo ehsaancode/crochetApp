@@ -4,8 +4,13 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const orderModel = require('../models/Order');
 const productModel = require('../models/Product');
-const nodemailer = require('nodemailer');
+const { Resend } = require('resend');
 const path = require('path');
+const fs = require('fs');
+
+const nodemailer = require('nodemailer'); // Keeping for fallback if needed, or remove? Better remove to clean up.
+// Actually, let's just comment it out or remove it.
+// const nodemailer = require('nodemailer');
 
 const generateEmailTemplate = (userName, content) => {
     return `
@@ -19,9 +24,6 @@ const generateEmailTemplate = (userName, content) => {
                 ${content}
             </div>
             <p style="margin-top: 30px; font-size: 14px; color: #888;">Best regards,<br>The Aalaboo Team</p>
-        </div>
-        <div>
-            <img src="cid:aalaboofooter" alt="Aalaboo" style="width: 100%; display: block; border: 0;" />
         </div>
         <div style="background-color: #f7f7f7; padding: 15px; text-align: center; font-size: 12px; color: #aaa;">
             &copy; ${new Date().getFullYear()} Aalaboo. All rights reserved.
@@ -449,36 +451,21 @@ const handleRequest = async (req, res) => {
             console.log("DEBUG EMAIL (MESSAGE): Sending to:", targetEmail, "Name:", targetName);
 
             try {
-                if (!process.env.SMTP_PASSWORD) {
-                    console.error("SMTP_PASSWORD is not set for admin message!");
-                    throw new Error("SMTP_PASSWORD missing");
+                if (!process.env.RESEND_API_KEY) {
+                    console.error("RESEND_API_KEY is not set!");
+                    throw new Error("RESEND_API_KEY missing");
                 }
-                const transporter = nodemailer.createTransport({
-                    host: 'smtp.gmail.com',
-                    port: 465,
-                    secure: true,
-                    auth: {
-                        user: 'mail.aalaboo@gmail.com',
-                        pass: process.env.SMTP_PASSWORD
-                    },
-                    connectionTimeout: 10000,
-                    greetingTimeout: 10000,
-                    socketTimeout: 10000
-                });
 
+                const resend = new Resend(process.env.RESEND_API_KEY);
                 const emailHtml = generateEmailTemplate(targetName, `Message regarding your request:<br><br><i>"${message}"</i>`);
-                await transporter.sendMail({
-                    from: 'mail.aalaboo@gmail.com',
+
+                await resend.emails.send({
+                    from: 'Aalaboo <onboarding@resend.dev>', // Use verified domain in production if available
                     to: targetEmail,
                     subject: 'Message regarding your Product Request - Aalaboo',
-                    text: `Hello ${targetName},\n\nAdmin Message regarding your request:\n\n"${message}"\n\nBest regards,\nAalaboo Team`,
-                    html: emailHtml,
-                    attachments: [{
-                        filename: 'footer.png',
-                        path: path.join(__dirname, '../assets/footer.png'),
-                        cid: 'aalaboofooter'
-                    }]
+                    html: emailHtml
                 });
+
             } catch (e) {
                 console.log("Email send failed:", e);
             }
@@ -514,33 +501,21 @@ const handleRequest = async (req, res) => {
             console.log("DEBUG EMAIL (ACCEPT): Sending to:", targetEmail, "Name:", targetName);
 
             try {
-                if (!process.env.SMTP_PASSWORD) {
-                    console.error("SMTP_PASSWORD is not set for accept request!");
-                    throw new Error("SMTP_PASSWORD missing");
+                if (!process.env.RESEND_API_KEY) {
+                    console.error("RESEND_API_KEY is not set!");
+                    throw new Error("RESEND_API_KEY missing");
                 }
-                const transporter = nodemailer.createTransport({
-                    host: 'smtp.gmail.com',
-                    port: 465,
-                    secure: true,
-                    auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD },
-                    connectionTimeout: 10000,
-                    greetingTimeout: 10000,
-                    socketTimeout: 10000
-                });
+                const resend = new Resend(process.env.RESEND_API_KEY);
 
                 const emailHtml = generateEmailTemplate(targetName, `Good news! The product you requested has been restocked and added to your Cart.<br><br>Please login to check out.`);
-                await transporter.sendMail({
-                    from: 'mail.aalaboo@gmail.com',
+
+                await resend.emails.send({
+                    from: 'Aalaboo <onboarding@resend.dev>',
                     to: targetEmail,
                     subject: 'Product Request Accepted - Aalaboo',
-                    text: `Hello ${targetName},\n\nGood news! The product you requested has been restocked and added to your Cart.\n\nPlease login to check out.\n\nBest regards,\nAalaboo Team`,
-                    html: emailHtml,
-                    attachments: [{
-                        filename: 'footer.png',
-                        path: path.join(__dirname, '../assets/footer.png'),
-                        cid: 'aalaboofooter'
-                    }]
+                    html: emailHtml
                 });
+
             } catch (e) { console.log("Email send failed:", e); }
 
             res.json({ success: true, message: "Request accepted (Cart updated & Email sent)" });
@@ -556,20 +531,12 @@ const contactFormEmail = async (req, res) => {
     try {
         const { name, email, message } = req.body;
 
-        if (!process.env.SMTP_PASSWORD) {
-            console.error("SMTP_PASSWORD is not set for contact form!");
+        if (!process.env.RESEND_API_KEY) {
+            console.error("RESEND_API_KEY is not set for contact form!");
             return res.json({ success: false, message: "Server configuration error: Email not configured" });
         }
 
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD },
-            connectionTimeout: 10000,
-            greetingTimeout: 10000,
-            socketTimeout: 10000
-        });
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
         const emailHtml = generateEmailTemplate("Admin",
             `New Contact Form Inquiry<br><br>
@@ -578,18 +545,12 @@ const contactFormEmail = async (req, res) => {
             <b>Message:</b><br>${message.replace(/\n/g, '<br>')}`
         );
 
-        await transporter.sendMail({
-            from: 'mail.aalaboo@gmail.com',
-            to: 'mail.aalaboo@gmail.com',
-            replyTo: email,
+        await resend.emails.send({
+            from: 'Aalaboo Contact <onboarding@resend.dev>',
+            to: 'mail.aalaboo@gmail.com', // Sending to admin
+            reply_to: email,
             subject: `New Inquiry from ${name}`,
-            text: `Name: ${name}\nEmail: ${email}\nMessage:\n${message}`,
-            html: emailHtml,
-            attachments: [{
-                filename: 'footer.png',
-                path: path.join(__dirname, '../assets/footer.png'),
-                cid: 'aalaboofooter'
-            }]
+            html: emailHtml
         });
 
         res.json({ success: true, message: "Message sent successfully" });
@@ -615,35 +576,22 @@ const sendResetOtp = async (req, res) => {
         user.resetOtpExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
         await user.save();
 
-        if (!process.env.SMTP_PASSWORD) {
-            console.error("SMTP_PASSWORD is not set in environment variables!");
+        if (!process.env.RESEND_API_KEY) {
+            console.error("RESEND_API_KEY is not set in environment variables!");
             return res.json({ success: false, message: "Server configuration error: Email service not configured" });
         }
 
-        const transporter = nodemailer.createTransport({
-            host: 'smtp.gmail.com',
-            port: 465,
-            secure: true,
-            auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD },
-            connectionTimeout: 10000, // 10 seconds
-            greetingTimeout: 10000,
-            socketTimeout: 10000
-        });
+        const resend = new Resend(process.env.RESEND_API_KEY);
 
         const emailHtml = generateEmailTemplate(user.name,
             `Your OTP for password reset is: <b style="font-size: 24px; letter-spacing: 2px;">${otp}</b><br><br>This OTP is valid for 15 minutes.`
         );
 
-        await transporter.sendMail({
-            from: 'mail.aalaboo@gmail.com',
+        await resend.emails.send({
+            from: 'Aalaboo Security <onboarding@resend.dev>',
             to: email,
             subject: 'Password Reset OTP - Aalaboo',
-            html: emailHtml,
-            attachments: [{
-                filename: 'footer.png',
-                path: path.join(__dirname, '../assets/footer.png'),
-                cid: 'aalaboofooter'
-            }]
+            html: emailHtml
         });
 
         res.json({ success: true, message: "OTP sent to your email" });
