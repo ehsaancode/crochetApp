@@ -5,6 +5,11 @@ const ScrollToTop = () => {
     const { pathname } = useLocation();
 
     useEffect(() => {
+        // Prevent browser from restoring scroll position automatically
+        if ('scrollRestoration' in window.history) {
+            window.history.scrollRestoration = 'manual';
+        }
+
         // Check if we are on the collection page
         if (pathname === '/collection') {
             // If we have a saved scroll position (from clicking a product), 

@@ -323,11 +323,11 @@ const Login = () => {
     }
 
     return (
-        <div className='min-h-[100dvh] w-full flex flex-col items-center px-4 relative bg-white dark:bg-black transition-colors duration-300 overflow-y-auto'>
-            <FadeContent blur={true} duration={0.6} className="w-full flex-1 flex flex-col items-center relative z-10">
+        <div className='min-h-[100dvh] w-full flex flex-col md:flex-row-reverse items-center justify-between px-4 relative bg-white dark:bg-black transition-colors duration-300 overflow-y-auto'>
+            <FadeContent blur={true} duration={0.6} className="w-full md:w-1/2 flex-1 flex flex-col items-center relative z-10 justify-center">
 
                 {/* Main Content Container - Centered and Spaced */}
-                <div className='flex flex-col items-center justify-center w-full max-w-lg mx-auto gap-3 md:gap-8 pt-28 md:pt-32 pb-8 scale-90 sm:scale-100'>
+                <div className='flex flex-col items-center justify-center w-full max-w-lg mx-auto gap-3 md:gap-8 pt-28 md:pt-0 pb-8 scale-90 sm:scale-100'>
 
                     {/* Welcome Messages */}
                     <div className="text-center">
@@ -389,8 +389,8 @@ const Login = () => {
             </FadeContent>
 
             {/* Bottom Lottie Animation - Static Position to prevent overlap */}
-            <div className={`w-full flex justify-center items-end mt-auto pointer-events-none opacity-90 z-0 transition-all duration-500 ease-in-out shrink-0 ${currentState === 'Sign Up' ? 'h-[250px] md:h-[400px]' : 'h-[300px] md:h-[450px]'}`}>
-                <div className={`h-full transition-all duration-500 ease-in-out ${currentState === 'Sign Up' ? 'w-[70vw] md:w-[500px]' : 'w-[80vw] md:w-[600px]'}`}>
+            <div className={`w-full md:w-1/2 flex justify-center items-end md:items-center mt-auto md:mt-0 pointer-events-none opacity-90 z-0 transition-all duration-500 ease-in-out shrink-0 ${currentState === 'Sign Up' ? 'h-[250px] md:h-[80vh]' : 'h-[300px] md:h-[80vh]'}`}>
+                <div className={`h-full transition-all duration-500 ease-in-out ${currentState === 'Sign Up' ? 'w-[70vw] md:w-full' : 'w-[80vw] md:w-full'}`}>
                     <DotLottieReact
                         src={officeHelloAnimation}
                         loop
