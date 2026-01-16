@@ -9,7 +9,6 @@ const path = require('path');
 const fs = require('fs');
 
 const nodemailer = require('nodemailer'); // Keeping for fallback if needed, or remove? Better remove to clean up.
-// Actually, let's just comment it out or remove it.
 // const nodemailer = require('nodemailer');
 
 const generateEmailTemplate = (userName, content) => {
@@ -462,6 +461,7 @@ const handleRequest = async (req, res) => {
                 await resend.emails.send({
                     from: 'Aalaboo <onboarding@resend.dev>', // Use verified domain in production if available
                     to: targetEmail,
+                    reply_to: 'mail.aalaboo@gmail.com',
                     subject: 'Message regarding your Product Request - Aalaboo',
                     html: emailHtml
                 });
@@ -512,6 +512,7 @@ const handleRequest = async (req, res) => {
                 await resend.emails.send({
                     from: 'Aalaboo <onboarding@resend.dev>',
                     to: targetEmail,
+                    reply_to: 'mail.aalaboo@gmail.com',
                     subject: 'Product Request Accepted - Aalaboo',
                     html: emailHtml
                 });
@@ -588,8 +589,9 @@ const sendResetOtp = async (req, res) => {
         );
 
         await resend.emails.send({
-            from: 'Aalaboo Security <onboarding@resend.dev>',
+            from: 'Aalaboo <onboarding@resend.dev>',
             to: email,
+            reply_to: 'mail.aalaboo@gmail.com',
             subject: 'Password Reset OTP - Aalaboo',
             html: emailHtml
         });
