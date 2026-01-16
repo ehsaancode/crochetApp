@@ -466,7 +466,7 @@ const handleRequest = async (req, res) => {
                     html: emailHtml,
                     attachments: [{
                         filename: 'footer.png',
-                        path: path.join(process.cwd(), 'assets/footer.png'),
+                        path: path.join(__dirname, '../assets/footer.png'),
                         cid: 'aalaboofooter'
                     }]
                 });
@@ -519,7 +519,7 @@ const handleRequest = async (req, res) => {
                     html: emailHtml,
                     attachments: [{
                         filename: 'footer.png',
-                        path: path.join(process.cwd(), 'assets/footer.png'),
+                        path: path.join(__dirname, '../assets/footer.png'),
                         cid: 'aalaboofooter'
                     }]
                 });
@@ -559,7 +559,7 @@ const contactFormEmail = async (req, res) => {
             html: emailHtml,
             attachments: [{
                 filename: 'footer.png',
-                path: path.join(process.cwd(), 'assets/footer.png'),
+                path: path.join(__dirname, '../assets/footer.png'),
                 cid: 'aalaboofooter'
             }]
         });
@@ -575,12 +575,6 @@ const contactFormEmail = async (req, res) => {
 const sendResetOtp = async (req, res) => {
     try {
         const { email } = req.body;
-
-        if (!process.env.SMTP_PASSWORD) {
-            console.error("SMTP_PASSWORD is not defined in environment variables");
-            return res.json({ success: false, message: "Server configuration error: Email service not configured" });
-        }
-
         const user = await userModel.findOne({ email });
 
         if (!user) {
@@ -592,8 +586,6 @@ const sendResetOtp = async (req, res) => {
         user.resetOtp = otp;
         user.resetOtpExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
         await user.save();
-
-        console.log(`Prepared OTP for ${email}. Attempting to send...`);
 
         const transporter = nodemailer.createTransport({
             service: 'gmail',
@@ -611,17 +603,16 @@ const sendResetOtp = async (req, res) => {
             html: emailHtml,
             attachments: [{
                 filename: 'footer.png',
-                path: path.join(process.cwd(), 'assets/footer.png'),
+                path: path.join(__dirname, '../assets/footer.png'),
                 cid: 'aalaboofooter'
             }]
         });
 
-        console.log(`OTP email sent successfully to ${email}`);
         res.json({ success: true, message: "OTP sent to your email" });
 
     } catch (error) {
-        console.error("Error in sendResetOtp:", error);
-        res.json({ success: false, message: error.message || "Failed to send OTP" }); // Return error message to client
+        console.log(error);
+        res.json({ success: false, message: error.message });
     }
 }
 
