@@ -158,20 +158,29 @@ function Collection() {
         }
     };
 
+    const hasRestoredScroll = useRef(false);
+
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 50);
         };
         window.addEventListener('scroll', handleScroll);
-
-        // Restore scroll position if available
-        const savedScrollY = sessionStorage.getItem('collectionScrollY');
-        if (savedScrollY) {
-            window.scrollTo(0, parseInt(savedScrollY, 10));
-        }
-
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
+
+    // Restore scroll position after products are loaded
+    useEffect(() => {
+        if (!hasRestoredScroll.current && filterProducts.length > 0) {
+            const savedScrollY = sessionStorage.getItem('collectionScrollY');
+            if (savedScrollY) {
+                // Small timeout to ensure DOM is ready
+                setTimeout(() => {
+                    window.scrollTo(0, parseInt(savedScrollY, 10));
+                }, 100);
+            }
+            hasRestoredScroll.current = true;
+        }
+    }, [filterProducts]);
 
     const saveScrollPosition = () => {
         sessionStorage.setItem('collectionScrollY', window.scrollY.toString());

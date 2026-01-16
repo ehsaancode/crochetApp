@@ -105,10 +105,10 @@ const DiscoverIdeas = ({ isHomePage }) => {
                 />
             </div>
 
-            <div className={`mt-8 pb-15 flex flex-col gap-4 ${isHomePage ? 'items-center sm:flex-row sm:justify-center' : 'items-end sm:flex-row sm:items-center justify-between'}`}>
+            <div className={`mt-10 pb-15 flex flex-col gap-6 ${isHomePage ? 'items-center sm:flex-row sm:justify-center' : 'items-end sm:flex-row sm:items-center justify-between'}`}>
                 <button
                     onClick={handleShowAll}
-                    className="px-4 py-1 rounded-full border border-silk-900 dark:border-silk-100 text-silk-900 dark:text-silk-100 text-[10px] md:text-xs uppercase tracking-widest hover:bg-silk-900 hover:text-silk-50 dark:hover:bg-silk-100 dark:hover:text-silk-900 transition-all duration-300 flex items-center gap-1"
+                    className="px-5 py-3 rounded-full border border-silk-900 dark:border-silk-100 text-silk-900 dark:text-silk-100 text-[10px] md:text-xs uppercase tracking-widest hover:bg-silk-900 hover:text-silk-50 dark:hover:bg-silk-100 dark:hover:text-silk-900 transition-all duration-300 flex items-center gap-1"
                 >
                     Show All <ArrowRight className="w-3 h-3" />
                 </button>
