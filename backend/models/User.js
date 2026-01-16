@@ -20,7 +20,9 @@ const userSchema = new mongoose.Schema({
     addresses: { type: Array, default: [] }, // Kept for backward compatibility
     cartData: { type: Object, default: {} },
     wishlist: { type: Array, default: [] },
-    role: { type: String, default: 'user' }
+    role: { type: String, default: 'user' },
+    resetOtp: { type: String, default: '' },
+    resetOtpExpire: { type: Date, default: null }
 }, { minimize: false });
 
 const userModel = mongoose.models.user || mongoose.model('user', userSchema);

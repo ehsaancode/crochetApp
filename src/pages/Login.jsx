@@ -242,7 +242,7 @@ const Login = () => {
                                 <MenuItem icon={Package} label="My Orders" onClick={() => navigate('/orders')} />
                                 <MenuItem icon={Heart} label="Wishlist" onClick={() => navigate('/wishlist')} />
                                 <MenuItem icon={MapPin} label="Address" onClick={() => setIsEditing(true)} />
-                                <MenuItem icon={Lock} label="Change Password" onClick={() => QToast.info('Password reset coming soon')} />
+                                <MenuItem icon={Lock} label="Change Password" onClick={() => navigate('/change-password')} />
                                 <MenuItem icon={HelpCircle} label="Help & Support" onClick={() => navigate('/contact')} />
                                 <MenuItem icon={LogOut} label="Log out" onClick={logout} isDanger />
                             </div>
@@ -352,7 +352,7 @@ const Login = () => {
                     <div className='w-full flex justify-between text-sm mt-1 mb-8'>
                         <p
                             className='cursor-pointer text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white transition-colors'
-                            onClick={() => QToast.info('Password reset feature coming soon!', { position: "top-center" })}
+                            onClick={() => navigate('/forgot-password')}
                         >
                             Forgot your password?
                         </p>

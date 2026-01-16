@@ -25,6 +25,8 @@ import PlaceOrder from './pages/PlaceOrder';
 import Orders from './pages/Orders';
 import CustomOrder from './pages/CustomOrder';
 import BecomeSeller from './pages/BecomeSeller';
+import ForgotPassword from './pages/ForgotPassword';
+import ChangePassword from './pages/ChangePassword';
 
 
 function Navigation() {
@@ -204,6 +206,8 @@ function App() {
                         <Route path="/place-order" element={<PlaceOrder />} />
                         <Route path="/orders" element={<Orders />} />
                         <Route path="/become-seller" element={<BecomeSeller />} />
+                        <Route path="/forgot-password" element={<ForgotPassword />} />
+                        <Route path="/change-password" element={<ChangePassword />} />
                     </Routes>
                 </main>
             </div>

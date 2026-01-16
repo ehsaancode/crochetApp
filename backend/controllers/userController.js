@@ -571,4 +571,119 @@ const contactFormEmail = async (req, res) => {
     }
 }
 
-module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest, addAddress, updateSecondaryAddress, deleteAddress, contactFormEmail };
+// Send Reset OTP
+const sendResetOtp = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+
+        user.resetOtp = otp;
+        user.resetOtpExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
+        await user.save();
+
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD }
+        });
+
+        const emailHtml = generateEmailTemplate(user.name,
+            `Your OTP for password reset is: <b style="font-size: 24px; letter-spacing: 2px;">${otp}</b><br><br>This OTP is valid for 15 minutes.`
+        );
+
+        await transporter.sendMail({
+            from: 'mail.aalaboo@gmail.com',
+            to: email,
+            subject: 'Password Reset OTP - Aalaboo',
+            html: emailHtml,
+            attachments: [{
+                filename: 'footer.png',
+                path: path.join(process.cwd(), 'assets/footer.png'),
+                cid: 'aalaboofooter'
+            }]
+        });
+
+        res.json({ success: true, message: "OTP sent to your email" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Reset Password with OTP
+const resetPassword = async (req, res) => {
+    try {
+        const { email, otp, newPassword } = req.body;
+        const user = await userModel.findOne({ email });
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        if (user.resetOtp !== otp || user.resetOtpExpire < Date.now()) {
+            return res.json({ success: false, message: "Invalid or expired OTP" });
+        }
+
+        if (newPassword.length < 8) {
+            return res.json({ success: false, message: "Password must be at least 8 characters" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        user.resetOtp = '';
+        user.resetOtpExpire = null;
+        await user.save();
+
+        res.json({ success: true, message: "Password reset successfully" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Change Password (Authenticated)
+const changePassword = async (req, res) => {
+    try {
+        const userId = req.userId; // Middleware injects this
+        const { currentPassword, newPassword } = req.body;
+
+        const user = await userModel.findById(userId);
+
+        if (!user) {
+            return res.json({ success: false, message: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+        if (!isMatch) {
+            return res.json({ success: false, message: "Incorrect current password" });
+        }
+
+        if (newPassword.length < 8) {
+            return res.json({ success: false, message: "New password must be at least 8 characters" });
+        }
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+        user.password = hashedPassword;
+        await user.save();
+
+        res.json({ success: true, message: "Password changed successfully" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+module.exports = { loginUser, registerUser, adminLogin, getProfile, updateProfile, allUsers, addToWishlist, removeFromWishlist, requestProduct, getAllRequests, handleRequest, addAddress, updateSecondaryAddress, deleteAddress, contactFormEmail, sendResetOtp, resetPassword, changePassword };
