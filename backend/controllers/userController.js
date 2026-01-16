@@ -454,7 +454,9 @@ const handleRequest = async (req, res) => {
                     throw new Error("SMTP_PASSWORD missing");
                 }
                 const transporter = nodemailer.createTransport({
-                    service: 'gmail',
+                    host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true,
                     auth: {
                         user: 'mail.aalaboo@gmail.com',
                         pass: process.env.SMTP_PASSWORD
@@ -517,7 +519,9 @@ const handleRequest = async (req, res) => {
                     throw new Error("SMTP_PASSWORD missing");
                 }
                 const transporter = nodemailer.createTransport({
-                    service: 'gmail',
+                    host: 'smtp.gmail.com',
+                    port: 465,
+                    secure: true,
                     auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD },
                     connectionTimeout: 10000,
                     greetingTimeout: 10000,
@@ -558,7 +562,9 @@ const contactFormEmail = async (req, res) => {
         }
 
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD },
             connectionTimeout: 10000,
             greetingTimeout: 10000,
@@ -615,7 +621,9 @@ const sendResetOtp = async (req, res) => {
         }
 
         const transporter = nodemailer.createTransport({
-            service: 'gmail',
+            host: 'smtp.gmail.com',
+            port: 465,
+            secure: true,
             auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD },
             connectionTimeout: 10000, // 10 seconds
             greetingTimeout: 10000,
