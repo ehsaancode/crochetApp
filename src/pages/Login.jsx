@@ -5,7 +5,7 @@ import axios from 'axios'
 import QToast from './uiComponents/QToast'
 import FadeContent from './uiComponents/FadeContent'
 
-import { User, Heart, Package, MapPin, LogOut, Edit2, LocateFixed, Info, Phone } from 'lucide-react'
+import { User, Heart, Package, MapPin, LogOut, Edit2, LocateFixed, Info, Phone, Settings, ChevronRight, Lock, HelpCircle, ArrowLeft, Camera } from 'lucide-react'
 import Wishlist from './Wishlist'
 import Orders from './Orders'
 import Loading from '../components/Loading'
@@ -183,208 +183,138 @@ const Login = () => {
         )
     }
 
+    // Helper component for menu items
+    const MenuItem = ({ icon: Icon, label, onClick, isDanger }) => (
+        <button
+            onClick={onClick}
+            className={`w-full flex items-center justify-between p-4 rounded-xl transition-all border-b border-gray-100 dark:border-gray-800 last:border-0 ${isDanger ? 'text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10' : 'text-silk-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5'}`}
+        >
+            <div className="flex items-center gap-4">
+                <Icon className="w-5 h-5 opacity-70" strokeWidth={1.5} />
+                <span className="font-medium text-base">{label}</span>
+            </div>
+            {!isDanger && <ChevronRight className="w-4 h-4 text-gray-400" />}
+        </button>
+    );
+
     if (token && userData) {
         return (
-            <div className='min-h-screen pt-24 pb-12 px-4 max-w-7xl mx-auto'>
+            <div className='min-h-screen pt-28 pb-12 px-4 max-w-lg mx-auto'>
                 <FadeContent blur={true} duration={0.6}>
-                    <div className='flex flex-col lg:flex-row gap-8'>
+                    {!isEditing ? (
+                        <>
+                            {/* Simple Header */}
+                            <div className="flex items-center justify-between mb-8">
+                                <button onClick={() => navigate(-1)} className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-white/10 transition-colors">
+                                    <ArrowLeft className="w-6 h-6 text-silk-900 dark:text-white" />
+                                </button>
+                                <h1 className="text-xl font-bold text-silk-900 dark:text-white">Profile</h1>
+                                <div className="w-10"></div>
+                            </div>
 
-                        {/* Sidebar / Top Compact Profile */}
-                        {/* Sidebar / Top Compact Profile */}
-                        <div className='w-full lg:w-1/4 flex flex-col gap-6 relative'>
+                            {/* Centered Profile Info */}
+                            <div className="flex flex-col items-center mb-10">
+                                <div className="w-28 h-28 rounded-full p-1 border-2 border-silk-100 dark:border-silk-800 mb-4">
+                                    <div className="w-full h-full rounded-full overflow-hidden bg-silk-50 dark:bg-gray-800 flex items-center justify-center">
+                                        {userData.image ? (
+                                            <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <span className="text-4xl font-serif text-silk-300 dark:text-silk-600">
+                                                {userData.name.charAt(0).toUpperCase()}
+                                            </span>
+                                        )}
+                                    </div>
+                                </div>
+                                <h2 className="text-xl font-bold text-silk-900 dark:text-white mb-1">{userData.name}</h2>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">{userData.email}</p>
 
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="bg-black dark:bg-white text-white dark:text-black px-8 py-2.5 rounded-full font-medium text-sm hover:shadow-lg transition-all active:scale-95"
+                                >
+                                    Edit Profile
+                                </button>
+                            </div>
 
-                            <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl p-6 shadow-sm text-center relative overflow-hidden'>
-                                <div className='absolute top-0 left-0 w-full h-24 bg-gradient-to-r from-silk-200 to-silk-300 dark:from-gray-800 dark:to-gray-700 opacity-30'></div>
-                                <div className='relative z-10 flex flex-col items-center mt-8 space-y-3'>
-                                    <div className='w-24 h-24 rounded-full bg-white dark:bg-gray-800 p-1 shadow-md'>
-                                        <div className='w-full h-full rounded-full overflow-hidden bg-silk-100 dark:bg-gray-700 flex items-center justify-center text-3xl font-serif'>
-                                            {userData.image ? (
-                                                <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
-                                            ) : (
-                                                userData.name.charAt(0).toUpperCase()
-                                            )}
+                            {/* Clean Menu List */}
+                            <div className="flex flex-col">
+                                <MenuItem icon={Settings} label="Settings" onClick={() => QToast.info('Settings coming soon')} />
+                                <MenuItem icon={Package} label="My Orders" onClick={() => navigate('/orders')} />
+                                <MenuItem icon={Heart} label="Wishlist" onClick={() => navigate('/wishlist')} />
+                                <MenuItem icon={MapPin} label="Address" onClick={() => setIsEditing(true)} />
+                                <MenuItem icon={Lock} label="Change Password" onClick={() => QToast.info('Password reset coming soon')} />
+                                <MenuItem icon={HelpCircle} label="Help & Support" onClick={() => navigate('/contact')} />
+                                <MenuItem icon={LogOut} label="Log out" onClick={logout} isDanger />
+                            </div>
+                        </>
+                    ) : (
+                        <div className="animate-fade-in">
+                            <div className="flex items-center justify-between mb-8">
+                                <button onClick={() => setIsEditing(false)} className="flex items-center text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-white transition-colors">
+                                    <ArrowLeft className="w-5 h-5 mr-1" /> Back
+                                </button>
+                                <h1 className="text-xl font-bold text-silk-900 dark:text-white">Edit Profile</h1>
+                                <div className="w-12" />
+                            </div>
+
+                            <form onSubmit={updateProfileHandler} className='flex flex-col gap-6'>
+                                <label htmlFor="profile-image-upload" className="cursor-pointer relative group w-28 h-28 mx-auto mb-4">
+                                    <div className='w-full h-full rounded-full overflow-hidden bg-silk-100 dark:bg-gray-800 relative border-2 border-dashed border-silk-300 dark:border-silk-700'>
+                                        {image ? (
+                                            <img src={URL.createObjectURL(image)} alt="Profile" className="w-full h-full object-cover" />
+                                        ) : userData.image ? (
+                                            <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
+                                        ) : (
+                                            <div className='w-full h-full flex items-center justify-center text-3xl font-serif text-silk-400'>{userData.name.charAt(0)}</div>
+                                        )}
+                                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
+                                            <Camera className="w-8 h-8 text-white" />
                                         </div>
+                                    </div>
+                                    <input type="file" id="profile-image-upload" hidden onChange={(e) => setImage(e.target.files[0])} />
+                                </label>
+
+                                <div className='space-y-4'>
+                                    <div>
+                                        <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5'>Full Name</label>
+                                        <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
                                     </div>
                                     <div>
-                                        <h2 className='text-xl font-bold text-silk-900 dark:text-white'>{userData.name}</h2>
-                                        <p className='text-sm text-silk-500 dark:text-silk-400'>{userData.email}</p>
+                                        <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5'>Phone</label>
+                                        <input onChange={(e) => setPhone(e.target.value)} value={phone} type="text" className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
                                     </div>
 
-
-
-                                    <button onClick={logout} className='flex items-center gap-2 text-sm text-red-500 hover:text-red-700 font-medium px-4 py-2 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors mt-2'>
-                                        <LogOut className='w-4 h-4' /> Sign Out
-                                    </button>
-                                </div>
-                            </div>
-
-                            {/* Tab Navigation */}
-                            <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl shadow-sm overflow-hidden flex flex-row lg:flex-col p-1 lg:p-0 gap-1 lg:gap-0'>
-                                <button
-                                    onClick={() => setActiveTab('profile')}
-                                    className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-all rounded-2xl lg:rounded-none ${activeTab === 'profile' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white shadow-sm lg:shadow-none lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-white/50 dark:hover:bg-gray-800/50'}`}
-                                >
-                                    <User className='w-5 h-5' /> <span className='inline'>Profile</span>
-                                </button>
-                                <button
-                                    onClick={() => setActiveTab('wishlist')}
-                                    className={`flex-1 lg:flex-none flex items-center justify-center lg:justify-start gap-3 px-6 py-4 transition-all rounded-2xl lg:rounded-none ${activeTab === 'wishlist' ? 'bg-silk-50 dark:bg-gray-800 text-silk-900 dark:text-white shadow-sm lg:shadow-none lg:border-l-4 border-silk-600' : 'text-gray-500 hover:bg-white/50 dark:hover:bg-gray-800/50'}`}
-                                >
-                                    <Heart className='w-5 h-5' /> <span className='inline'>Wishlist</span>
-                                </button>
-                            </div>
-
-
-                        </div>
-
-                        {/* Content Area */}
-                        <div className='flex-1 lg:w-3/4'>
-                            {activeTab === 'profile' && (
-                                <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl p-6 md:p-8 shadow-sm animate-fade-in'>
-                                    <div className='flex justify-between items-center mb-8 pb-4 border-b border-gray-100 dark:border-gray-800'>
-                                        <h3 className='text-xl font-serif text-silk-900 dark:text-white'>Profile Details</h3>
-                                        <button onClick={() => setIsEditing(!isEditing)} className='flex items-center gap-2 text-silk-600 hover:text-silk-900 dark:text-silk-400 dark:hover:text-white transition-colors'>
-                                            <Edit2 className='w-4 h-4' /> {isEditing ? 'Cancel Edit' : 'Edit'}
-                                        </button>
-                                    </div>
-
-                                    {!isEditing ? (
-                                        <div className='grid grid-cols-1 md:grid-cols-2 gap-8'>
-                                            <div className='space-y-6'>
-                                                <div>
-                                                    <p className='text-xs text-gray-500 uppercase tracking-widest mb-1'>Full Name</p>
-                                                    <p className='font-medium text-lg text-gray-900 dark:text-white'>{userData.name}</p>
-                                                </div>
-                                                <div>
-                                                    <p className='text-xs text-gray-500 uppercase tracking-widest mb-1'>Email Address</p>
-                                                    <p className='font-medium text-lg text-gray-900 dark:text-white'>{userData.email}</p>
-                                                </div>
-                                                <div>
-                                                    <p className='text-xs text-gray-500 uppercase tracking-widest mb-1'>Phone</p>
-                                                    <p className='font-medium text-lg text-gray-900 dark:text-white'>{userData.phone || 'Not set'}</p>
-                                                </div>
+                                    <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
+                                        <div className="flex justify-between items-center mb-2">
+                                            <label className='block text-sm font-medium text-gray-900 dark:text-white'>Address Details</label>
+                                            <button
+                                                type="button"
+                                                onClick={handleLocation}
+                                                className="flex items-center gap-1.5 text-xs font-medium text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-200 bg-silk-50 dark:bg-silk-900/50 px-3 py-1.5 rounded-full transition-colors"
+                                            >
+                                                <LocateFixed className="w-3.5 h-3.5" /> Use Current Location
+                                            </button>
+                                        </div>
+                                        <div className="grid grid-cols-1 gap-4">
+                                            <input onChange={(e) => setStreet(e.target.value)} value={street} type="text" placeholder="Street Address" className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                            <input onChange={(e) => setLandmark(e.target.value)} value={landmark} type="text" placeholder="Landmark (Optional)" className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <input onChange={(e) => setCity(e.target.value)} value={city} type="text" placeholder="City" className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                                <input onChange={(e) => setState(e.target.value)} value={state} type="text" placeholder="State" className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
                                             </div>
-                                            <div className='space-y-6'>
-                                                <div className='flex items-start gap-3'>
-                                                    <MapPin className='w-5 h-5 text-silk-600 mt-1' />
-                                                    <div>
-                                                        <p className='text-xs text-gray-500 uppercase tracking-widest mb-1'>Address</p>
-                                                        <p className='font-medium text-gray-900 dark:text-white'>
-                                                            {userData.address ? (
-                                                                <>
-                                                                    {userData.address.street}<br />
-                                                                    {userData.address.landmark && <>{userData.address.landmark}<br /></>}
-                                                                    {userData.address.city}, {userData.address.state}<br />
-                                                                    {userData.address.zip}, {userData.address.country}
-                                                                </>
-                                                            ) : 'No address saved'}
-                                                        </p>
-                                                    </div>
-                                                </div>
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <input onChange={(e) => setZip(e.target.value)} value={zip} type="text" placeholder="Zip Code" className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
+                                                <input onChange={(e) => setCountry(e.target.value)} value={country} type="text" placeholder="Country" className='w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
                                             </div>
                                         </div>
-                                    ) : (
-                                        <form onSubmit={updateProfileHandler} className='flex flex-col gap-6'>
-                                            {/* Editable Image Section */}
-                                            <label htmlFor="profile-image-upload" className="cursor-pointer relative group w-24 h-24 mx-auto">
-                                                <div className='w-full h-full rounded-full overflow-hidden bg-silk-100 dark:bg-gray-700 relative border-2 border-dashed border-silk-300'>
-                                                    {image ? (
-                                                        <img src={URL.createObjectURL(image)} alt="Profile" className="w-full h-full object-cover" />
-                                                    ) : userData.image ? (
-                                                        <img src={userData.image} alt="Profile" className="w-full h-full object-cover" />
-                                                    ) : (
-                                                        <div className='w-full h-full flex items-center justify-center text-2xl font-serif'>{userData.name.charAt(0)}</div>
-                                                    )}
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity">
-                                                        <Edit2 className="w-6 h-6 text-white" />
-                                                    </div>
-                                                </div>
-                                                <input type="file" id="profile-image-upload" hidden onChange={(e) => setImage(e.target.files[0])} />
-                                            </label>
-
-                                            <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
-                                                <div>
-                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Full Name</label>
-                                                    <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                                </div>
-                                                <div>
-                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Phone</label>
-                                                    <input onChange={(e) => setPhone(e.target.value)} value={phone} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                                </div>
-                                                <div className='md:col-span-2'>
-                                                    <div className="flex justify-between items-center mb-1">
-                                                        <label className='block text-sm font-medium text-gray-700 dark:text-gray-300'>Street Address</label>
-                                                        <button
-                                                            type="button"
-                                                            onClick={handleLocation}
-                                                            className="flex items-center gap-1.5 text-xs text-silk-600 dark:text-silk-400 hover:text-silk-900 dark:hover:text-silk-200 transition-colors bg-silk-50 dark:bg-silk-900/50 px-2 py-1 rounded-md"
-                                                        >
-                                                            <LocateFixed className="w-3.5 h-3.5" /> Use Current Location
-                                                        </button>
-                                                    </div>
-                                                    <input onChange={(e) => setStreet(e.target.value)} value={street} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                                </div>
-                                                <div className='md:col-span-2'>
-                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Landmark (Optional)</label>
-                                                    <input onChange={(e) => setLandmark(e.target.value)} value={landmark} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                                </div>
-                                                <div>
-                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>City</label>
-                                                    <input onChange={(e) => setCity(e.target.value)} value={city} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                                </div>
-                                                <div>
-                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>State</label>
-                                                    <input onChange={(e) => setState(e.target.value)} value={state} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                                </div>
-                                                <div>
-                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Zip Code</label>
-                                                    <input onChange={(e) => setZip(e.target.value)} value={zip} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                                </div>
-                                                <div>
-                                                    <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'>Country</label>
-                                                    <input onChange={(e) => setCountry(e.target.value)} value={country} type="text" className='w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-black text-gray-900 dark:text-white focus:ring-2 focus:ring-silk-500 focus:outline-none' />
-                                                </div>
-                                            </div>
-                                            <div className='flex gap-4 mt-6'>
-                                                <button type='submit' className='bg-silk-900 dark:bg-silk-100 text-white dark:text-black text-sm h-10 px-6 rounded-xl font-medium transition-all hover:bg-silk-800 dark:hover:bg-white shadow-md hover:shadow-lg'>Save Changes</button>
-                                                <button type='button' onClick={() => setIsEditing(false)} className='px-6 py-2 border border-gray-300 dark:border-gray-700 text-gray-700 dark:text-white rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors'>Cancel</button>
-                                            </div>
-                                        </form>
-                                    )}
+                                    </div>
                                 </div>
-                            )}
-
-                            {/* Wishlist Tab Content */}
-                            {activeTab === 'wishlist' && (
-                                <div className='bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] rounded-3xl shadow-sm overflow-hidden min-h-[500px]'>
-                                    {/* Hacking styles to make Wishlist fit cleaner: Using css modules often better but here we just render it. 
-                                        Since Wishlist has its own container logic, it might have double padding. 
-                                        Ideally we'd pass a "compact" prop, but for now let's just see. 
-                                        We might need to adjust Wishlist.jsx if it renders a full page structure.
-                                        Wishlist.jsx starts with `pt-14`. We might want to remove that top padding with a prop.
-                                    */}
-                                    <Wishlist compact={true} />
+                                <div className='flex gap-4 mt-2'>
+                                    <button type='submit' className='flex-1 bg-silk-900 dark:bg-silk-100 text-white dark:text-black py-3.5 rounded-full font-medium transition-all hover:bg-black dark:hover:bg-white/90 shadow-lg active:scale-95'>Save Changes</button>
                                 </div>
-                            )}
-
-                            {/* Orders Tab Content */}
-
+                            </form>
                         </div>
-                    </div>
-
-                    {/* Mobile Footer Links - Bottom Center */}
-                    <div className='lg:hidden flex justify-center items-center gap-6 mt-12 pb-8 opacity-70'>
-                        <Link to='/about' className='flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-silk-900 dark:text-gray-400 dark:hover:text-white transition-colors'>
-                            <Info className="w-3.5 h-3.5" />
-                            About us
-                        </Link>
-                        <span className='text-gray-300 dark:text-gray-700'>|</span>
-                        <Link to='/contact' className='flex items-center gap-1.5 text-sm font-medium text-gray-500 hover:text-silk-900 dark:text-gray-400 dark:hover:text-white transition-colors'>
-                            <Phone className="w-3.5 h-3.5" />
-                            Contact
-                        </Link>
-                    </div>
+                    )}
                 </FadeContent>
             </div>
         )

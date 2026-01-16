@@ -123,7 +123,6 @@ function Navigation() {
                     { path: '/', icon: HomeIcon, label: 'Home' },
                     { path: '/collection', icon: Store, label: 'Shop' },
                     { path: '/cart', icon: ShoppingBag, label: 'Cart' },
-                    { path: '/orders', icon: Package, label: 'Orders' },
                     { path: '/account', icon: User, label: 'Account', isProfile: true }
                 ].map((item) => {
                     const isActive = location.pathname === item.path;
