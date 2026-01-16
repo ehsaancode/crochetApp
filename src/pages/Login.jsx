@@ -323,15 +323,15 @@ const Login = () => {
     }
 
     return (
-        <div className='h-[100dvh] w-full flex flex-col items-center px-4 overflow-hidden relative bg-white dark:bg-black transition-colors duration-300'>
-            <FadeContent blur={true} duration={0.6} className="w-full h-full flex flex-col items-center relative z-10">
+        <div className='min-h-[100dvh] w-full flex flex-col items-center px-4 relative bg-white dark:bg-black transition-colors duration-300 overflow-y-auto'>
+            <FadeContent blur={true} duration={0.6} className="w-full flex-1 flex flex-col items-center relative z-10">
 
                 {/* Main Content Container - Centered and Spaced */}
-                <div className='flex-1 flex flex-col items-center justify-center w-full max-w-lg mx-auto gap-4 md:gap-8 pb-32 md:pb-0'>
+                <div className='flex flex-col items-center justify-center w-full max-w-lg mx-auto gap-3 md:gap-8 pt-28 md:pt-32 pb-8 scale-90 sm:scale-100'>
 
                     {/* Welcome Messages */}
                     <div className="text-center">
-                        <h2 className='font-serif text-3xl md:text-5xl font-bold text-silk-900 dark:text-white mb-2'>Welcome to Aalaboo</h2>
+                        <h2 className='font-serif text-2xl md:text-5xl font-bold text-silk-900 dark:text-white mb-2'>Welcome to Aalaboo</h2>
                         <p className='text-sm md:text-lg text-silk-600 dark:text-silk-300'>
                             {currentState === 'Login'
                                 ? 'Please sign in to continue.'
@@ -341,7 +341,7 @@ const Login = () => {
 
                     <form onSubmit={onSubmitHandler} className='flex flex-col items-center w-full px-2 md:px-0'>
 
-                        <p className='font-serif text-2xl md:text-3xl font-medium text-silk-900 dark:text-white mb-6'>{currentState}</p>
+                        <p className='font-serif text-2xl md:text-3xl font-medium text-silk-900 dark:text-white mb-4'>{currentState}</p>
 
                         {currentState === 'Sign Up' && (
                             <div className="w-full animate-fade-in flex flex-col gap-3 mb-3">
@@ -355,15 +355,15 @@ const Login = () => {
                                     <input type="file" id="image-upload-signup" hidden onChange={(e) => setImage(e.target.files[0])} />
                                 </div>
                                 <div className="grid grid-cols-2 gap-3">
-                                    <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-4 py-3 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-sm dark:text-white' placeholder='Full Name' required />
-                                    <input onChange={(e) => setPhone(e.target.value)} value={phone} type="text" className='w-full px-4 py-3 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-sm dark:text-white' placeholder='Phone' />
+                                    <input onChange={(e) => setName(e.target.value)} value={name} type="text" className='w-full px-3 py-2 md:px-4 md:py-3 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-xs md:placeholder:text-sm text-sm dark:text-white' placeholder='Full Name' required />
+                                    <input onChange={(e) => setPhone(e.target.value)} value={phone} type="text" className='w-full px-3 py-2 md:px-4 md:py-3 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-xs md:placeholder:text-sm text-sm dark:text-white' placeholder='Phone' />
                                 </div>
                             </div>
                         )}
 
                         <div className="w-full flex flex-col gap-3 mb-4">
-                            <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" className='w-full px-4 py-3.5 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-sm md:placeholder:text-base dark:text-white' placeholder='Email' required />
-                            <input onChange={(e) => setPassword(e.target.value)} value={password} type="password" className='w-full px-4 py-3.5 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-sm md:placeholder:text-base dark:text-white' placeholder='Password' required />
+                            <input onChange={(e) => setEmail(e.target.value)} value={email} type="email" className='w-full px-3 py-2.5 md:px-4 md:py-3.5 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-xs md:placeholder:text-base text-sm dark:text-white' placeholder='Email' required />
+                            <input onChange={(e) => setPassword(e.target.value)} value={password} type="password" className='w-full px-3 py-2.5 md:px-4 md:py-3.5 border border-silk-200 dark:border-gray-700 rounded-xl bg-white/50 dark:bg-gray-900/50 backdrop-blur-sm focus:outline-none focus:ring-2 focus:ring-silk-500 placeholder:text-xs md:placeholder:text-base text-sm dark:text-white' placeholder='Password' required />
                         </div>
 
                         <div className='w-full flex justify-between text-xs md:text-sm mt-1 mb-8 px-1'>
@@ -380,7 +380,7 @@ const Login = () => {
                         </div>
 
                         <div className="w-full">
-                            <button type="submit" className="w-full py-4 bg-silk-900 dark:bg-white text-white dark:text-black text-lg font-semibold rounded-full hover:bg-black dark:hover:bg-gray-200 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95">
+                            <button type="submit" className="w-full py-2.5 md:py-4 bg-silk-900 dark:bg-white text-white dark:text-black text-base md:text-lg font-semibold rounded-full hover:bg-black dark:hover:bg-gray-200 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-1 active:scale-95">
                                 {currentState === 'Login' ? 'Sign In' : 'Sign Up'}
                             </button>
                         </div>
@@ -388,14 +388,16 @@ const Login = () => {
                 </div>
             </FadeContent>
 
-            {/* Background Lottie Animation */}
-            <div className={`absolute bottom-0 left-1/2 -translate-x-1/2 pointer-events-none opacity-90 z-0 transition-all duration-500 ease-in-out ${currentState === 'Sign Up' ? 'w-[80vw] h-[70vw] md:w-[500px] md:h-[500px] max-h-[35vh]' : 'w-[90vw] h-[80vw] md:w-[600px] md:h-[600px] max-h-[45vh]'}`}>
-                <DotLottieReact
-                    src={officeHelloAnimation}
-                    loop
-                    autoplay
-                    className="w-full h-full object-contain object-bottom"
-                />
+            {/* Bottom Lottie Animation - Static Position to prevent overlap */}
+            <div className={`w-full flex justify-center items-end mt-auto pointer-events-none opacity-90 z-0 transition-all duration-500 ease-in-out shrink-0 ${currentState === 'Sign Up' ? 'h-[250px] md:h-[400px]' : 'h-[300px] md:h-[450px]'}`}>
+                <div className={`h-full transition-all duration-500 ease-in-out ${currentState === 'Sign Up' ? 'w-[70vw] md:w-[500px]' : 'w-[80vw] md:w-[600px]'}`}>
+                    <DotLottieReact
+                        src={officeHelloAnimation}
+                        loop
+                        autoplay
+                        className="w-full h-full object-contain object-bottom"
+                    />
+                </div>
             </div>
         </div>
     )

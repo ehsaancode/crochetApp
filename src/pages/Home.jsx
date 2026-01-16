@@ -63,7 +63,7 @@ function Home() {
                 <div className="text-center mb-16">
                     <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                         <h3 className="font-serif text-2xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4">
-                            Curated Favorites
+                            Curated Favorites For You
                             <Sparkles className="inline-block w-5 h-5 md:w-8 md:h-8 ml-3 mb-2 text-silk-600 dark:text-silk-400" />
                         </h3>
                         <p className="text-silk-600 dark:text-silk-400 text-sm md:text-xl font-light">
