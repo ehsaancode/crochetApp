@@ -449,12 +449,19 @@ const handleRequest = async (req, res) => {
             console.log("DEBUG EMAIL (MESSAGE): Sending to:", targetEmail, "Name:", targetName);
 
             try {
+                if (!process.env.SMTP_PASSWORD) {
+                    console.error("SMTP_PASSWORD is not set for admin message!");
+                    throw new Error("SMTP_PASSWORD missing");
+                }
                 const transporter = nodemailer.createTransport({
                     service: 'gmail',
                     auth: {
                         user: 'mail.aalaboo@gmail.com',
                         pass: process.env.SMTP_PASSWORD
-                    }
+                    },
+                    connectionTimeout: 10000,
+                    greetingTimeout: 10000,
+                    socketTimeout: 10000
                 });
 
                 const emailHtml = generateEmailTemplate(targetName, `Message regarding your request:<br><br><i>"${message}"</i>`);
@@ -505,9 +512,16 @@ const handleRequest = async (req, res) => {
             console.log("DEBUG EMAIL (ACCEPT): Sending to:", targetEmail, "Name:", targetName);
 
             try {
+                if (!process.env.SMTP_PASSWORD) {
+                    console.error("SMTP_PASSWORD is not set for accept request!");
+                    throw new Error("SMTP_PASSWORD missing");
+                }
                 const transporter = nodemailer.createTransport({
                     service: 'gmail',
-                    auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD }
+                    auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD },
+                    connectionTimeout: 10000,
+                    greetingTimeout: 10000,
+                    socketTimeout: 10000
                 });
 
                 const emailHtml = generateEmailTemplate(targetName, `Good news! The product you requested has been restocked and added to your Cart.<br><br>Please login to check out.`);
@@ -538,9 +552,17 @@ const contactFormEmail = async (req, res) => {
     try {
         const { name, email, message } = req.body;
 
+        if (!process.env.SMTP_PASSWORD) {
+            console.error("SMTP_PASSWORD is not set for contact form!");
+            return res.json({ success: false, message: "Server configuration error: Email not configured" });
+        }
+
         const transporter = nodemailer.createTransport({
             service: 'gmail',
-            auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD }
+            auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD },
+            connectionTimeout: 10000,
+            greetingTimeout: 10000,
+            socketTimeout: 10000
         });
 
         const emailHtml = generateEmailTemplate("Admin",
@@ -587,9 +609,17 @@ const sendResetOtp = async (req, res) => {
         user.resetOtpExpire = Date.now() + 15 * 60 * 1000; // 15 minutes
         await user.save();
 
+        if (!process.env.SMTP_PASSWORD) {
+            console.error("SMTP_PASSWORD is not set in environment variables!");
+            return res.json({ success: false, message: "Server configuration error: Email service not configured" });
+        }
+
         const transporter = nodemailer.createTransport({
             service: 'gmail',
-            auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD }
+            auth: { user: 'mail.aalaboo@gmail.com', pass: process.env.SMTP_PASSWORD },
+            connectionTimeout: 10000, // 10 seconds
+            greetingTimeout: 10000,
+            socketTimeout: 10000
         });
 
         const emailHtml = generateEmailTemplate(user.name,

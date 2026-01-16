@@ -1,23 +1,22 @@
-# Bug Fix: OTP Email Sending in Production
+# OTP Sending Fix Plan
 
-## Problem
-The user reported that sending OTP for "forgot password" works locally but fails in the deployed application.
+## Problem Analysis
+The "Forgot Password" OTP functionality works locally but hangs (gets stuck "Sending OTP...") in the deployed environment.
 
-## Root Cause Analysis
-The `userController.js` was using `path.join(process.cwd(), 'assets/footer.png')` to locate the email footer image. 
-- In a local environment, `process.cwd()` usually points to the project root, making the path valid.
-- In a deployed environment (especially serverless or containerized setups), the working directory (`process.cwd()`) might not be what is expected, causing the file path to resolve incorrectly. When `nodemailer` cannot find the attachment, it throws an error, causing the API request to fail.
+## Potential Causes
+1. **Missing Environment Variable**: The `SMTP_PASSWORD` is likely missing in the deployment environment (e.g., Vercel, Render, Heroku).
+2. **Port Restrictions**: The hosting provider might be blocking SMTP ports (587, 465, 25).
+3. **Gmail Security**: Gmail might be blocking the connection from the new server IP, even with an App Password (less likely if App Password is used, but possible).
+4. **Timeouts**: The connection to Gmail might be timing out due to network strictness.
 
-## Solution implemented
-Updated `backend/controllers/userController.js` to use `__dirname` for robust relative path resolution:
-- Replaced `path.join(process.cwd(), 'assets/footer.png')` with `path.join(__dirname, '../assets/footer.png')`.
-- This ensures the code always looks for the `assets` folder relative to the `controllers` folder, regardless of where the Node process was started.
+## Proposed Solution
+1. **Verify Environment Variables**: User needs to explicitly add `SMTP_PASSWORD` and `SMTP_EMAIL` (if used) to their deployment platform's environment variables.
+2. **Review Logs**: Check server logs for specific connection errors.
+3. **Code Enhancement**:
+    - Add connection timeout settings to Nodemailer.
+    - Add more verbose logging for debugging.
 
-## Verification
-- Validated that `backend/assets/footer.png` exists locally.
-- The path `../assets/footer.png` relative to `backend/controllers/userController.js` correctly resolves to `backend/assets/footer.png`.
-
-## Next Steps
-- The user should redeploy the backend.
-- Ensure `VITE_BACKEND_URL` is set correctly in the frontend production environment.
-- Ensure `SMTP_PASSWORD` and other environment variables are set in the backend production environment.
+## Actionable Steps for User
+1. Check if `SMTP_PASSWORD` is set in your deployment dashboard.
+2. If using a cloud provider like AWS or DigitalOcean, check if SMTP ports are open.
+3. Redeploy after ensuring variables are present.
