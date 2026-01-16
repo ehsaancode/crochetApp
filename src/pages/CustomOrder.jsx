@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 
 function CustomOrder() {
-    const { token, backendUrl, userData, fetchUserProfile } = useContext(ShopContext); // added userData
+    const { token, backendUrl, userData, fetchUserProfile, galleryImages } = useContext(ShopContext); // added userData
     // Force local backend for testing if needed, or user needs to update env.
     // console.log("Using Backend URL:", backendUrl);
     const navigate = useNavigate();
@@ -28,19 +28,9 @@ function CustomOrder() {
     const [loading, setLoading] = useState(false);
 
     // Gallery Picker
-    const [gallery, setGallery] = useState([]);
+    const gallery = galleryImages;
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
     const [selectedIndex, setSelectedIndex] = useState(null);
-
-    useEffect(() => {
-        const fetchGallery = async () => {
-            try {
-                const response = await axios.get(backendUrl + '/api/gallery/list');
-                if (response.data.success) setGallery(response.data.images);
-            } catch (error) { console.error(error); }
-        };
-        fetchGallery();
-    }, [backendUrl]);
 
     const optimizeImageUrl = (url, width) => {
         if (!url || !url.includes('cloudinary.com')) return url;

@@ -109,7 +109,7 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
                                 return (
                                     <div key={itemIndex} className="relative">
                                         <div className="relative w-full h-full overflow-hidden rounded-[10px] bg-transparent flex items-center justify-center text-white text-[1.5rem]">
-                                            {typeof content === 'string' ? (
+                                            {typeof content === 'string' && (content.startsWith('http') || content.startsWith('/') || content.startsWith('data:')) ? (
                                                 <img
                                                     src={content}
                                                     alt="Grid Item"
@@ -117,7 +117,7 @@ const GridMotion = ({ items = [], gradientColor = 'black' }) => {
                                                     loading="lazy"
                                                 />
                                             ) : (
-                                                <div className="p-4 text-center z-[1]">{content}</div>
+                                                <div className="w-full h-full bg-gray-200 dark:bg-zinc-800 animate-pulse rounded-[10px]"></div>
                                             )}
                                         </div>
                                     </div>

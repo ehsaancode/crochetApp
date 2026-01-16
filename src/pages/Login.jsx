@@ -12,11 +12,11 @@ import Loading from '../components/Loading'
 
 const Login = () => {
 
-    const { token, setToken, navigate, backendUrl } = useContext(ShopContext);
+    const { token, setToken, navigate, backendUrl, userData, fetchUserProfile, setUserData } = useContext(ShopContext);
     const location = useLocation();
 
     const [currentState, setCurrentState] = useState('Login');
-    const [userData, setUserData] = useState(null);
+    // const [userData, setUserData] = useState(null); // Removed local state
     const [isEditing, setIsEditing] = useState(false);
     const [activeTab, setActiveTab] = useState('profile');
 
@@ -32,6 +32,23 @@ const Login = () => {
     const [zip, setZip] = useState('');
     const [country, setCountry] = useState('');
     const [image, setImage] = useState(false);
+
+    // Sync form with userData from Context
+    useEffect(() => {
+        if (userData) {
+            setName(userData.name || '');
+            setEmail(userData.email || '');
+            setPhone(userData.phone || '');
+            if (userData.address) {
+                setStreet(userData.address.street || '');
+                setLandmark(userData.address.landmark || '');
+                setCity(userData.address.city || '');
+                setState(userData.address.state || '');
+                setZip(userData.address.zip || '');
+                setCountry(userData.address.country || '');
+            }
+        }
+    }, [userData]);
 
     const onSubmitHandler = async (e) => {
         e.preventDefault();
@@ -84,35 +101,6 @@ const Login = () => {
         }
     }
 
-    const fetchUserProfile = async (tokenArg) => {
-        const t = tokenArg || token;
-        if (!t) return;
-        try {
-            const response = await axios.get(backendUrl + '/api/user/profile', { headers: { token: t } });
-            if (response.data.success) {
-                setUserData(response.data.user);
-                // Pre-fill edit form
-                setName(response.data.user.name);
-                setEmail(response.data.user.email);
-                setPhone(response.data.user.phone || '');
-                if (response.data.user.address) {
-                    setStreet(response.data.user.address.street || '');
-                    setLandmark(response.data.user.address.landmark || '');
-                    setCity(response.data.user.address.city || '');
-                    setState(response.data.user.address.state || '');
-                    setZip(response.data.user.address.zip || '');
-                    setCountry(response.data.user.address.country || '');
-                }
-                setImage(false); // Reset image state
-            } else {
-                QToast.error(response.data.message, { position: "top-right" });
-            }
-        } catch (error) {
-            console.log(error);
-            QToast.error(error.message, { position: "top-right" });
-        }
-    }
-
     const updateProfileHandler = async (e) => {
         e.preventDefault();
         try {
@@ -148,11 +136,6 @@ const Login = () => {
         navigate('/account');
     }
 
-    useEffect(() => {
-        if (token) {
-            fetchUserProfile();
-        }
-    }, [token])
 
     const handleLocation = () => {
         if (!navigator.geolocation) {

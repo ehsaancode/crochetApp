@@ -6,9 +6,9 @@ import axios from 'axios';
 import GridMotion from '../pages/uiComponents/GridMotion';
 
 const DiscoverIdeas = ({ isHomePage }) => {
-    const { backendUrl } = useContext(ShopContext);
+    const { backendUrl, galleryImages } = useContext(ShopContext);
     const navigate = useNavigate();
-    const [gallery, setGallery] = useState([]);
+    const gallery = galleryImages;
 
     const [visibleCount, setVisibleCount] = useState(window.innerWidth > 768 ? 24 : 12); // Increased default for grid motion
     const [showAllGallery, setShowAllGallery] = useState(false);
@@ -17,29 +17,8 @@ const DiscoverIdeas = ({ isHomePage }) => {
     const touchStart = useRef(null);
     const touchEnd = useRef(null);
 
-    // ... (rest of imports/state)
-
-    // (hook implementations remain same)
-
-    // ...
-
-
     // Min swipe distance (in px) 
     const minSwipeDistance = 50;
-
-    useEffect(() => {
-        const fetchGallery = async () => {
-            try {
-                const response = await axios.get(backendUrl + '/api/gallery/list');
-                if (response.data.success) {
-                    setGallery(response.data.images);
-                }
-            } catch (error) {
-                console.error("Failed to load gallery ideas", error);
-            }
-        };
-        fetchGallery();
-    }, [backendUrl]);
 
     // Keyboard navigation
     useEffect(() => {

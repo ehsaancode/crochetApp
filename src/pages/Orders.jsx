@@ -15,11 +15,36 @@ const Orders = ({ compact }) => {
 
     const location = useLocation();
     const [showConfetti, setShowConfetti] = useState(false);
-    const { backendUrl, token, currency, getProductsData } = useContext(ShopContext);
-    const [orderData, setOrderData] = useState([])
-    const [customOrders, setCustomOrders] = useState([])
+    const { backendUrl, token, currency, orders, customOrders, fetchUserOrders } = useContext(ShopContext);
+    const [orderData, setOrderData] = useState([]);
+    // const [customOrders, setCustomOrders] = useState([]); // Removed local state, using contextCustomOrders directly
     const [loading, setLoading] = useState(true);
     const [activeTab, setActiveTab] = useState('orders');
+
+    // Sync context orders to flattened orderData
+    useEffect(() => {
+        if (orders) {
+            let allOrdersItem = [];
+            orders.forEach((order) => {
+                order.items.forEach((item) => {
+                    item['status'] = order.status;
+                    item['payment'] = order.payment;
+                    item['paymentMethod'] = order.paymentMethod;
+                    item['date'] = order.date;
+                    item['statusDate'] = order.statusDate || order.date;
+                    item['cancelledBy'] = order.cancelledBy;
+                    item['orderId'] = order._id;
+                    allOrdersItem.push(item);
+                });
+            });
+            // ShopContext reverses orders. We simply display them.
+            // If ShopContext.orders is [Old, New] (due to reverse), then allOrdersItem is [OldItem, NewItem].
+            // To show Newest first, we should reverse again? 
+            // Let's preserve original visual behavior: Original reversed the result.
+            // If original API was [New, Old], result was [Old, New].
+            setOrderData(allOrdersItem.reverse());
+        }
+    }, [orders]);
 
     useEffect(() => {
         if (location.state?.newOrder) {
@@ -67,36 +92,12 @@ const Orders = ({ compact }) => {
     const loadOrderData = async () => {
         try {
             if (!token) {
-                return null
+                return null;
             }
 
-            // Fetch Standard Orders
-            const response = await axios.post(backendUrl + '/api/order/userorders', {}, { headers: { token } })
-            if (response.data.success) {
-                let allOrdersItem = []
-                response.data.orders.map((order) => {
-                    order.items.map((item) => {
-                        item['status'] = order.status
-                        item['payment'] = order.payment
-                        item['paymentMethod'] = order.paymentMethod
-                        item['date'] = order.date
-                        item['statusDate'] = order.statusDate || order.date // Fallback to order date if statusDate missing (legacy orders)
-                        item['cancelledBy'] = order.cancelledBy
-                        item['orderId'] = order._id
-                        allOrdersItem.push(item)
-                    })
-                })
-                setOrderData(allOrdersItem.reverse())
-                setLastFetchTime(Date.now());
-            }
-
-            // Fetch Custom Orders
-            const customResponse = await axios.post(backendUrl + '/api/custom-order/userorders', { userId: token }, { headers: { token } }) // userId typically from taken in middleware, but passing body just in case logic needs it
-            if (customResponse.data.success) {
-                setCustomOrders(customResponse.data.orders)
-            }
-
-            fetchUserReviews();
+            await fetchUserOrders(token);
+            await fetchUserReviews();
+            setLastFetchTime(Date.now());
 
         } catch (error) {
             console.log(error);

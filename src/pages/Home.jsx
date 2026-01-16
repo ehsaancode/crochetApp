@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Mail, Phone, Instagram, Lock, Scissors, Globe, Banknote, Heart } from 'lucide-react';
+import { Mail, Phone, Instagram, Lock, Scissors, Globe, Banknote, Heart, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext'; // Added context
 import FadeContent from './uiComponents/FadeContent'
@@ -64,6 +64,7 @@ function Home() {
                     <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>
                         <h3 className="font-serif text-2xl md:text-5xl text-silk-900 dark:text-silk-100 mb-4">
                             Curated Favorites
+                            <Sparkles className="inline-block w-5 h-5 md:w-8 md:h-8 ml-3 mb-2 text-silk-600 dark:text-silk-400" />
                         </h3>
                         <p className="text-silk-600 dark:text-silk-400 text-sm md:text-xl font-light">
                             Discover the finest selection of our most-loved handcrafted treasures

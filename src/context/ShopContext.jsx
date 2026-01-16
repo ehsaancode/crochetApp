@@ -218,42 +218,52 @@ const ShopContextProvider = (props) => {
             setToken(localStorage.getItem('token'))
             getUserCart(localStorage.getItem('token'))
             fetchUserProfile(localStorage.getItem('token'))
-            getOrderCount(localStorage.getItem('token'))
+            fetchUserOrders(localStorage.getItem('token'))
         } else if (token) {
             fetchUserProfile(token)
             getUserCart(token)
-            getOrderCount(token)
+            fetchUserOrders(token)
         }
     }, [token])
 
-    const getOrderCount = async (token) => {
+    const [orders, setOrders] = useState([]);
+    const [customOrders, setCustomOrders] = useState([]);
+
+    const fetchUserOrders = async (token) => {
         try {
             if (!token) return;
 
-            let count = 0;
+            let currentOrders = [];
+            let currentCustomOrders = [];
 
             // Standard Orders
             const response = await axios.post(backendUrl + '/api/order/userorders', {}, { headers: { token } })
             if (response.data.success) {
-                response.data.orders.forEach((order) => {
-                    order.items.forEach((item) => {
-                        if (order.status !== 'Delivered' && order.status !== 'Cancelled') {
-                            count++;
-                        }
-                    })
-                })
+                setOrders(response.data.orders.reverse());
+                currentOrders = response.data.orders;
             }
 
             // Custom Orders
             const customResponse = await axios.post(backendUrl + '/api/custom-order/userorders', {}, { headers: { token } })
             if (customResponse.data.success) {
-                customResponse.data.orders.forEach((order) => {
-                    if (order.status !== 'Completed' && order.status !== 'Cancelled') {
+                setCustomOrders(customResponse.data.orders.reverse());
+                currentCustomOrders = customResponse.data.orders;
+            }
+
+            // Calculate Count
+            let count = 0;
+            currentOrders.forEach((order) => {
+                order.items.forEach((item) => {
+                    if (order.status !== 'Delivered' && order.status !== 'Cancelled') {
                         count++;
                     }
                 })
-            }
-
+            });
+            currentCustomOrders.forEach((order) => {
+                if (order.status !== 'Completed' && order.status !== 'Cancelled') {
+                    count++;
+                }
+            });
             setOrderCount(count);
 
         } catch (error) {
@@ -371,9 +381,9 @@ const ShopContextProvider = (props) => {
         userData, setUserData, fetchUserProfile,
         addToWishlist, removeFromWishlist, requestProduct,
         getProductsData,
-        setShippingFee, orderCount, getOrderCount,
+        setShippingFee, orderCount, fetchUserOrders,
         recentlyViewed, addToRecentlyViewed,
-        galleryImages
+        galleryImages, orders, customOrders
     }
 
     return (
