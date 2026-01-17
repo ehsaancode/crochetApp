@@ -104,7 +104,7 @@ function Home() {
                 </div>
 
                 <div className="mb-32">
-                    <Carousel items={products.slice(0, 5).map(p => ({ ...p, img: optimizeImageUrl(p.image[0], 800), id: p._id }))} />
+                    <Carousel items={products.filter(p => p.newArrival).slice(0, 10).map(p => ({ ...p, img: optimizeImageUrl(p.image[0], 800), id: p._id }))} />
                 </div>
 
                 <div className="text-center py-24 px-8 md:px-32 mb-32 rounded-3xl shadow-xl bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27]">

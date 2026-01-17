@@ -77,6 +77,12 @@ const productSchema = new mongoose.Schema(
             index: true
         },
 
+        newArrival: {
+            type: Boolean,
+            default: false,
+            index: true
+        },
+
         rating: {
             type: Number,
             default: 0

@@ -21,6 +21,7 @@ const Edit = ({ token }) => {
     const [category, setCategory] = useState("Men");
     const [subCategory, setSubCategory] = useState("Topwear");
     const [bestseller, setBestseller] = useState(false);
+    const [newArrival, setNewArrival] = useState(false);
     const [sizes, setSizes] = useState([]);
     const [sizePrices, setSizePrices] = useState({});
     const [defaultSize, setDefaultSize] = useState("");
@@ -68,6 +69,7 @@ const Edit = ({ token }) => {
                 setCategory(product.category || "Men");
                 setSubCategory(product.subCategory || "Topwear");
                 setBestseller(product.bestseller || false);
+                setNewArrival(product.newArrival || false);
                 setSizes(product.sizes || []);
                 setSizePrices(product.sizePrices || {});
                 setDefaultSize(product.defaultSize || "");
@@ -115,6 +117,7 @@ const Edit = ({ token }) => {
             formData.append("category", category)
             formData.append("subCategory", subCategory)
             formData.append("bestseller", bestseller)
+            formData.append("newArrival", newArrival)
             formData.append("sizes", JSON.stringify(sizes))
             formData.append("sizePrices", JSON.stringify(cleanSizePrices))
             formData.append("defaultSize", defaultSize)
@@ -381,6 +384,11 @@ const Edit = ({ token }) => {
                 <div className='flex items-center gap-2 mt-2 p-3 bg-muted/30 rounded-lg border border-border cursor-pointer w-full max-w-[200px]' onClick={() => setBestseller(prev => !prev)}>
                     <input readOnly checked={bestseller} type="checkbox" id="bestseller" className='w-4 h-4 accent-silk-600' />
                     <label className='cursor-pointer font-medium select-none' htmlFor="bestseller">Bestseller Product</label>
+                </div>
+
+                <div className='flex items-center gap-2 mt-2 p-3 bg-muted/30 rounded-lg border border-border cursor-pointer w-full max-w-[200px]' onClick={() => setNewArrival(prev => !prev)}>
+                    <input readOnly checked={newArrival} type="checkbox" id="newArrival" className='w-4 h-4 accent-silk-600' />
+                    <label className='cursor-pointer font-medium select-none' htmlFor="newArrival">New Arrival Product</label>
                 </div>
 
                 <button type="submit" className='px-6 py-2 mt-4 bg-emerald-100 text-emerald-800 text-sm font-medium rounded-lg hover:bg-emerald-200 transition-all shadow-sm active:scale-95'>Update Product</button>

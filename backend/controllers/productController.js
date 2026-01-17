@@ -3,7 +3,7 @@ const productModel = require("../models/Product");
 // Function for add product
 const addProduct = async (req, res) => {
     try {
-        const { name, description, category, subCategory, sizes, sizePrices, defaultSize, colors, bestseller, shippingFee, productId } = req.body;
+        const { name, description, category, subCategory, sizes, sizePrices, defaultSize, colors, bestseller, newArrival, shippingFee, productId } = req.body;
 
         const image1 = req.files.image1 && req.files.image1[0];
         const image2 = req.files.image2 && req.files.image2[0];
@@ -41,6 +41,8 @@ const addProduct = async (req, res) => {
             defaultSize: defaultSize || '',
             colors: colors ? JSON.parse(colors) : [],
             image: imagesUrl,
+            bestseller: bestseller === "true" ? true : false,
+            newArrival: newArrival === "true" ? true : false,
             date: Date.now(),
             shippingFee: shippingFee ? Number(shippingFee) : 100
         }
@@ -135,7 +137,7 @@ const listNewArrivals = async (req, res) => {
 // Function for updating product
 const updateProduct = async (req, res) => {
     try {
-        const { productId, name, description, category, subCategory, sizes, sizePrices, defaultSize, colors, bestseller, shippingFee } = req.body;
+        const { productId, name, description, category, subCategory, sizes, sizePrices, defaultSize, colors, bestseller, newArrival, shippingFee } = req.body;
 
         const product = await productModel.findById(productId);
         if (!product) {
@@ -179,6 +181,7 @@ const updateProduct = async (req, res) => {
         product.category = category;
         product.subCategory = subCategory;
         product.bestseller = bestseller === "true" ? true : false;
+        product.newArrival = newArrival === "true" ? true : false;
         product.sizes = JSON.parse(sizes);
 
         // Debug and Update sizePrices

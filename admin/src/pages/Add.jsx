@@ -72,6 +72,7 @@ const Add = ({ token }) => {
     const [category, setCategory] = useState("Men");
     const [subCategory, setSubCategory] = useState("Sweaters");
     const [bestseller, setBestseller] = useState(false);
+    const [newArrival, setNewArrival] = useState(false);
     const [sizes, setSizes] = useState(["Free Size"]);
     const [sizePrices, setSizePrices] = useState({});
     const [defaultSize, setDefaultSize] = useState("Free Size");
@@ -109,6 +110,7 @@ const Add = ({ token }) => {
                 setSubCategory(initialSubCat);
 
                 setBestseller(product.bestseller || false);
+                setNewArrival(product.newArrival || false);
                 setSizes(product.sizes || []);
                 setSizePrices(product.sizePrices || {});
                 setDefaultSize(product.defaultSize || "");
@@ -160,6 +162,7 @@ const Add = ({ token }) => {
             formData.append("category", category)
             formData.append("subCategory", subCategory)
             formData.append("bestseller", bestseller)
+            formData.append("newArrival", newArrival)
             formData.append("sizes", JSON.stringify(sizes))
             formData.append("sizePrices", JSON.stringify(cleanSizePrices))
             formData.append("defaultSize", defaultSize)
@@ -212,6 +215,8 @@ const Add = ({ token }) => {
                         setColors([])
                         setOldImages([])
                         setDeletedIndices([])
+                        setBestseller(false)
+                        setNewArrival(false)
                     }, 2000);
                 } else {
                     setIsUploadPopupOpen(false);
@@ -479,6 +484,11 @@ const Add = ({ token }) => {
                         <div className='flex items-center gap-2 p-3 bg-muted/30 rounded-lg border border-border cursor-pointer w-full' onClick={() => setBestseller(prev => !prev)}>
                             <input readOnly checked={bestseller} type="checkbox" id="bestseller" className='w-4 h-4 accent-silk-600' />
                             <label className='cursor-pointer font-medium select-none' htmlFor="bestseller">Bestseller Product</label>
+                        </div>
+
+                        <div className='flex items-center gap-2 p-3 bg-muted/30 rounded-lg border border-border cursor-pointer w-full' onClick={() => setNewArrival(prev => !prev)}>
+                            <input readOnly checked={newArrival} type="checkbox" id="newArrival" className='w-4 h-4 accent-silk-600' />
+                            <label className='cursor-pointer font-medium select-none' htmlFor="newArrival">New Arrival Product</label>
                         </div>
                     </div>
                 </div>
