@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import { ShoppingBag, Filter, X, Search } from 'lucide-react';
 import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
