@@ -75,6 +75,7 @@ const FestiveCard = () => {
     // Config Styles
     const dynamicTextColor = config.fontColor ? { color: config.fontColor } : {};
     const baseTextColorClass = isDefaultBg ? 'text-silk-900 dark:text-silk-100' : (isLightBg ? 'text-gray-900' : 'text-white');
+    const defaultParaColorClass = isDefaultBg ? 'text-silk-600 dark:text-silk-400' : '';
 
     const productCardStyle = config.productCardColor ? { backgroundColor: config.productCardColor } : {};
 
@@ -116,7 +117,7 @@ const FestiveCard = () => {
                     {config.name}
                 </h2>
                 {config.subtitle && (
-                    <p className="text-sm md:text-lg opacity-90 mb-6 font-light tracking-wide" style={config.paraColor ? { color: config.paraColor } : {}}>
+                    <p className={`text-sm md:text-lg opacity-90 mb-6 font-light tracking-wide ${!config.paraColor ? defaultParaColorClass : ''}`} style={config.paraColor ? { color: config.paraColor } : {}}>
                         {config.subtitle}
                     </p>
                 )}
