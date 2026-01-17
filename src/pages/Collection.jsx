@@ -344,19 +344,17 @@ function Collection() {
                                     </button>
                                 </div>
 
-                                <div className="relative z-10 p-4 flex flex-col flex-grow justify-between">
-                                    <div>
-                                        <h4 className="font-serif text-lg mb-1 text-silk-900 dark:text-white group-hover:text-silk-600 dark:group-hover:text-silk-300 transition-colors">{item.name}</h4>
-                                        <div className="flex justify-between items-center mt-2">
-                                            <p className="text-silk-900 dark:text-silk-200 font-medium">₹{
-                                                item.defaultSize && item.sizePrices && item.sizePrices[item.defaultSize]
-                                                    ? Number(item.sizePrices[item.defaultSize])
-                                                    : (item.sizePrices && Object.values(item.sizePrices).length > 0 ? Number(Object.values(item.sizePrices)[0]) : 'N/A')
-                                            }</p>
-                                            <div className="flex text-silk-400 dark:text-silk-500">
-                                                <Star className="w-3 h-3 fill-current" />
-                                                <span className="text-xs ml-1">{item.rating || 0}.0</span>
-                                            </div>
+                                <div className="relative z-10 p-4 flex flex-col flex-grow">
+                                    <h4 className="font-serif text-lg mb-2 text-silk-900 dark:text-white group-hover:text-silk-600 dark:group-hover:text-silk-300 transition-colors truncate w-full" title={item.name}>{item.name}</h4>
+                                    <div className="mt-auto flex justify-between items-center">
+                                        <p className="text-silk-900 dark:text-silk-200 font-medium">₹{
+                                            item.defaultSize && item.sizePrices && item.sizePrices[item.defaultSize]
+                                                ? Number(item.sizePrices[item.defaultSize])
+                                                : (item.sizePrices && Object.values(item.sizePrices).length > 0 ? Number(Object.values(item.sizePrices)[0]) : 'N/A')
+                                        }</p>
+                                        <div className="flex text-silk-400 dark:text-silk-500 items-center">
+                                            <Star className="w-3 h-3 fill-current" />
+                                            <span className="text-xs ml-1">{item.rating || 0}.0</span>
                                         </div>
                                     </div>
                                 </div>

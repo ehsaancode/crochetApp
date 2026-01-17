@@ -87,9 +87,7 @@ function Home() {
                     />
                 </div>
 
-                <div className="mb-32">
-                    <FestiveCard />
-                </div>
+
 
                 <div className="flex items-end justify-between mb-10">
                     <ShinyText
@@ -148,6 +146,10 @@ function Home() {
                     </Link>
                 </FadeContent>
             </section>
+
+            <div className="mb-32 max-w-7xl mx-6 md:mx-auto">
+                <FestiveCard />
+            </div>
 
             <section className="text-center py-24 px-8 md:px-32 bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27] max-w-7xl mx-6 md:mx-auto rounded-3xl mb-32 shadow-xl">
                 <FadeContent blur={true} duration={1000} easing="ease-out" initialOpacity={0}>

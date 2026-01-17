@@ -64,25 +64,33 @@ const FestiveCard = () => {
         finalBackgroundColor = hexToRgba(config.backgroundColor, 0.4); // 40% opacity for glass effect
     }
 
+    const isDefaultBg = !config.backgroundColor || config.backgroundColor === '#ffffff' || config.backgroundColor.toLowerCase() === '#fff';
+
     const bgStyle = config.backgroundImage
         ? { backgroundImage: `url(${config.backgroundImage})`, backgroundSize: 'cover', backgroundPosition: 'center' }
-        : { backgroundColor: finalBackgroundColor };
+        : (isDefaultBg ? {} : { backgroundColor: finalBackgroundColor });
 
-    const isLightBg = config.backgroundColor === '#ffffff' || config.backgroundColor.toLowerCase() === '#fff' || config.backgroundColor.toLowerCase() === '#ffffff';
+    const isLightBg = isDefaultBg || (config.backgroundColor === '#ffffff' || config.backgroundColor.toLowerCase() === '#fff');
 
     // Config Styles
     const dynamicTextColor = config.fontColor ? { color: config.fontColor } : {};
-    const textColorClass = config.fontColor ? '' : (isLightBg ? 'text-gray-900' : 'text-white');
+    const baseTextColorClass = isDefaultBg ? 'text-silk-900 dark:text-silk-100' : (isLightBg ? 'text-gray-900' : 'text-white');
 
     const productCardStyle = config.productCardColor ? { backgroundColor: config.productCardColor } : {};
 
+    // Standard gradient from Home.jsx
+    const standardGradientClass = 'bg-gradient-to-b from-transparent to-silk-200 dark:from-black dark:to-[#170D27]';
+
     return (
         /* Main Card Container */
-        <div className={`relative w-full shadow-2xl min-h-[400px] md:min-h-[500px] flex flex-col md:flex-row rounded-3xl mb-16 ${backdropClass}`}>
+        <div className={`relative w-full shadow-xl min-h-[450px] md:min-h-[550px] flex flex-col md:flex-row rounded-3xl ${backdropClass}`}>
 
-            {/* Background Layer Wrapper - Clips the background but allows Hero Image to pop out */}
+            {/* Background Layer Wrapper */}
             <div className="absolute inset-0 rounded-3xl overflow-hidden z-0">
-                <div className={`w-full h-full transition-all duration-700 ${imgBlurClass}`} style={bgStyle}>
+                <div
+                    className={`w-full h-full transition-all duration-700 ${imgBlurClass} ${isDefaultBg && !config.backgroundImage ? standardGradientClass : ''}`}
+                    style={bgStyle}
+                >
                     {config.backgroundImage && <div className="absolute inset-0 bg-black/30"></div>}
                 </div>
             </div>
@@ -103,17 +111,17 @@ const FestiveCard = () => {
             )}
 
             {/* Content Section (Left) */}
-            <div className={`relative z-10 w-full md:w-1/3 p-6 md:p-8 flex flex-col justify-center ${textColorClass}`} style={dynamicTextColor}>
-                <h2 className="font-serif text-2xl md:text-4xl font-bold mb-3 leading-tight" style={dynamicTextColor}>
+            <div className={`relative z-10 w-full md:w-1/3 p-6 md:p-8 flex flex-col justify-center ${baseTextColorClass}`}>
+                <h2 className={`${config.headingFont || "font-serif"} text-2xl md:text-4xl font-bold mb-3 leading-tight`} style={dynamicTextColor}>
                     {config.name}
                 </h2>
                 {config.subtitle && (
-                    <p className="text-sm md:text-lg opacity-90 mb-6 font-light tracking-wide" style={dynamicTextColor}>
+                    <p className="text-sm md:text-lg opacity-90 mb-6 font-light tracking-wide" style={config.paraColor ? { color: config.paraColor } : {}}>
                         {config.subtitle}
                     </p>
                 )}
                 {config.showButton !== false && (
-                    <Link to="/collection" className={`bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 px-5 py-2.5 rounded-full w-max flex items-center gap-2 transition-all text-sm ${textColorClass}`} style={dynamicTextColor}>
+                    <Link to="/collection" className={`bg-white/20 hover:bg-white/30 backdrop-blur-md border border-white/40 px-5 py-2.5 rounded-full w-max flex items-center gap-2 transition-all text-sm ${baseTextColorClass}`} style={dynamicTextColor}>
                         <span>Explore Collection</span>
                         <ArrowRight className="w-4 h-4" />
                     </Link>

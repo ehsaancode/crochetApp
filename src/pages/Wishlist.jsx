@@ -127,8 +127,8 @@ const Wishlist = ({ compact }) => {
                                                         }}
                                                         disabled={addingId === productData._id}
                                                         className={`p-2 rounded-lg transition-all duration-300 ${successId === productData._id
-                                                                ? 'bg-green-500 text-white hover:bg-green-600'
-                                                                : 'bg-silk-900 dark:bg-silk-50 text-white dark:text-black hover:opacity-90'
+                                                            ? 'bg-green-500 text-white hover:bg-green-600'
+                                                            : 'bg-silk-900 dark:bg-silk-50 text-white dark:text-black hover:opacity-90'
                                                             }`}
                                                         title={successId === productData._id ? "Added to Cart" : "Quick Add"}
                                                     >

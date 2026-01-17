@@ -125,7 +125,7 @@ const DiscoverIdeas = ({ isHomePage }) => {
             {showAllGallery && (
                 <div className="fixed inset-0 z-[45] bg-white dark:bg-black overflow-y-auto animate-fade-in p-6 md:p-12">
                     <div className="max-w-7xl mx-auto">
-                        <div className="flex justify-between items-center mb-8">
+                        <div className="flex justify-between items-center mt-16 mb-5">
                             <h2 className="font-serif text-2xl md:text-4xl text-silk-900 dark:text-silk-50">Gallery</h2>
                             <button
                                 onClick={() => setShowAllGallery(false)}

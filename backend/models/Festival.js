@@ -17,6 +17,8 @@ const festivalSchema = new mongoose.Schema({
     showButton: { type: Boolean, default: true }, // Toggle for Explore Collection button
     productCardColor: { type: String, default: '' }, // Optional overriding product card color
     productIds: [{ type: String }], // Array of product IDs to show
+    paraColor: { type: String, default: '' }, // Specific color for paragraph text
+    headingFont: { type: String, default: '' }, // Font class for heading (e.g., font-serif, font-sans)
     lastUpdated: { type: Date, default: Date.now }
 });
 

@@ -190,7 +190,7 @@ const Login = () => {
     const MenuItem = ({ icon: Icon, label, onClick, isDanger }) => (
         <button
             onClick={onClick}
-            className={`w-full flex items-center justify-between p-4 rounded-xl transition-all border-b border-gray-100 dark:border-gray-800 last:border-0 ${isDanger ? 'text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10' : 'text-silk-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5'}`}
+            className={`w-full flex items-center justify-between p-4 rounded-xl transition-all ${isDanger ? 'text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/10' : 'text-silk-900 dark:text-white hover:bg-gray-50 dark:hover:bg-white/5'}`}
         >
             <div className="flex items-center gap-4">
                 <Icon className="w-5 h-5 opacity-70" strokeWidth={1.5} />
@@ -241,7 +241,7 @@ const Login = () => {
 
                             {/* Clean Menu List */}
                             <div className="flex flex-col">
-                                <MenuItem icon={Settings} label="Settings" onClick={() => QToast.info('Settings coming soon')} />
+                                {/* <MenuItem icon={Settings} label="Settings" onClick={() => QToast.info('Settings coming soon')} /> */}
                                 <MenuItem icon={Package} label="My Orders" onClick={() => navigate('/orders')} />
                                 <MenuItem icon={Heart} label="Wishlist" onClick={() => navigate('/wishlist')} />
                                 <MenuItem icon={MapPin} label="Address" onClick={() => setIsEditing(true)} />

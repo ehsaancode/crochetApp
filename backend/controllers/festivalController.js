@@ -45,6 +45,8 @@ const updateFestival = async (req, res) => {
         festival.productCardColor = productCardColor || "";
         festival.heroTop = heroTop || "-2.5rem";
         festival.heroRight = heroRight || "-1.5rem";
+        festival.paraColor = req.body.paraColor || "";
+        festival.headingFont = req.body.headingFont || "";
 
         if (productIds) {
             festival.productIds = JSON.parse(productIds);

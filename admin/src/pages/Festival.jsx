@@ -19,6 +19,8 @@ const Festival = ({ token }) => {
     const [blurBackground, setBlurBackground] = useState(false);
     const [showButton, setShowButton] = useState(true);
     const [productCardColor, setProductCardColor] = useState("");
+    const [paraColor, setParaColor] = useState("");
+    const [headingFont, setHeadingFont] = useState("font-serif");
     const [productIds, setProductIds] = useState([]);
 
     const [saving, setSaving] = useState(false);
@@ -53,7 +55,10 @@ const Festival = ({ token }) => {
                 setProductCardColor(f.productCardColor || "");
                 setProductIds(f.productIds || []);
                 setExistingHero(f.heroImage);
+                setExistingHero(f.heroImage);
                 setExistingBg(f.backgroundImage);
+                setParaColor(f.paraColor || "");
+                setHeadingFont(f.headingFont || "font-serif");
             }
 
             // Get Products for selection
@@ -94,6 +99,8 @@ const Festival = ({ token }) => {
             formData.append("blurBackground", blurBackground);
             formData.append("showButton", showButton);
             formData.append("productCardColor", productCardColor);
+            formData.append("paraColor", paraColor);
+            formData.append("headingFont", headingFont);
             formData.append("productIds", JSON.stringify(productIds));
 
             if (heroImage) formData.append("heroImage", heroImage);
@@ -189,23 +196,61 @@ const Festival = ({ token }) => {
                         <div>
                             <p className='mb-2 font-medium'>Background Color</p>
                             <div className="flex gap-2">
-                                <input type="color" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="h-10 w-20 p-1 rounded cursor-pointer" />
-                                <input type="text" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
+                                <input type="color" value={backgroundColor || "#ffffff"} onChange={(e) => setBackgroundColor(e.target.value)} className="h-10 w-20 p-1 rounded cursor-pointer" />
+                                <input type="text" value={backgroundColor} onChange={(e) => setBackgroundColor(e.target.value)} className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" placeholder="Empty for default" />
+                                {backgroundColor && (
+                                    <button type="button" onClick={() => setBackgroundColor("")} className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors" title="Clear Color">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                )}
                             </div>
                         </div>
                         <div>
                             <p className='mb-2 font-medium'>Font Color (Optional)</p>
                             <div className="flex gap-2">
                                 <input type="color" value={fontColor || "#000000"} onChange={(e) => setFontColor(e.target.value)} className="h-10 w-20 p-1 rounded cursor-pointer" />
-                                <input type="text" value={fontColor} onChange={(e) => setFontColor(e.target.value)} placeholder="Default (Based on BG)" className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
+                                <input type="text" value={fontColor} onChange={(e) => setFontColor(e.target.value)} placeholder="Default (Theme Based)" className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
+                                {fontColor && (
+                                    <button type="button" onClick={() => setFontColor("")} className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors" title="Clear Color">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                )}
                             </div>
                         </div>
                         <div>
                             <p className='mb-2 font-medium'>Product Card Color (Optional)</p>
                             <div className="flex gap-2">
                                 <input type="color" value={productCardColor || "#ffffff"} onChange={(e) => setProductCardColor(e.target.value)} className="h-10 w-20 p-1 rounded cursor-pointer" />
-                                <input type="text" value={productCardColor} onChange={(e) => setProductCardColor(e.target.value)} placeholder="Default (White/Translucent)" className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
+                                <input type="text" value={productCardColor} onChange={(e) => setProductCardColor(e.target.value)} placeholder="Default (Theme Based)" className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
+                                {productCardColor && (
+                                    <button type="button" onClick={() => setProductCardColor("")} className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors" title="Clear Color">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                )}
                             </div>
+                        </div>
+
+                        <div>
+                            <p className='mb-2 font-medium'>Paragraph Color (Optional)</p>
+                            <div className="flex gap-2">
+                                <input type="color" value={paraColor || "#000000"} onChange={(e) => setParaColor(e.target.value)} className="h-10 w-20 p-1 rounded cursor-pointer" />
+                                <input type="text" value={paraColor} onChange={(e) => setParaColor(e.target.value)} placeholder="Default (Inherit)" className="flex-1 px-4 py-2 rounded-lg border border-border bg-input" />
+                                {paraColor && (
+                                    <button type="button" onClick={() => setParaColor("")} className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded transition-colors" title="Clear Color">
+                                        <X className="w-5 h-5" />
+                                    </button>
+                                )}
+                            </div>
+                        </div>
+
+                        <div>
+                            <p className='mb-2 font-medium'>Heading Font Style</p>
+                            <select value={headingFont} onChange={(e) => setHeadingFont(e.target.value)} className='w-full px-4 py-2 rounded-lg border border-border bg-input transition-colors cursor-pointer'>
+                                <option value="font-serif">Serif (Elegant)</option>
+                                <option value="font-sans">Sans-Serif (Modern)</option>
+                                <option value="font-dancing">Cursive (Playful)</option>
+                                <option value="font-mono">Monospace (Technical)</option>
+                            </select>
                         </div>
                     </div>
 
