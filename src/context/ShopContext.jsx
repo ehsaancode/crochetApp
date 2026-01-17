@@ -33,6 +33,8 @@ const ShopContextProvider = (props) => {
 
     const [galleryImages, setGalleryImages] = useState([]);
 
+    const [rawMaterials, setRawMaterials] = useState([]);
+
     const getProductsData = async () => {
         try {
             const response = await axios.get(backendUrl + '/api/product/list')
@@ -45,6 +47,17 @@ const ShopContextProvider = (props) => {
         } catch (error) {
             console.log(error)
             QToast.error(error.message, { position: "top-right" })
+        }
+    }
+
+    const getRawMaterialsData = async () => {
+        try {
+            const response = await axios.get(backendUrl + '/api/raw-material/list');
+            if (response.data.success) {
+                setRawMaterials(response.data.rawMaterials);
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 
@@ -61,6 +74,7 @@ const ShopContextProvider = (props) => {
 
     useEffect(() => {
         getProductsData()
+        getRawMaterialsData()
         getGalleryImages()
     }, [])
 
@@ -92,11 +106,14 @@ const ShopContextProvider = (props) => {
     const addToCart = async (itemId, size, quantity = 1) => {
         let finalSize = size;
         const productData = products.find((product) => product._id === itemId);
+        const rawMaterialData = rawMaterials.find((material) => material._id === itemId);
 
         if (!finalSize) {
             if (productData && productData.sizes && productData.sizes.length > 0) {
                 QToast.error('Select Product Size', { position: "top-center" });
                 return;
+            } else if (rawMaterialData) {
+                finalSize = rawMaterialData.length || "Standard";
             } else {
                 finalSize = "Default";
             }
@@ -162,6 +179,10 @@ const ShopContextProvider = (props) => {
         let totalAmount = 0;
         for (const items in cartItems) {
             let itemInfo = products.find((product) => product._id === items);
+            if (!itemInfo) {
+                itemInfo = rawMaterials.find((material) => material._id === items);
+            }
+
             if (itemInfo) {
                 for (const item in cartItems[items]) {
                     try {
@@ -185,6 +206,10 @@ const ShopContextProvider = (props) => {
         let maxFee = 0;
         for (const items in cartItems) {
             let itemInfo = products.find((product) => product._id === items);
+            if (!itemInfo) {
+                itemInfo = rawMaterials.find((material) => material._id === items);
+            }
+
             if (itemInfo) {
                 for (const item in cartItems[items]) {
                     try {
@@ -383,7 +408,8 @@ const ShopContextProvider = (props) => {
         getProductsData,
         setShippingFee, orderCount, fetchUserOrders,
         recentlyViewed, addToRecentlyViewed,
-        galleryImages, orders, customOrders
+        galleryImages, orders, customOrders,
+        rawMaterials, getRawMaterialsData
     }
 
     return (

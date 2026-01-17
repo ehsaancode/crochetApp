@@ -92,7 +92,7 @@ import Carousel from './uiComponents/Carousel';
 
 const Cart = () => {
 
-    const { products, currency, cartItems, updateQuantity, navigate, token, recentlyViewed, userData } = useContext(ShopContext);
+    const { products, currency, cartItems, updateQuantity, navigate, token, recentlyViewed, userData, rawMaterials } = useContext(ShopContext);
     const { theme } = useTheme();
     const [cartData, setCartData] = useState([]);
     const [dotLottie, setDotLottie] = useState(null);
@@ -128,12 +128,12 @@ const Cart = () => {
 
     useEffect(() => {
 
-        if (products.length > 0) {
+        if (products.length > 0 || rawMaterials.length > 0) {
             const tempData = [];
             for (const items in cartItems) {
                 for (const item in cartItems[items]) {
                     if (cartItems[items][item] > 0) {
-                        const productExists = products.find(product => product._id === items);
+                        const productExists = products.find(product => product._id === items) || rawMaterials.find(material => material._id === items);
                         if (productExists) {
                             tempData.push({
                                 _id: items,
@@ -146,7 +146,7 @@ const Cart = () => {
             }
             setCartData(tempData);
         }
-    }, [cartItems, products])
+    }, [cartItems, products, rawMaterials])
 
     return (
         <div className='border-t pt-32 px-4 sm:px-12 md:px-24 min-h-[80vh] relative overflow-hidden'>
@@ -222,16 +222,20 @@ const Cart = () => {
                 <div className='space-y-4'>
                     {cartData.map((item, index) => {
 
-                        const productData = products.find((product) => product._id === item._id);
+                        const productData = products.find((product) => product._id === item._id) || rawMaterials.find(material => material._id === item._id);
 
                         return (
                             <div key={index} className='py-4 border-t border-b text-gray-700 grid grid-cols-[4fr_0.5fr_0.5fr] sm:grid-cols-[4fr_2fr_0.5fr] items-center gap-4 animate-fade-in'>
                                 <div className='flex items-start gap-6'>
-                                    <Link to={`/product/${item._id}`} className='shrink-0'>
+                                    {/* Link needs to be dynamic based on type if possible, or generic. Assuming /product works for now or redirect works? 
+                                        Actually, RawMaterialDetail is /raw-material/:id. ProductDetail is /product/:id.
+                                        We need to check which one it is to link correctly.
+                                    */}
+                                    <Link to={rawMaterials.find(m => m._id === item._id) ? `/raw-material/${item._id}` : `/product/${item._id}`} className='shrink-0'>
                                         <img className='w-16 sm:w-20' src={productData.image[0]} alt="" />
                                     </Link>
                                     <div>
-                                        <Link to={`/product/${item._id}`}>
+                                        <Link to={rawMaterials.find(m => m._id === item._id) ? `/raw-material/${item._id}` : `/product/${item._id}`}>
                                             <p className='text-xs sm:text-lg font-medium dark:text-gray-200 hover:text-silk-600 dark:hover:text-silk-400 transition-colors'>{productData.name}</p>
                                         </Link>
                                         <div className='flex items-center gap-5 mt-2'>
