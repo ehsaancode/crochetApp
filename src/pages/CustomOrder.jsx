@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { ShopContext } from '../context/ShopContext';
 import { useNavigate, useLocation } from 'react-router-dom';
 import FadeContent from './uiComponents/FadeContent';
+import GalleryPicker from '../components/GalleryPicker';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
@@ -27,20 +28,10 @@ function CustomOrder() {
     const [showSaveSuccess, setShowSaveSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    // Gallery Picker
-    const gallery = galleryImages;
     const [isGalleryOpen, setIsGalleryOpen] = useState(false);
-    const [selectedIndex, setSelectedIndex] = useState(null);
 
-    const optimizeImageUrl = (url, width) => {
-        if (!url || !url.includes('cloudinary.com')) return url;
-        if (url.includes('/upload/w_')) return url;
-        return url.replace('/upload/', `/upload/w_${width},q_auto,f_auto/`);
-    };
-
-    const confirmGallerySelection = async (imageUrl) => {
+    const handleGallerySelect = async (imageUrl) => {
         setIsGalleryOpen(false);
-        setSelectedIndex(null);
         setLoading(true);
         try {
             const response = await fetch(imageUrl);
@@ -843,88 +834,14 @@ function CustomOrder() {
                 </FadeContent>
             </div>
 
-            {/* Gallery Picker Modal */}
-            <AnimatePresence>
-                {isGalleryOpen && (
-                    <div className="fixed inset-0 z-[60] bg-white dark:bg-black overflow-y-auto animate-fade-in p-6 md:p-12">
-                        <div className="max-w-7xl mx-auto">
-                            <div className="flex justify-between items-center mb-8">
-                                <div>
-                                    <h2 className="font-serif text-2xl md:text-3xl text-silk-900 dark:text-silk-50 mb-2">Pick a Design</h2>
-                                    <p className="text-sm text-silk-600 dark:text-silk-400">Select an image to use as a reference</p>
-                                </div>
-                                <button
-                                    onClick={() => setIsGalleryOpen(false)}
-                                    className="p-2 hover:bg-gray-100 dark:hover:bg-white/10 rounded-full transition-colors"
-                                >
-                                    <X className="w-8 h-8 text-silk-900 dark:text-silk-50" />
-                                </button>
-                            </div>
-                            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-12">
-                                {gallery.map((item, index) => (
-                                    <div
-                                        key={item._id}
-                                        onClick={() => setSelectedIndex(index)}
-                                        className="group relative aspect-square rounded-xl overflow-hidden cursor-pointer bg-gray-100 dark:bg-white/5 border border-transparent hover:border-silk-500 transition-all"
-                                    >
-                                        <img
-                                            src={optimizeImageUrl(item.image, 300)}
-                                            loading="lazy"
-                                            alt="Idea"
-                                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
-                                        />
-                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors" />
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    </div>
-                )}
-            </AnimatePresence>
-
-            {/* Full Screen Image View */}
-            {selectedIndex !== null && gallery[selectedIndex] && (
-                <div
-                    className="fixed inset-0 z-[70] flex items-center justify-center bg-black/95 p-4 animate-fade-in backdrop-blur-sm"
-                    onClick={() => setSelectedIndex(null)}
-                >
-                    <div className="relative max-w-4xl w-full flex flex-col items-center gap-6" onClick={(e) => e.stopPropagation()}>
-                        <button
-                            onClick={() => setSelectedIndex(null)}
-                            className="absolute top-0 right-0 -mt-14 sm:-mr-12 sm:mt-0 text-white/70 hover:text-white transition-colors p-2 z-50"
-                        >
-                            <X className="w-8 h-8" />
-                        </button>
-
-                        <button
-                            onClick={(e) => { e.stopPropagation(); setSelectedIndex((prev) => (prev - 1 + gallery.length) % gallery.length); }}
-                            className="absolute left-[-20px] sm:left-[-60px] top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white transition-colors hidden sm:block"
-                        >
-                            <ChevronLeft className="w-10 h-10" />
-                        </button>
-
-                        <button
-                            onClick={(e) => { e.stopPropagation(); setSelectedIndex((prev) => (prev + 1) % gallery.length); }}
-                            className="absolute right-[-20px] sm:right-[-60px] top-1/2 -translate-y-1/2 p-2 text-white/70 hover:text-white transition-colors hidden sm:block"
-                        >
-                            <ChevronRight className="w-10 h-10" />
-                        </button>
-
-                        <img
-                            src={gallery[selectedIndex].image}
-                            alt="Full view"
-                            className="max-h-[70vh] w-auto object-contain rounded-lg shadow-2xl select-none"
-                        />
-
-                        <button
-                            onClick={() => confirmGallerySelection(gallery[selectedIndex].image)}
-                            className="bg-white text-black px-10 py-3 rounded-full font-serif uppercase tracking-widest text-sm hover:scale-105 transition-transform shadow-[0_0_20px_rgba(255,255,255,0.3)]"
-                        >
-                            Use This Design
-                        </button>
-                    </div>
-                </div>
-            )}
+            {/* Reusable Gallery Picker */}
+            <GalleryPicker
+                isOpen={isGalleryOpen}
+                onClose={() => setIsGalleryOpen(false)}
+                onSelect={handleGallerySelect}
+                title="Pick a Design"
+                subtitle="Select an image to use as a reference"
+            />
 
             {/* AnimatePresence for Progress (kept for structure) */}
 
