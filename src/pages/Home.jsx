@@ -139,11 +139,18 @@ function Home() {
                     <p className="text-silk-600 dark:text-silk-400 text-sm md:text-lg font-light mb-8 max-w-xl mx-auto">
                         Join our community of skilled artisans and sell your <span className="italic">unique</span> crochet creations to a global audience.
                     </p>
-                    <Link to="/become-seller">
-                        <button className="bg-silk-900 dark:bg-white text-white dark:text-black border border-transparent text-sm h-10 px-8 rounded-full font-medium transition-all hover:bg-silk-800 dark:hover:bg-gray-100 hover:scale-105 shadow-sm">
-                            Become a Seller
-                        </button>
-                    </Link>
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+                        <Link to="/become-seller">
+                            <button className="bg-silk-900 dark:bg-white text-white dark:text-black border border-transparent text-sm h-10 px-8 rounded-full font-medium transition-all hover:bg-silk-800 dark:hover:bg-gray-100 hover:scale-105 shadow-sm">
+                                Become a Seller
+                            </button>
+                        </Link>
+                        <Link to="/raw-materials">
+                            <button className="bg-transparent border border-silk-900 dark:border-white text-silk-900 dark:text-silk-100 text-sm h-10 px-8 rounded-full font-medium transition-all hover:bg-silk-900 hover:text-white dark:hover:bg-white dark:hover:text-black hover:scale-105 shadow-sm">
+                                Buy Raw Material
+                            </button>
+                        </Link>
+                    </div>
                 </FadeContent>
             </section>
 
