@@ -1,14 +1,14 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, Link, useLocation } from 'react-router-dom';
 import { ShopContext } from '../context/ShopContext';
-import { ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, X, Check, Loader2 } from 'lucide-react';
+import { ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, X, Check, Loader2, Heart } from 'lucide-react';
 import { useDrag } from '@use-gesture/react';
 import QToast from './uiComponents/QToast';
 import axios from 'axios';
 
 function RawMaterialDetail() {
     const { id } = useParams();
-    const { addToCart, navigate, token, backendUrl } = useContext(ShopContext);
+    const { addToCart, navigate, token, backendUrl, userData, addToWishlist, removeFromWishlist } = useContext(ShopContext);
     const [material, setMaterial] = useState(null);
     const [activeImage, setActiveImage] = useState(0);
     const [quantity, setQuantity] = useState(1);
@@ -213,6 +213,22 @@ function RawMaterialDetail() {
                                 title="Share"
                             >
                                 <Share2 className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => {
+                                    if (userData?.wishlist?.some(w => w.productId === material._id)) {
+                                        removeFromWishlist(material._id);
+                                    } else {
+                                        addToWishlist(material);
+                                    }
+                                }}
+                                className={`p-3 border rounded-full transition-colors flex items-center justify-center ${userData?.wishlist?.some(w => w.productId === material._id)
+                                        ? 'border-red-200 bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:border-red-800'
+                                        : 'border-silk-200 dark:border-silk-700 hover:bg-silk-50 dark:hover:bg-white/10 text-silk-600 dark:text-silk-300'
+                                    }`}
+                                title={userData?.wishlist?.some(w => w.productId === material._id) ? "Remove from Wishlist" : "Add to Wishlist"}
+                            >
+                                <Heart className={`w-5 h-5 ${userData?.wishlist?.some(w => w.productId === material._id) ? 'fill-current' : ''}`} />
                             </button>
                         </div>
 

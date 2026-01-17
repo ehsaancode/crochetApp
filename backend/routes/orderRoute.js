@@ -12,6 +12,7 @@ orderRouter.post('/status', updateStatus); // Ideally should be admin protected
 orderRouter.post('/place', authMiddleware, placeOrder);
 orderRouter.post('/razorpay', authMiddleware, placeOrderRazorpay);
 orderRouter.post('/verifyRazorpay', authMiddleware, verifyRazorpay);
+orderRouter.post('/calculate-delivery', require('../controllers/orderController').calculateDelivery);
 
 // User Features
 orderRouter.post('/userorders', authMiddleware, userOrders);

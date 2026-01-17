@@ -170,13 +170,7 @@ function ProductDetail() {
                             </div>
                         )}
 
-                        {/* Wishlist Button (On Image) */}
-                        <button
-                            onClick={handleWishlistToggle}
-                            className={`absolute top-4 right-4 z-10 p-3 rounded-full backdrop-blur-md transition-all duration-300 shadow-sm ${isInWishlist ? 'bg-red-50/90 text-red-500' : 'bg-white/80 dark:bg-black/50 text-silk-900 dark:text-white hover:bg-white dark:hover:bg-black/70 hover:text-red-500'}`}
-                        >
-                            <Heart className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />
-                        </button>
+
 
                         {/* Navigation Arrows */}
                         <button
@@ -315,6 +309,16 @@ function ProductDetail() {
                                 title="Share"
                             >
                                 <Share2 className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={handleWishlistToggle}
+                                className={`p-3 border rounded-full transition-colors flex items-center justify-center ${isInWishlist
+                                    ? 'border-red-200 bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:border-red-800'
+                                    : 'border-silk-200 dark:border-silk-700 hover:bg-silk-50 dark:hover:bg-white/10 text-silk-600 dark:text-silk-300'
+                                    }`}
+                                title={isInWishlist ? "Remove from Wishlist" : "Add to Wishlist"}
+                            >
+                                <Heart className={`w-5 h-5 ${isInWishlist ? 'fill-current' : ''}`} />
                             </button>
                         </div>
 

@@ -1,15 +1,25 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ShoppingBag, Filter, X, Search } from 'lucide-react';
+import { ShoppingBag, Filter, X, Search, Heart } from 'lucide-react';
 import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
 import Loading from '../components/Loading';
+import QToast from './uiComponents/QToast';
 
 function RawMaterials() {
-    const { backendUrl, search, setSearch, showSearch } = useContext(ShopContext);
+    const { backendUrl, search, setSearch, showSearch, userData, addToWishlist, removeFromWishlist, token, navigate } = useContext(ShopContext);
     const [rawMaterials, setRawMaterials] = useState([]);
     const [filterMaterials, setFilterMaterials] = useState([]);
     const [isFilterOpen, setIsFilterOpen] = useState(false);
+    const [isScrolled, setIsScrolled] = useState(false);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            setIsScrolled(window.scrollY > 50);
+        };
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
 
     // Filters
     const [type, setType] = useState([]);
@@ -73,7 +83,7 @@ function RawMaterials() {
 
     useEffect(() => {
         applyFilter();
-    }, [rawMaterials, type, priceRange, debouncedSearchQuery]);
+    }, [rawMaterials, debouncedSearchQuery]);
 
     const handleLoadMore = () => {
         setIsLoadingMore(true);
@@ -103,10 +113,14 @@ function RawMaterials() {
     return (
         <div className="pt-28 pb-12 px-4 max-w-7xl mx-auto flex flex-col md:flex-row gap-8 min-h-screen">
             {/* Mobile Filter Toggle */}
+            {/* Mobile Filter Toggle */}
             <div className="md:hidden sticky top-24 z-40 flex mb-4 transition-all duration-700 ease-in-out w-full justify-start">
                 <button
                     onClick={() => setIsFilterOpen(true)}
-                    className="flex items-center justify-center text-silk-900 dark:text-white font-medium shadow-lg w-full py-3 rounded-full bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-silk-200 dark:hover:bg-gray-800 space-x-2"
+                    className={`flex items-center justify-center text-silk-900 dark:text-white font-medium shadow-lg overflow-hidden transition-all duration-700 ease-in-out ${isScrolled
+                        ? 'w-32 py-2 rounded-full bg-silk-100/50 dark:bg-black/50 backdrop-blur-md hover:bg-silk-200/50 dark:hover:bg-gray-900/50 space-x-2'
+                        : 'w-full py-3 rounded-full bg-silk-100/90 dark:bg-gray-900/80 backdrop-blur-sm hover:bg-silk-200 dark:hover:bg-gray-800 space-x-2'
+                        }`}
                 >
                     <Filter className="w-5 h-5" />
                     <span>Filters</span>
@@ -118,6 +132,15 @@ function RawMaterials() {
                 <div className="flex justify-between items-center mb-4 md:hidden">
                     <h3 className="font-serif text-xl dark:text-white">Filters</h3>
                     <button onClick={() => setIsFilterOpen(false)} className="dark:text-white"><X className="w-6 h-6" /></button>
+                </div>
+
+                <div className="sticky top-[-1.5rem] -mx-6 px-6 py-3 z-50 bg-white/95 dark:bg-black/95 backdrop-blur-sm border-b border-gray-100 dark:border-gray-900 md:hidden mb-6 shadow-sm">
+                    <button
+                        onClick={() => { applyFilter(); setIsFilterOpen(false); }}
+                        className="w-full py-2 bg-silk-900 dark:bg-silk-100 text-white dark:text-black font-medium text-sm rounded-full hover:bg-silk-800 dark:hover:bg-white transition-all shadow-md active:scale-95"
+                    >
+                        Apply Filters
+                    </button>
                 </div>
 
                 <div className="space-y-8">
@@ -180,6 +203,23 @@ function RawMaterials() {
                         <Link to={`/raw-material/${item._id}`} key={item._id} className="group cursor-pointer">
                             <div className="h-full flex flex-col rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300 relative border border-silk-200 dark:border-silk-blue-border/30 bg-silk-50 dark:bg-black">
                                 <div className="relative z-10 aspect-square overflow-hidden bg-white dark:bg-gray-800">
+                                    <button
+                                        onClick={(e) => {
+                                            e.preventDefault();
+                                            e.stopPropagation();
+                                            if (userData?.wishlist?.some(w => w.productId === item._id)) {
+                                                removeFromWishlist(item._id);
+                                            } else {
+                                                addToWishlist(item);
+                                            }
+                                        }}
+                                        className="absolute top-2 left-2 w-8 h-8 flex items-center justify-center rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-all duration-300 z-20"
+                                    >
+                                        <Heart
+                                            className={`w-5 h-5 transition-colors duration-300 ${userData?.wishlist?.some(w => w.productId === item._id) ? 'fill-red-500 text-red-500' : 'text-silk-900 hover:fill-red-500 hover:text-red-500'}`}
+                                            strokeWidth={1.5}
+                                        />
+                                    </button>
                                     <img src={item.image[0]} alt={item.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out" loading="lazy" />
                                     <div className="absolute top-2 right-2 bg-black/50 text-white text-xs px-2 py-1 rounded backdrop-blur-sm">
                                         {item.length}
@@ -190,8 +230,20 @@ function RawMaterials() {
                                     <p className="text-xs text-silk-500 dark:text-silk-400 mb-2">{item.type} • {item.color}</p>
                                     <div className="mt-auto flex justify-between items-center">
                                         <p className="text-silk-900 dark:text-silk-200 font-medium">₹{item.price}</p>
-                                        <button className="md:hidden w-8 h-8 flex items-center justify-center bg-silk-900 text-white rounded-full">
-                                            <ShoppingBag className="w-4 h-4" />
+                                        <button
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                if (!token) {
+                                                    QToast.error('Please login to buy products', { position: "top-center" });
+                                                    navigate('/login');
+                                                    return;
+                                                }
+                                                navigate('/place-order', { state: { product: item, quantity: 1, size: item.length || 'Standard', color: item.color || 'Standard' } });
+                                            }}
+                                            className="px-4 py-1.5 bg-silk-900 dark:bg-silk-100 text-white dark:text-black text-xs font-serif rounded-full hover:bg-silk-800 dark:hover:bg-white/90 transition-colors shadow-sm"
+                                        >
+                                            Buy Now
                                         </button>
                                     </div>
                                 </div>

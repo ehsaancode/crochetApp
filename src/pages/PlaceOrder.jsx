@@ -62,24 +62,29 @@ const PlaceOrder = () => {
 
             setCalculatingShipping(true);
             try {
-                const query = `${formData.street}, ${formData.city}, ${formData.state}, ${formData.zipcode}, ${formData.country}`;
-                const response = await axios.get(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`);
+                // Call backend to avoid CORS issues
+                const response = await axios.post(backendUrl + '/api/order/calculate-delivery', {
+                    street: formData.street,
+                    city: formData.city,
+                    state: formData.state,
+                    zipcode: formData.zipcode,
+                    country: formData.country || 'India' // Default if missing
+                });
 
-                if (response.data && response.data.length > 0) {
-                    const { lat, lon } = response.data[0];
-                    const distance = calculateDistance(WAREHOUSE_COORDS.lat, WAREHOUSE_COORDS.lon, parseFloat(lat), parseFloat(lon));
+                if (response.data.success) {
+                    const { fee, distance } = response.data;
+                    setShippingFee(fee);
 
-                    if (distance > 150) {
-                        setShippingFee(150);
-                        QToast.info(`Distance: ${distance.toFixed(1)}km. Shipping: ₹150`, { position: 'bottom' });
-                    } else if (distance > 40) {
-                        setShippingFee(100);
-                        QToast.info(`Distance: ${distance.toFixed(1)}km. Shipping: ₹100`, { position: 'bottom' });
-                    } else {
-                        setShippingFee(0);
+                    if (fee === 0) {
                         QToast.success(`Distance: ${distance.toFixed(1)}km. Free Shipping!`, { position: 'bottom' });
+                    } else {
+                        QToast.info(`Distance: ${distance.toFixed(1)}km. Shipping: ₹${fee}`, { position: 'bottom' });
                     }
+                } else {
+                    console.warn("Shipping calc failed:", response.data.message);
+                    // Fallback or just ignore if address not found yet
                 }
+
             } catch (error) {
                 console.error("Shipping calc error:", error);
             } finally {

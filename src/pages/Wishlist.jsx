@@ -8,7 +8,7 @@ import QToast from './uiComponents/QToast'
 
 const Wishlist = ({ compact }) => {
 
-    const { products, currency, userData, removeFromWishlist, addToCart, requestProduct, token, fetchUserProfile, navigate } = useContext(ShopContext);
+    const { products, rawMaterials, currency, userData, removeFromWishlist, addToCart, requestProduct, token, fetchUserProfile, navigate } = useContext(ShopContext);
     const [addingId, setAddingId] = React.useState(null);
     const [successId, setSuccessId] = React.useState(null);
 
@@ -53,8 +53,12 @@ const Wishlist = ({ compact }) => {
 
             <div className='grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 gap-y-10'>
                 {userData.wishlist.map((item, index) => {
-                    const isAvailable = products.find(p => p._id === item.productId);
+                    const isProduct = products.find(p => p._id === item.productId);
+                    const isRawMaterial = rawMaterials.find(r => r._id === item.productId);
+                    const isAvailable = isProduct || isRawMaterial;
                     const productData = isAvailable || item; // Use live data if available, else snapshot
+
+                    const itemLink = isRawMaterial ? `/raw-material/${productData._id}` : `/product/${productData._id}`;
 
                     return (
                         <FadeContent key={index} blur={true} duration={0.4} delay={index * 0.05} className="h-full">
@@ -107,7 +111,7 @@ const Wishlist = ({ compact }) => {
 
                                             <div className="mt-auto flex flex-col gap-2">
                                                 <div className='flex gap-2'>
-                                                    <Link to={`/product/${productData._id}`} className='flex-1'>
+                                                    <Link to={itemLink} className='flex-1'>
                                                         <button className='w-full py-2 border border-silk-900 dark:border-silk-200 text-silk-900 dark:text-silk-200 rounded-lg text-sm hover:bg-silk-900 hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors'>
                                                             View
                                                         </button>
@@ -120,7 +124,11 @@ const Wishlist = ({ compact }) => {
                                                                 return;
                                                             }
                                                             setAddingId(productData._id);
-                                                            await addToCart(productData._id, productData.sizes[0] || 'Default')
+                                                            const sizeToAdd = isRawMaterial
+                                                                ? (productData.length || 'Standard')
+                                                                : (productData.sizes?.[0] || 'Default');
+
+                                                            await addToCart(productData._id, sizeToAdd)
                                                             setAddingId(null);
                                                             setSuccessId(productData._id);
                                                             setTimeout(() => setSuccessId(null), 2000);

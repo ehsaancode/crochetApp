@@ -160,4 +160,65 @@ const cancelOrder = async (req, res) => {
     }
 }
 
-module.exports = { placeOrder, placeOrderRazorpay, verifyRazorpay, allOrders, userOrders, updateStatus, cancelOrder };
+// Calculate Delivery Fee Server-Side (Avoids CORS)
+const calculateDelivery = async (req, res) => {
+    try {
+        const { street, city, state, zipcode, country } = req.body;
+
+        if (!street || !city || !zipcode) {
+            return res.json({ success: false, message: "Missing address details" });
+        }
+
+        const query = `${street}, ${city}, ${state}, ${zipcode}, ${country}`;
+        const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+
+        // Use built-in fetch with User-Agent
+        const response = await fetch(url, {
+            headers: {
+                'User-Agent': 'Aalaboo-Backend/1.0' // Required by Nominatim
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error(`Nominatim API Error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data && data.length > 0) {
+            const { lat, lon } = data[0];
+
+            // Warehouse Coords (Puinan)
+            const WAREHOUSE_LAT = 22.944245420133758;
+            const WAREHOUSE_LON = 88.28156250538409;
+
+            // Distance Calculation (Haversine Formula)
+            const R = 6371; // Radius of earth in km
+            const dLat = (lat - WAREHOUSE_LAT) * Math.PI / 180;
+            const dLon = (lon - WAREHOUSE_LON) * Math.PI / 180;
+            const a =
+                Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(WAREHOUSE_LAT * Math.PI / 180) * Math.cos(lat * Math.PI / 180) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const distance = R * c; // Distance in km
+
+            let fee = 0;
+            if (distance > 150) {
+                fee = 150;
+            } else if (distance > 40) {
+                fee = 100;
+            }
+
+            return res.json({ success: true, fee, distance });
+        } else {
+            return res.json({ success: false, message: "Address not found" });
+        }
+
+    } catch (error) {
+        console.log("Delivery Calc Error:", error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+module.exports = { placeOrder, placeOrderRazorpay, verifyRazorpay, allOrders, userOrders, updateStatus, cancelOrder, calculateDelivery };
