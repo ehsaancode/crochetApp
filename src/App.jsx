@@ -25,6 +25,8 @@ import PlaceOrder from './pages/PlaceOrder';
 import Orders from './pages/Orders';
 import CustomOrder from './pages/CustomOrder';
 import BecomeSeller from './pages/BecomeSeller';
+import RawMaterials from './pages/RawMaterials';
+import RawMaterialDetail from './pages/RawMaterialDetail';
 import ForgotPassword from './pages/ForgotPassword';
 import ChangePassword from './pages/ChangePassword';
 
@@ -199,13 +201,15 @@ function App() {
                         <Route path="/about" element={<About />} />
                         <Route path="/contact" element={<Contact />} />
                         <Route path="/custom-order" element={<CustomOrder />} />
-                        <Route path="/product/:id" element={<ProductDetail />} />
+                        <Route path="/item/:id" element={<ProductDetail />} />
                         <Route path="/cart" element={<Cart />} />
                         <Route path="/wishlist" element={<Wishlist />} />
                         <Route path="/account" element={<Login />} />
                         <Route path="/place-order" element={<PlaceOrder />} />
                         <Route path="/orders" element={<Orders />} />
                         <Route path="/become-seller" element={<BecomeSeller />} />
+                        <Route path="/raw-materials" element={<RawMaterials />} />
+                        <Route path="/raw-material/:id" element={<RawMaterialDetail />} />
                         <Route path="/forgot-password" element={<ForgotPassword />} />
                         <Route path="/change-password" element={<ChangePassword />} />
                     </Routes>
