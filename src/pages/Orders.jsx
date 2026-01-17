@@ -10,6 +10,7 @@ import confettiAnimation from './uiComponents/lottie/Confetti.lottie';
 import { useLocation, Link } from 'react-router-dom';
 import Loading from '../components/Loading';
 import DiscoverIdeas from '../components/DiscoverIdeas';
+import SEO from '../components/SEO';
 
 const Orders = ({ compact }) => {
 
@@ -218,13 +219,17 @@ const Orders = ({ compact }) => {
         // Footer
         doc.setFontSize(10);
         doc.text("Thank you for shopping with Aalaboo!", 20, 130);
-        doc.text("www.aalaboo.com", 20, 135);
+        doc.text("https://aalaboo.onrender.com", 20, 135);
 
         doc.save(`invoice_${order.name}.pdf`);
     }
 
     return (
         <div className={compact ? 'p-6' : 'border-t pt-24 px-8 sm:px-12 md:px-24 min-h-[80vh]'}>
+            <SEO
+                title="My Orders"
+                description="View your order history and track your shipments."
+            />
 
             {!compact && (
                 <div className="flex flex-col gap-2 mb-8">

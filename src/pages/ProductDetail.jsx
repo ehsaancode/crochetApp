@@ -5,6 +5,7 @@ import { ShopContext } from '../context/ShopContext';
 import { Star, Heart, ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, Maximize2, X, Check, Loader2 } from 'lucide-react';
 import QToast from './uiComponents/QToast';
 import freeSizeIcon from '../assets/centimeter.png';
+import SEO from '../components/SEO';
 
 function ProductDetail() {
     const { id } = useParams();
@@ -133,6 +134,12 @@ function ProductDetail() {
 
     return (
         <div className="pt-24 px-4 max-w-7xl mx-auto">
+            <SEO
+                title={product.name}
+                description={product.description?.substring(0, 160) || `Buy ${product.name} at Aalaboo.`}
+                image={product.image[0]}
+                url={window.location.href}
+            />
             {/* Breadcrumb / Back */}
             <div className="mb-8">
                 <Link to="/collection" className="inline-flex items-center text-silk-600 hover:text-silk-900 transition-colors">

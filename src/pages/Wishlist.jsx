@@ -5,6 +5,7 @@ import { Heart, ShoppingBag, AlertCircle, Trash2, Loader2, Check } from 'lucide-
 import { RainbowButton } from '../components/ui/rainbow-button'
 import FadeContent from './uiComponents/FadeContent'
 import QToast from './uiComponents/QToast'
+import SEO from '../components/SEO'
 
 const Wishlist = ({ compact }) => {
 
@@ -45,6 +46,7 @@ const Wishlist = ({ compact }) => {
 
     return (
         <div className={compact ? 'p-6' : 'border-t pt-28 px-4 sm:px-12 md:px-24 min-h-screen pb-12'}>
+            {!compact && <SEO title="My Wishlist" description="View and manage your saved items." />}
             {!compact && (
                 <div className='text-2xl mb-8'>
                     <h1 className='font-serif text-3xl text-silk-900 dark:text-silk-50'>MY <span className='text-silk-600 font-medium'>WISHLIST</span></h1>

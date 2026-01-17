@@ -4,6 +4,7 @@ import { ShopContext } from '../context/ShopContext';
 import { ShoppingBag, ChevronLeft, ChevronRight, Truck, ShieldCheck, ArrowLeft, Share2, Play, X, Check, Loader2, Heart } from 'lucide-react';
 import { useDrag } from '@use-gesture/react';
 import QToast from './uiComponents/QToast';
+import SEO from '../components/SEO';
 import axios from 'axios';
 
 function RawMaterialDetail() {
@@ -103,6 +104,12 @@ function RawMaterialDetail() {
 
     return (
         <div className="pt-24 px-4 max-w-7xl mx-auto">
+            <SEO
+                title={material.name}
+                description={material.description?.substring(0, 160) || `Buy ${material.name} raw materials at Aalaboo.`}
+                image={material.image[0]}
+                url={window.location.href}
+            />
             {/* Breadcrumb / Back */}
             <div className="mb-8">
                 <Link to="/raw-materials" className="inline-flex items-center text-silk-600 hover:text-silk-900 transition-colors">
@@ -223,8 +230,8 @@ function RawMaterialDetail() {
                                     }
                                 }}
                                 className={`p-3 border rounded-full transition-colors flex items-center justify-center ${userData?.wishlist?.some(w => w.productId === material._id)
-                                        ? 'border-red-200 bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:border-red-800'
-                                        : 'border-silk-200 dark:border-silk-700 hover:bg-silk-50 dark:hover:bg-white/10 text-silk-600 dark:text-silk-300'
+                                    ? 'border-red-200 bg-red-50 text-red-500 hover:bg-red-100 dark:bg-red-900/20 dark:border-red-800'
+                                    : 'border-silk-200 dark:border-silk-700 hover:bg-silk-50 dark:hover:bg-white/10 text-silk-600 dark:text-silk-300'
                                     }`}
                                 title={userData?.wishlist?.some(w => w.productId === material._id) ? "Remove from Wishlist" : "Add to Wishlist"}
                             >

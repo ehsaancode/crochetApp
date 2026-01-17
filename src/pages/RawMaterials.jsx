@@ -6,6 +6,8 @@ import axios from 'axios';
 import Loading from '../components/Loading';
 import QToast from './uiComponents/QToast';
 
+import SEO from '../components/SEO';
+
 function RawMaterials() {
     const { backendUrl, search, setSearch, showSearch, userData, addToWishlist, removeFromWishlist, token, navigate } = useContext(ShopContext);
     const [rawMaterials, setRawMaterials] = useState([]);
@@ -109,9 +111,12 @@ function RawMaterials() {
     }, [visibleMaterials, filterMaterials.length, isLoadingMore]);
 
     const uniqueTypes = [...new Set(rawMaterials.map(m => m.type))];
-
     return (
         <div className="pt-28 pb-12 px-4 max-w-7xl mx-auto flex flex-col md:flex-row gap-8 min-h-screen">
+            <SEO
+                title="Raw Materials"
+                description="Purchase high-quality crochet raw materials including yarns, hooks, and accessories directly from Aalaboo."
+            />
             {/* Mobile Filter Toggle */}
             {/* Mobile Filter Toggle */}
             <div className="md:hidden sticky top-24 z-40 flex mb-4 transition-all duration-700 ease-in-out w-full justify-start">

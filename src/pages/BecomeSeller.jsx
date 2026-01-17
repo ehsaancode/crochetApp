@@ -5,6 +5,7 @@ import { ShopContext } from '../context/ShopContext';
 import axios from 'axios';
 import QToast from './uiComponents/QToast';
 import FadeContent from './uiComponents/FadeContent';
+import SEO from '../components/SEO';
 
 const BecomeSeller = () => {
     const { backendUrl } = useContext(ShopContext);
@@ -169,6 +170,10 @@ const BecomeSeller = () => {
 
     return (
         <div className="min-h-screen pt-28 pb-12 bg-silk-50 dark:bg-black transition-colors duration-300">
+            <SEO
+                title="Become a Seller"
+                description="Join Aalaboo's community of artisans. Sell your handcrafted crochet items on our platform."
+            />
             <div className="max-w-4xl mx-auto px-6">
 
                 <FadeContent blur={true} duration={0.6}>

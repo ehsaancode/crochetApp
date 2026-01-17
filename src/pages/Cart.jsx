@@ -89,6 +89,7 @@ import whiteCatAnimation from './uiComponents/lottie/White Cat Peeping.lottie';
 import blackCatAnimation from './uiComponents/lottie/blackCatPeek.lottie';
 import { useTheme } from '../context/ThemeContext';
 import Carousel from './uiComponents/Carousel';
+import SEO from '../components/SEO';
 
 const Cart = () => {
 
@@ -150,6 +151,10 @@ const Cart = () => {
 
     return (
         <div className='border-t pt-32 px-4 sm:px-12 md:px-24 min-h-[80vh] relative overflow-hidden'>
+            <SEO
+                title="Your Cart"
+                description="Review your selected items and proceed to checkoutSecurely on Aalaboo."
+            />
 
             {cartData.length > 0 && (
                 <div className='text-2xl mb-3'>

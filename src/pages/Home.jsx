@@ -15,6 +15,8 @@ import FestiveCard from '../components/FestiveCard';
 import DiscoverIdeas from '../components/DiscoverIdeas';
 
 
+import SEO from '../components/SEO';
+
 function Home() {
     const { theme } = useTheme();
     const { products, galleryImages } = useContext(ShopContext);
@@ -39,11 +41,15 @@ function Home() {
             setMasonryItems(items);
         }
     }, [products]);
-
     return (
         <>
+            <SEO
+                title="Home"
+                description="Welcome to Aalaboo, your premier destination for handcrafted luxury crochet fashion. Explore our curated collection of artisanal wearables and accessories."
+            />
 
             <section id="home" className="h-[85vh] flex items-center justify-center p-6 text-center relative overflow-hidden">
+
                 <div className="absolute inset-0 z-0">
                     <DarkVeil darkMode={theme === 'dark'} />
                 </div>

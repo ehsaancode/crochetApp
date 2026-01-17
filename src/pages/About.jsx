@@ -5,11 +5,17 @@ import DarkVeil from './uiComponents/DarkVeil';
 import { useTheme } from '../context/ThemeContext';
 import humanTouchImg from '../assets/images/about_human_touch.jpg';
 
+import SEO from '../components/SEO';
+
 function About() {
     const { theme } = useTheme();
 
     return (
         <div className="min-h-screen">
+            <SEO
+                title="About Aalaboo"
+                description="Learn about the soul of slow fashion at Aalaboo. We celebrate the art of handmade crochet, empowering artisans and prioritizing conscious production."
+            />
             {/* Hero Section */}
             <section className="relative h-[70vh] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">

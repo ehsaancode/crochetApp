@@ -7,6 +7,8 @@ import FadeContent from './uiComponents/FadeContent';
 import DarkVeil from './uiComponents/DarkVeil';
 import { useTheme } from '../context/ThemeContext';
 
+import SEO from '../components/SEO';
+
 function Contact() {
     const { theme } = useTheme();
     const { backendUrl } = useContext(ShopContext);
@@ -42,9 +44,12 @@ function Contact() {
             setLoading(false);
         }
     };
-
     return (
         <div className="min-h-screen">
+            <SEO
+                title="Contact Us"
+                description="Get in touch with Aalaboo for custom orders, inquiries, or support. We'd love to hear from you."
+            />
             {/* Hero Section */}
             <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 z-0">
@@ -167,8 +172,8 @@ function Contact() {
                                         type="submit"
                                         disabled={loading || sent}
                                         className={`w-full py-4 rounded-full font-medium tracking-wide flex items-center justify-center gap-2 transition-all hover:scale-[1.02] shadow-lg disabled:opacity-70 disabled:cursor-wait ${sent
-                                                ? 'bg-green-600 text-white hover:bg-green-700'
-                                                : 'bg-silk-900 dark:bg-white text-white dark:text-black hover:bg-silk-800 dark:hover:bg-gray-100'
+                                            ? 'bg-green-600 text-white hover:bg-green-700'
+                                            : 'bg-silk-900 dark:bg-white text-white dark:text-black hover:bg-silk-800 dark:hover:bg-gray-100'
                                             }`}
                                     >
                                         {loading ? (

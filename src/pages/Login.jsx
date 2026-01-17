@@ -12,6 +12,7 @@ import Loading from '../components/Loading'
 import { DotLottieReact } from '@lottiefiles/dotlottie-react';
 import { useTheme } from '../context/ThemeContext';
 import girlSayHiAnimation from '../assets/newLottie/girl say hi.lottie';
+import SEO from '../components/SEO';
 
 const Login = () => {
     const { theme } = useTheme();
@@ -203,6 +204,7 @@ const Login = () => {
     if (token && userData) {
         return (
             <div className='min-h-screen pt-28 pb-12 px-4 max-w-lg mx-auto'>
+                <SEO title="My Profile" description="Manage your Aalaboo account, orders, and wishlist." />
                 <FadeContent blur={true} duration={0.6}>
                     {!isEditing ? (
                         <>
@@ -325,6 +327,10 @@ const Login = () => {
 
     return (
         <div className='h-[100dvh] w-full flex flex-col md:flex-row-reverse items-center justify-between px-4 relative bg-white dark:bg-black transition-colors duration-300 overflow-hidden pt-16'>
+            <SEO
+                title={currentState === 'Sign Up' ? 'Create Account' : 'Login'}
+                description="Sign in or create an account to shop for handcrafted crochet fashion at Aalaboo."
+            />
 
             {/* Top/Right Lottie Animation */}
             <div className={`w-full md:w-1/2 flex justify-center items-center transition-all duration-500 ease-in-out shrink-0 relative ${currentState === 'Sign Up' ? 'h-[25vh] md:h-full' : 'h-[30vh] md:h-full'}`}>

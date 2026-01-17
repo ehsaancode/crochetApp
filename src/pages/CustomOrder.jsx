@@ -7,6 +7,7 @@ import FadeContent from './uiComponents/FadeContent';
 import GalleryPicker from '../components/GalleryPicker';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import SEO from '../components/SEO';
 
 function CustomOrder() {
     const { token, backendUrl, userData, fetchUserProfile, galleryImages } = useContext(ShopContext); // added userData
@@ -361,6 +362,10 @@ function CustomOrder() {
 
     return (
         <div className="min-h-screen pt-28 pb-12 bg-silk-50 dark:bg-black transition-colors duration-300 flex items-center justify-center">
+            <SEO
+                title="Custom Crochet Order"
+                description="Turn your photo into a handmade crochet piece. Upload your design and customize your order with Aalaboo."
+            />
             <div className="w-full max-w-5xl px-6">
                 <FadeContent blur={true} duration={0.6} easing="ease-out" initialOpacity={0}>
                     <div className="text-center mb-10">

@@ -7,6 +7,7 @@ import QToast from './uiComponents/QToast';
 import { LocateFixed } from 'lucide-react';
 import Lottie from 'lottie-react';
 import processingAnimation from './uiComponents/lottie/Processing animation with a checkmark.json';
+import SEO from '../components/SEO';
 
 const PlaceOrder = () => {
     const [showSuccess, setShowSuccess] = useState(false);
@@ -351,6 +352,10 @@ const PlaceOrder = () => {
 
     return (
         <form onSubmit={onSubmitHandler} className='flex flex-col sm:flex-row justify-between gap-4 pt-5 sm:pt-14 min-h-[80vh] border-t px-4 sm:px-12 md:px-24'>
+            <SEO
+                title="Checkout"
+                description="Complete your purchase securely on Aalaboo. Choose your preferred payment method and delivery address."
+            />
             {/* Left Side */}
             <div className='flex flex-col gap-4 w-full sm:max-w-[480px]'>
 
