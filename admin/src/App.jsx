@@ -53,6 +53,7 @@ const App = () => {
                 <Route path='/gallery' element={<Gallery token={token} />} />
                 <Route path='/applications' element={<Applications token={token} />} />
                 <Route path='/add-raw-material' element={<AddRawMaterial token={token} />} />
+                <Route path='/edit-raw-material/:id' element={<AddRawMaterial token={token} />} />
               </Routes>
             </div>
           </div>

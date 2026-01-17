@@ -246,7 +246,7 @@ function RawMaterials() {
                                                 }
                                                 navigate('/place-order', { state: { product: item, quantity: 1, size: item.length || 'Standard', color: item.color || 'Standard' } });
                                             }}
-                                            className="px-4 py-1.5 bg-silk-900 dark:bg-silk-100 text-white dark:text-black text-sm font-medium tracking-wide rounded-full hover:bg-silk-800 dark:hover:bg-white/90 transition-colors shadow-sm"
+                                            className="px-3 py-1 text-xs md:text-sm md:px-4 md:py-1.5 bg-silk-900 dark:bg-silk-100 text-white dark:text-black font-medium tracking-wide rounded-full hover:bg-silk-800 dark:hover:bg-white/90 transition-colors shadow-sm"
                                         >
                                             Buy Now
                                         </button>

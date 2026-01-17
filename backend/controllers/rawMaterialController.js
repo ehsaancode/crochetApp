@@ -61,6 +61,74 @@ const listRawMaterials = async (req, res) => {
     }
 }
 
+// Single Raw Material Info
+const singleRawMaterial = async (req, res) => {
+    try {
+        const { id } = req.body;
+        const rawMaterial = await rawMaterialModel.findById(id);
+        res.json({ success: true, rawMaterial });
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
+// Update Raw Material
+const updateRawMaterial = async (req, res) => {
+    try {
+        const { id, name, description, price, color, type, length } = req.body;
+
+        const rawMaterial = await rawMaterialModel.findById(id);
+        if (!rawMaterial) {
+            return res.json({ success: false, message: "Raw Material not found" });
+        }
+
+        let updatedImages = [...rawMaterial.image];
+
+        const getUrl = (file) => {
+            if (file.path && (file.path.startsWith('http:') || file.path.startsWith('https:'))) {
+                return file.path;
+            }
+            let protocol = req.protocol;
+            if (req.get('host').includes('onrender.com')) {
+                protocol = 'https';
+            }
+            return `${protocol}://${req.get('host')}/uploads/${file.filename}`;
+        }
+
+        if (req.body.deletedIndices) {
+            const deleted = JSON.parse(req.body.deletedIndices);
+            deleted.forEach(index => {
+                if (index >= 0 && index < updatedImages.length) {
+                    updatedImages[index] = null;
+                }
+            });
+        }
+
+        if (req.files.image1) updatedImages[0] = getUrl(req.files.image1[0]);
+        if (req.files.image2) updatedImages[1] = getUrl(req.files.image2[0]);
+        if (req.files.image3) updatedImages[2] = getUrl(req.files.image3[0]);
+        if (req.files.image4) updatedImages[3] = getUrl(req.files.image4[0]);
+
+        updatedImages = updatedImages.filter(item => item);
+
+        rawMaterial.name = name;
+        rawMaterial.description = description;
+        rawMaterial.price = Number(price);
+        rawMaterial.color = color;
+        rawMaterial.type = type;
+        rawMaterial.length = length || "";
+        rawMaterial.image = updatedImages;
+
+        await rawMaterial.save();
+        res.json({ success: true, message: "Raw Material Updated" });
+
+    } catch (error) {
+        console.log(error);
+        res.json({ success: false, message: error.message });
+    }
+}
+
 // Remove Raw Material
 const removeRawMaterial = async (req, res) => {
     try {
@@ -72,4 +140,4 @@ const removeRawMaterial = async (req, res) => {
     }
 }
 
-module.exports = { addRawMaterial, listRawMaterials, removeRawMaterial };
+module.exports = { addRawMaterial, listRawMaterials, removeRawMaterial, singleRawMaterial, updateRawMaterial };
