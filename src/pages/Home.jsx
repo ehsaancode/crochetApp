@@ -28,7 +28,8 @@ function Home() {
 
     useEffect(() => {
         if (products.length > 0) {
-            const items = products.slice(0, 12).map((product, index) => ({
+            const bestsellers = products.filter(product => product.bestseller);
+            const items = bestsellers.slice(0, 12).map((product, index) => ({
                 id: product._id,
                 img: optimizeImageUrl(product.image[0], 600),
                 name: product.name,
