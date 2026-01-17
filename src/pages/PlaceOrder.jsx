@@ -41,7 +41,7 @@ const PlaceOrder = () => {
 
     const [calculatingShipping, setCalculatingShipping] = useState(false);
 
-    const [method, setMethod] = useState('cod');
+    const [method, setMethod] = useState('razorpay');
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
@@ -593,11 +593,11 @@ const PlaceOrder = () => {
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'stripe' ? 'bg-green-400' : ''}`}></p>
                             <p className='text-gray-500 text-sm font-medium mx-4'>Stripe</p>
                         </div> */}
-                        <div onClick={() => setMethod('razorpay')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer border-silk-500 bg-silk-50 dark:bg-slate-800 dark:border-silk-400'>
+                        <div onClick={() => setMethod('razorpay')} className={`flex items-center gap-3 p-2 px-3 cursor-pointer rounded-lg ${method === 'razorpay' ? 'bg-silk-50 dark:bg-slate-800' : ''}`}>
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'razorpay' ? 'bg-green-400' : ''}`}></p>
                             <p className='text-silk-900 dark:text-white text-sm font-medium mx-4'>Pay Online</p>
                         </div>
-                        <div onClick={() => setMethod('cod')} className='flex items-center gap-3 border p-2 px-3 cursor-pointer border-silk-500 bg-silk-50 dark:bg-slate-800 dark:border-silk-400'>
+                        <div onClick={() => setMethod('cod')} className={`flex items-center gap-3 p-2 px-3 cursor-pointer rounded-lg ${method === 'cod' ? 'bg-silk-50 dark:bg-slate-800' : ''}`}>
                             <p className={`min-w-3.5 h-3.5 border rounded-full ${method === 'cod' ? 'bg-green-400' : ''}`}></p>
                             <p className='text-silk-900 dark:text-white text-sm font-medium mx-4'>Cash on Delivery</p>
                         </div>
