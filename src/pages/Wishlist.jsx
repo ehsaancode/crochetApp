@@ -44,7 +44,7 @@ const Wishlist = ({ compact }) => {
     }
 
     return (
-        <div className={compact ? 'p-6' : 'border-t pt-14 px-4 sm:px-12 md:px-24 min-h-screen pb-12'}>
+        <div className={compact ? 'p-6' : 'border-t pt-28 px-4 sm:px-12 md:px-24 min-h-screen pb-12'}>
             {!compact && (
                 <div className='text-2xl mb-8'>
                     <h1 className='font-serif text-3xl text-silk-900 dark:text-silk-50'>MY <span className='text-silk-600 font-medium'>WISHLIST</span></h1>
