@@ -10,6 +10,7 @@ const customOrderRouter = require('./routes/customOrderRoute');
 const festivalRouter = require('./routes/festivalRoute');
 const galleryRouter = require('./routes/galleryRoute');
 const sellerRouter = require('./routes/sellerRoute');
+const rawMaterialRouter = require('./routes/rawMaterialRoute');
 
 dotenv.config();
 
@@ -33,6 +34,7 @@ app.use('/api/custom-order', customOrderRouter);
 app.use('/api/festival', festivalRouter);
 app.use('/api/gallery', galleryRouter);
 app.use('/api/seller', sellerRouter);
+app.use('/api/raw-material', rawMaterialRouter);
 
 // Global Error Handler
 app.use((err, req, res, next) => {

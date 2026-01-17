@@ -12,6 +12,7 @@ import CustomOrders from './pages/CustomOrders'
 import Festival from './pages/Festival'
 import Gallery from './pages/Gallery'
 import Applications from './pages/Applications'
+import AddRawMaterial from './pages/AddRawMaterial'
 import Dashboard from './pages/Dashboard'
 import Login from './components/Login'
 import QToast from './components/QToast';
@@ -51,6 +52,7 @@ const App = () => {
                 <Route path='/festival' element={<Festival token={token} />} />
                 <Route path='/gallery' element={<Gallery token={token} />} />
                 <Route path='/applications' element={<Applications token={token} />} />
+                <Route path='/add-raw-material' element={<AddRawMaterial token={token} />} />
               </Routes>
             </div>
           </div>
